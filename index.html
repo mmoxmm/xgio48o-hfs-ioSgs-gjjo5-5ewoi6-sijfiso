@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* デザイン・UIは一切変えず、提示されたファイルを維持 */
+/* デザイン・UIは一切変えず、提示されたスタイルを維持 */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#ffffff;--surface:#f5f5f7;--surface2:#ebebef;--border:#e0e0e8;
@@ -105,6 +105,7 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .preset-actions{display:flex;gap:6px}
 .icon-btn{font-size:11px;font-family:'Syne',sans-serif;font-weight:600;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);padding:4px 10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
 .icon-btn:hover{color:var(--text);border-color:#999}
+.icon-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
 
 .groups-list{display:flex;flex-direction:column;gap:10px}
 .group-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
@@ -120,7 +121,6 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .emoji-key{font-size:16px;flex-shrink:0;width:28px;text-align:center}
 .emoji-swatches{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 
-/* スウォッチの表示（背景色に文字色を載せるアイディアを反映） */
 .swatch-chip{position:relative;width:32px;height:32px;border-radius:6px;border:1.5px solid rgba(0,0,0,.08);cursor:pointer;flex-shrink:0;transition:transform .12s,box-shadow .12s;overflow:hidden}
 .swatch-chip:hover{transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .swatch-chip.active-chip{border-color:var(--text);box-shadow:0 0 0 2px var(--text)}
@@ -129,6 +129,10 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .swatch-chip:hover .swatch-chip-tooltip{opacity:1}
 .swatch-chip-del{position:absolute;top:1px;right:1px;width:12px;height:12px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .12s;cursor:pointer;line-height:1}
 .swatch-chip:hover .swatch-chip-del{opacity:1}
+
+/* ロック中のスタイル（削除バツを常に表示するなどの視覚的フィードバック） */
+body.is-locked .swatch-chip-del { opacity: 0.6; }
+body.is-locked .swatch-chip:hover .swatch-chip-del { opacity: 1; }
 
 .emoji-add-btn{width:28px;height:28px;border-radius:6px;border:1.5px dashed var(--border);background:none;color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
 .emoji-add-btn:hover{border-color:#aaa;color:var(--text);background:var(--surface2)}
@@ -274,11 +278,14 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     <div class="presets-header">
       <span class="section-label">プリセット</span>
       <div class="preset-actions">
+        <button class="icon-btn" id="lockBtn" onclick="toggleLock()" title="編集・反映モード切替">
+          <span id="lockIcon">🔓</span> <span id="lockText">解除中</span>
+        </button>
         <button class="icon-btn" onclick="openAddModal(null)">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          現在の色を登録
+          登録
         </button>
-        <button class="icon-btn" onclick="addGroup()">グループ追加</button>
+        <button class="icon-btn" onclick="addGroup()">＋群</button>
       </div>
     </div>
     <div class="groups-list" id="groupsList"></div>
@@ -316,22 +323,44 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 </div>
 
 <script>
-// --- 最新の絵文字並び順を反映した初期設定 ---
+// --- 最新の絵文字並び順 ---
 const uid = () => Math.random().toString(36).slice(2, 9);
 const DEFAULT_GROUPS = [
   { name: '🌃', rows: [
-    { key: '🌃', colors: [] }, { key: '👓', colors: [] }, { key: '🐹', colors: [] }, 
-    { key: '🥽', colors: [] }, { key: '🕶️', colors: [] }, { key: '🐸', colors: [] }, { key: '🩰', colors: [] }
+    { key: '🌃', colors: [] }, { key: '眼鏡', colors: [] }, { key: 'ハム', colors: [] }, 
+    { key: 'ゴーグル', colors: [] }, { key: 'サングラス', colors: [] }, { key: 'カエル', colors: [] }, { key: 'トゥシューズ', colors: [] }
   ]},
   { name: '🌆', rows: [
-    { key: '🌆', colors: [] }, { key: '🦍', colors: [] }, { key: '🐱', colors: [] }, 
-    { key: '🐰', colors: [] }, { key: '🦊', colors: [] }, { key: '🧪', colors: [] }, { key: '🎀', colors: [] }
+    { key: '🌆', colors: [] }, { key: 'ゴリラ', colors: [] }, { key: 'ネコ', colors: [] }, 
+    { key: 'ウサギ', colors: [] }, { key: 'キツネ', colors: [] }, { key: '試験管', colors: [] }, { key: 'リボン', colors: [] }
   ]}
 ];
 
+// ロック状態管理
+let isLocked = false;
+function toggleLock() {
+  isLocked = !isLocked;
+  const btn = document.getElementById('lockBtn');
+  const icon = document.getElementById('lockIcon');
+  const text = document.getElementById('lockText');
+  
+  if (isLocked) {
+    btn.classList.add('active');
+    icon.textContent = '🔒';
+    text.textContent = 'ロック中';
+    document.body.classList.add('is-locked');
+    showToast('編集モード：タップで削除');
+  } else {
+    btn.classList.remove('active');
+    icon.textContent = '🔓';
+    text.textContent = '解除中';
+    document.body.classList.remove('is-locked');
+    showToast('反映モード：タップでプレビュー');
+  }
+}
+
 let groups = (() => {
   try {
-    // 既存データ（cp_groups5, cp_groups_v7, cp_groups）を優先的に探す
     const d = localStorage.getItem('cp_groups5') || localStorage.getItem('cp_groups_v7') || localStorage.getItem('cp_groups');
     if (d) return ensureIds(JSON.parse(d));
   } catch (e) {}
@@ -354,23 +383,20 @@ function ensureIds(gs) {
   }));
 }
 
-// --- Sync (GitHub Gist) ---
+// --- Sync (Gist) ---
 let syncConfig = { token: '', gistId: '' };
 let pollTimer = null, lastEtag = '';
-
 function setSyncBadge(state, label) {
   const badge = document.getElementById('syncBadge');
   badge.className = 'sync-badge ' + (state || '');
   document.getElementById('syncLabel').textContent = label;
 }
-
 function loadSyncConfig() {
   try {
     const c = JSON.parse(localStorage.getItem('cp_sync') || '{}');
     syncConfig.token = c.token || ''; syncConfig.gistId = c.gistId || '';
   } catch (e) {}
 }
-
 async function gistGet() {
   if (!syncConfig.gistId || !syncConfig.token) return null;
   try {
@@ -384,7 +410,6 @@ async function gistGet() {
     return JSON.parse(data.files['presets.json'].content);
   } catch (e) { return null; }
 }
-
 async function gistPut(data) {
   if (!syncConfig.gistId || !syncConfig.token) return false;
   const r = await fetch('https://api.github.com/gists/' + syncConfig.gistId, {
@@ -393,7 +418,6 @@ async function gistPut(data) {
   });
   return r.ok;
 }
-
 async function setupSync() {
   const token = document.getElementById('gistTokenInput').value.trim();
   const gistId = document.getElementById('gistIdInput').value.trim();
@@ -415,7 +439,6 @@ async function setupSync() {
     if (d.id) { syncConfig.gistId = d.id; localStorage.setItem('cp_sync', JSON.stringify(syncConfig)); startPolling(); updateSyncShareUrl(); }
   }
 }
-
 function clearSync() { stopPolling(); syncConfig = { token: '', gistId: '' }; localStorage.removeItem('cp_sync'); setSyncBadge('', '未接続'); document.getElementById('syncShareUrlRow').style.display = 'none'; }
 function startPolling() { stopPolling(); setSyncBadge('synced', '同期中'); pollTimer = setInterval(async () => { const data = await gistGet(); if (data && data !== 'unchanged') { groups = ensureIds(data); renderGroups(); } }, 8000); }
 function stopPolling() { if (pollTimer) clearInterval(pollTimer); }
@@ -448,7 +471,6 @@ function getContrast(a, b) {
   const l1 = lum(a), l2 = lum(b);
   return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
 }
-
 function applyHex(k, hex) {
   if (!validHex(hex)) return;
   const [h, s, v] = hexToHsv(hex); state[k] = { h, s, v };
@@ -502,13 +524,30 @@ function renderGroups() {
         inner.style.background = c.b; inner.style.color = c.t; inner.textContent = 'Aa';
         const tt = document.createElement('div'); tt.className = 'swatch-chip-tooltip'; tt.textContent = `${c.t} / ${c.b}`;
         const del = document.createElement('div'); del.className = 'swatch-chip-del'; del.textContent = '×';
+        
+        // バツボタン自体の動作
         del.onclick = e => { e.stopPropagation(); row.colors.splice(ci, 1); saveGroups(); renderGroups(); };
-        chip.onclick = () => { applyHex('t', c.t); applyHex('b', c.b); showToast(c.b.toUpperCase() + ' をコピー'); copyText(c.b.toUpperCase()); };
+        
+        // チップ本体の動作（ロック状態で分岐）
+        chip.onclick = () => {
+          if (isLocked) {
+             // ロック中は削除確認（または即削除）
+             if(confirm(`このスウォッチ (${c.b}) を削除しますか？`)) {
+                row.colors.splice(ci, 1); saveGroups(); renderGroups();
+             }
+          } else {
+             // 通常モードは反映
+             applyHex('t', c.t); applyHex('b', c.b); 
+             showToast(c.b.toUpperCase() + ' を反映'); 
+             copyText(c.b.toUpperCase()); 
+          }
+        };
+        
         chip.append(inner, tt, del); swatchesEl.append(chip);
       });
       const addRowBtn = document.createElement('button'); addRowBtn.className = 'emoji-add-btn'; addRowBtn.textContent = '+';
       addRowBtn.onclick = () => { const t = document.getElementById('tHex').value, b = document.getElementById('bHex').value; row.colors.push({ id: uid(), t, b }); saveGroups(); renderGroups(); };
-      swatchesEl.append(addRowBtn); rowEl.append(swatchesEl); rowsEl.append(rowEl);
+      swatchesEl.append(addRowBtn); rowEl.append(swatchesEl); rowEl.append(swatchesEl); rowsEl.append(rowEl);
     });
     block.append(rowsEl);
     const addRow = document.createElement('div'); addRow.className = 'group-add-row';
