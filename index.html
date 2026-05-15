@@ -128,7 +128,7 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .swatch-chip-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-weight:700;user-select:none;border-radius:4px;overflow:hidden;text-align:center}
 .swatch-chip-tooltip{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10}
 .swatch-chip:hover .swatch-chip-tooltip{opacity:1}
-.swatch-lock-badge{position:absolute;top:-4px;right:-4px;font-size:9px;background:#fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,0.3);width:14px;height:14px;display:flex;align-items:center;justify-content:center;z-index:3}
+.swatch-chip.locked{border:2px solid #555 !important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);}
 
 /* スワップ選択ハイライト */
 .swatch-chip.selected-for-swap{border:2px solid var(--accent)!important;box-shadow:0 0 0 3px rgba(59,121,96,0.35)!important;transform:scale(1.1);}
@@ -703,10 +703,7 @@ function renderGroups() {
         };
 
         chip.append(inner, tt, editBtn);
-        if (c.locked) {
-          const lb = document.createElement('div'); lb.className = 'swatch-lock-badge'; lb.textContent = '🔒';
-          chip.append(lb);
-        }
+        if (c.locked) chip.classList.add('locked');
         swatchesEl.append(chip);
       });
 
