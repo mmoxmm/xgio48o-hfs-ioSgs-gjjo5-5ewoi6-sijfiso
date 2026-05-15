@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Preview — 文字色 × 背景色チェッカー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--surface:#f5f5f7;--surface2:#ebebef;--border:#e0e0e8;
+  --text:#1a1a2e;--muted:#9999aa;--radius:12px;--radius-sm:8px;
+  --accent:#3b7960;--accent-light:#f0faf5;--accent-border:#c3e8d8;
+}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;padding:24px 16px;line-height:1.5}
+.app{max-width:900px;margin:0 auto}
+
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px}
+h1{font-size:19px;font-weight:700;letter-spacing:-.02em}
+h1 span{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
+.sync-badge{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all .3s}
+.sync-badge.synced{background:var(--accent-light);border-color:var(--accent-border);color:var(--accent)}
+.sync-badge.syncing{background:#fffbe6;border-color:#ffe58f;color:#b8860b}
+.sync-badge.error{background:#fff2f0;border-color:#ffccc7;color:#cf1322}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+.swap-btn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;transition:background .15s}
+.swap-btn:hover{background:var(--surface2)}
+.swap-btn svg{flex-shrink:0;transition:transform .3s}
+.swap-btn:hover svg{transform:rotate(180deg)}
+
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:540px){.panels{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.panel-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+
+.swatch-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.swatch{width:44px;height:44px;border-radius:var(--radius-sm);border:1px solid var(--border);flex-shrink:0;position:relative;overflow:hidden;cursor:pointer}
+.swatch input[type=color]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer}
+.hex-wrap{flex:1;min-width:0}
+.hex-label{font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:3px}
+
+/* Copyable hex field */
+.hex-copy-row{display:flex;align-items:center;gap:4px}
+.hex-input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:14px;font-weight:500;padding:5px 8px;outline:none;transition:border-color .15s}
+.hex-input:focus{border-color:#999}
+.copy-hex-btn{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:10px;padding:5px 7px;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace;font-weight:500;white-space:nowrap}
+.copy-hex-btn:hover{background:var(--text);color:#fff;border-color:var(--text)}
+.copy-hex-btn.copied{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.name-input{width:100%;background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:'Syne',sans-serif;font-size:12px;padding:3px 2px;outline:none;margin-bottom:8px;transition:border-color .15s}
+.name-input::placeholder{color:var(--muted)}
+.name-input:focus{border-bottom-color:#aaa}
+
+.sliders{display:flex;flex-direction:column;gap:6px}
+.slider-group{display:flex;align-items:center;gap:8px}
+.slider-name{font-size:10px;color:var(--muted);width:12px;flex-shrink:0}
+input[type=range]{flex:1;height:5px;border-radius:3px;outline:none;border:none;padding:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.2);box-shadow:0 1px 4px rgba(0,0,0,.15);cursor:pointer;transition:transform .1s}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
+.slider-val{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);width:30px;text-align:right;flex-shrink:0}
+
+.preview-wrap{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:16px}
+.preview-hint{font-size:10px;color:var(--muted);text-align:right;padding:4px 10px 0;font-style:italic;background:var(--bg)}
+.preview-box{padding:24px 20px;min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;transition:background .12s,color .12s}
+.preview-large{font-size:26px;font-weight:700;letter-spacing:-.02em;outline:none;border-radius:4px}
+.preview-body{font-size:14px;line-height:1.65;max-width:400px;outline:none;border-radius:4px}
+.preview-small{font-size:11px;opacity:.7;outline:none;border-radius:4px}
+[contenteditable]:focus{outline:1px dashed rgba(128,128,128,.35);outline-offset:2px}
+.preview-bar{background:var(--surface);border-top:1px solid var(--border);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.color-codes{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.code-chip{display:flex;align-items:center;gap:5px;cursor:pointer;border-radius:6px;padding:2px 6px;transition:background .12s}
+.code-chip:hover{background:var(--surface2)}
+.code-chip:hover .chip-copy-hint{opacity:1}
+.chip-dot{width:9px;height:9px;border-radius:50%;border:1px solid var(--border);flex-shrink:0}
+.code-label{color:var(--muted);font-size:10px}
+.chip-code{font-family:'DM Mono',monospace;font-size:12px;font-weight:500}
+.chip-name{font-size:10px;color:var(--muted);font-family:'Syne',sans-serif}
+.chip-copy-hint{font-size:9px;color:var(--accent);opacity:0;transition:opacity .15s;margin-left:2px}
+.ratio-badge{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;font-family:'DM Mono',monospace;background:var(--surface2);color:#888899}
+
+/* Sync setup panel */
+.sync-setup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px}
+.sync-setup-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.sync-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sync-input{flex:1;min-width:160px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:6px 10px;outline:none;transition:border-color .15s}
+.sync-input:focus{border-color:var(--accent)}
+.sync-input::placeholder{color:var(--muted);font-family:'Syne',sans-serif;font-size:12px}
+.sync-action-btn{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border);transition:all .15s;white-space:nowrap}
+.sync-action-btn.primary{background:var(--text);color:#fff;border-color:var(--text)}
+.sync-action-btn.primary:hover{opacity:.85}
+.sync-action-btn.secondary{background:none;color:var(--muted)}
+.sync-action-btn.secondary:hover{color:var(--text)}
+.sync-note{font-size:10px;color:var(--muted);margin-top:8px;line-height:1.6}
+.sync-note a{color:var(--accent);text-decoration:none}
+.sync-note a:hover{text-decoration:underline}
+.sync-share-url{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sync-share-input{flex:1;min-width:120px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);padding:5px 8px;outline:none;user-select:all;cursor:text}
+.sync-copy-btn{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:5px 12px;cursor:pointer;transition:opacity .15s;flex-shrink:0}
+.sync-copy-btn:hover{opacity:.85}
+
+/* Presets */
+.presets-section{margin-bottom:20px}
+.presets-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.preset-actions{display:flex;gap:6px}
+.icon-btn{font-size:11px;font-family:'Syne',sans-serif;font-weight:600;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);padding:4px 10px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.icon-btn:hover{color:var(--text);border-color:#999}
+
+.groups-list{display:flex;flex-direction:column;gap:10px}
+.group-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.group-header{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.group-drag-handle{cursor:grab;color:var(--muted);font-size:13px;user-select:none;flex-shrink:0}
+.group-drag-handle:active{cursor:grabbing}
+.group-name-input{flex:1;background:transparent;border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);outline:none;min-width:0}
+.group-move-btns{display:flex;gap:2px;flex-shrink:0}
+.move-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:10px;padding:2px 5px;cursor:pointer;transition:all .12s}
+.move-btn:hover{color:var(--text);border-color:#999}
+.group-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0 2px;line-height:1;transition:color .12s;flex-shrink:0}
+.group-del-btn:hover{color:#cc4444}
+
+/* Emoji rows layout */
+.emoji-rows{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.emoji-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.emoji-key{font-size:16px;flex-shrink:0;width:28px;text-align:center}
+.emoji-swatches{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.swatch-chip{position:relative;width:32px;height:32px;border-radius:6px;border:1.5px solid rgba(0,0,0,.08);cursor:pointer;flex-shrink:0;transition:transform .12s,box-shadow .12s;overflow:hidden}
+.swatch-chip:hover{transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.swatch-chip.active-chip{border-color:var(--text);box-shadow:0 0 0 2px var(--text)}
+.swatch-chip-inner{width:100%;height:100%}
+.swatch-chip-tooltip{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10}
+.swatch-chip:hover .swatch-chip-tooltip{opacity:1}
+.swatch-chip-del{position:absolute;top:1px;right:1px;width:12px;height:12px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .12s;cursor:pointer;line-height:1}
+.swatch-chip:hover .swatch-chip-del{opacity:1}
+.emoji-add-btn{width:28px;height:28px;border-radius:6px;border:1.5px dashed var(--border);background:none;color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+.emoji-add-btn:hover{border-color:#aaa;color:var(--text);background:var(--surface2)}
+.group-add-row{padding:6px 12px;border-top:1px solid var(--border)}
+.group-add-preset{display:flex;align-items:center;gap:5px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;color:var(--muted);cursor:pointer;background:none;border:none;width:100%;transition:color .15s;padding:0}
+.group-add-preset:hover{color:var(--text)}
+
+/* Copy toast */
+.copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,0,0,.8);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:8px 16px;border-radius:99px;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
+.copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(2px)}
+.modal{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:14px}
+.modal-preview{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:14px}
+.modal-preview-swatches{display:flex;gap:4px;flex-shrink:0}
+.modal-preview-dot{width:26px;height:26px;border-radius:5px;border:1px solid var(--border)}
+.modal-preview-info{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7}
+.modal-field{margin-bottom:12px}
+.modal-label{font-size:11px;color:var(--muted);letter-spacing:.05em;margin-bottom:5px}
+.modal-input,.group-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .15s}
+.modal-input:focus,.group-select:focus{border-color:#999}
+.emoji-key-select{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.emoji-key-btn{font-size:18px;padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;background:var(--surface);transition:all .12s;line-height:1}
+.emoji-key-btn:hover{background:var(--surface2)}
+.emoji-key-btn.selected{border-color:var(--text);background:var(--surface2)}
+.emoji-new-input{margin-top:6px;display:none;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:14px;padding:6px 10px;outline:none}
+.emoji-new-input.visible{display:block}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.modal-btn{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border);transition:all .15s}
+.modal-btn.primary{background:var(--text);color:#fff;border-color:var(--text)}
+.modal-btn.primary:hover{opacity:.85}
+.modal-btn.secondary{background:none;color:var(--muted)}
+.modal-btn.secondary:hover{color:var(--text)}
+
+footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
+
+.dragging{opacity:.3;pointer-events:none}
+.drag-over-group{outline:2px dashed #9999cc;outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Color Preview <span>文字色 × 背景色チェッカー</span></h1>
+    <div class="sync-badge" id="syncBadge">
+      <span class="sync-dot"></span>
+      <span id="syncLabel">未接続</span>
+    </div>
+  </header>
+
+  <button class="swap-btn" onclick="swapColors()">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+    文字色と背景色を入れ替え
+  </button>
+
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-title">文字色</div>
+      <div class="swatch-row">
+        <div class="swatch" id="tSwatch"><input type="color" id="tPicker" value="#1a1a2e"></div>
+        <div class="hex-wrap">
+          <div class="hex-label">HEX</div>
+          <div class="hex-copy-row">
+            <input type="text" class="hex-input" id="tHex" value="#1a1a2e" maxlength="7" spellcheck="false">
+            <button class="copy-hex-btn" id="copyTBtn" onclick="copyHex('t')">コピー</button>
+          </div>
+        </div>
+      </div>
+      <input type="text" class="name-input" id="tName" placeholder="色の名前（任意）" maxlength="30">
+      <div class="sliders">
+        <div class="slider-group"><span class="slider-name">H</span><input type="range" id="tH" min="0" max="359" value="229" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><span class="slider-val" id="tHval">229°</span></div>
+        <div class="slider-group"><span class="slider-name">S</span><input type="range" id="tS" min="0" max="100" value="44"><span class="slider-val" id="tSval">44%</span></div>
+        <div class="slider-group"><span class="slider-name">V</span><input type="range" id="tV" min="0" max="100" value="18"><span class="slider-val" id="tVval">18%</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">背景色</div>
+      <div class="swatch-row">
+        <div class="swatch" id="bSwatch"><input type="color" id="bPicker" value="#e8f4f8"></div>
+        <div class="hex-wrap">
+          <div class="hex-label">HEX</div>
+          <div class="hex-copy-row">
+            <input type="text" class="hex-input" id="bHex" value="#e8f4f8" maxlength="7" spellcheck="false">
+            <button class="copy-hex-btn" id="copyBBtn" onclick="copyHex('b')">コピー</button>
+          </div>
+        </div>
+      </div>
+      <input type="text" class="name-input" id="bName" placeholder="色の名前（任意）" maxlength="30">
+      <div class="sliders">
+        <div class="slider-group"><span class="slider-name">H</span><input type="range" id="bH" min="0" max="359" value="200" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><span class="slider-val" id="bHval">200°</span></div>
+        <div class="slider-group"><span class="slider-name">S</span><input type="range" id="bS" min="0" max="100" value="38"><span class="slider-val" id="bSval">38%</span></div>
+        <div class="slider-group"><span class="slider-name">V</span><input type="range" id="bV" min="0" max="100" value="97"><span class="slider-val" id="bVval">97%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview-wrap">
+    <div class="preview-hint">↓ クリックして文字を編集できます</div>
+    <div class="preview-box" id="preview">
+      <div class="preview-large" contenteditable="true" spellcheck="false">あAaBbCc 123</div>
+      <div class="preview-body" contenteditable="true" spellcheck="false">日本語と English が混在したサンプルテキストです。This is a sample text for color preview.</div>
+      <div class="preview-small" contenteditable="true" spellcheck="false">小さい文字サイズでの見やすさもチェックできます。Small text visibility check.</div>
+    </div>
+    <div class="preview-bar">
+      <div class="color-codes">
+        <div class="code-chip" onclick="copyAndShowHex('t')" title="タップでコピー">
+          <div class="chip-dot" id="tcDot"></div>
+          <span class="code-label">文字&nbsp;</span>
+          <span class="chip-code" id="tcCode">#1A1A2E</span>
+          <span class="chip-name" id="tcName"></span>
+          <span class="chip-copy-hint">tap to copy</span>
+        </div>
+        <div class="code-chip" onclick="copyAndShowHex('b')" title="タップでコピー">
+          <div class="chip-dot" id="bcDot"></div>
+          <span class="code-label">背景&nbsp;</span>
+          <span class="chip-code" id="bcCode">#E8F4F8</span>
+          <span class="chip-name" id="bcName"></span>
+          <span class="chip-copy-hint">tap to copy</span>
+        </div>
+      </div>
+      <div class="ratio-badge" id="ratioBadge">— : 1</div>
+    </div>
+  </div>
+
+  <!-- Sync setup -->
+  <div class="sync-setup" id="syncSetup">
+    <div class="sync-setup-title">🔗 プリセット同期設定（GitHub Gist使用・無料）</div>
+    <div class="sync-row">
+      <input type="text" class="sync-input" id="gistTokenInput" placeholder="GitHub Personal Access Token (gist権限)" autocomplete="off">
+      <input type="text" class="sync-input" id="gistIdInput" placeholder="Gist ID（2人目は相手から受け取る）" style="max-width:220px">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <button class="sync-action-btn primary" onclick="setupSync()">接続 / 作成</button>
+      <button class="sync-action-btn secondary" onclick="clearSync()">切断</button>
+    </div>
+    <div class="sync-note" id="syncNote">
+      <a href="https://github.com/settings/tokens/new?scopes=gist&description=ColorPreview" target="_blank">① GitHubでgistスコープのトークンを作成</a> →
+      ② 1人目が「接続/作成」→ 共有URLをコピーして相手に送る →
+      ③ 相手はURLを開くだけで自動設定完了。以後プリセット変更が自動同期されます。
+    </div>
+    <div class="sync-share-url" id="syncShareUrlRow" style="display:none">
+      <input type="text" class="sync-share-input" id="syncShareInput" readonly>
+      <button class="sync-copy-btn" onclick="copySyncUrl()">URLコピー</button>
+    </div>
+  </div>
+
+  <div class="presets-section">
+    <div class="presets-header">
+      <span class="section-label">プリセット</span>
+      <div class="preset-actions">
+        <button class="icon-btn" onclick="openAddModal(null)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          現在の色を登録
+        </button>
+        <button class="icon-btn" onclick="addGroup()">グループ追加</button>
+      </div>
+    </div>
+    <div class="groups-list" id="groupsList"></div>
+  </div>
+
+  <footer>スウォッチをタップ → プレビュー反映 ＋ コードコピー · GitHub Gistで2人リアルタイム同期</footer>
+</div>
+
+<!-- Copy toast -->
+<div class="copy-toast" id="copyToast"></div>
+
+<!-- Add preset modal -->
+<div class="modal-overlay" id="addModal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <h3>現在の色を登録</h3>
+    <div class="modal-preview">
+      <div class="modal-preview-swatches">
+        <div class="modal-preview-dot" id="modalDotT"></div>
+        <div class="modal-preview-dot" id="modalDotB"></div>
+      </div>
+      <div class="modal-preview-info" id="modalInfo"></div>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">グループ</div>
+      <select class="group-select" id="modalGroup" onchange="onModalGroupChange()"></select>
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">絵文字キー（同じキーの行に追加）</div>
+      <div class="emoji-key-select" id="emojiKeySelect"></div>
+      <input type="text" class="emoji-new-input" id="emojiNewInput" placeholder="新しい絵文字を入力" maxlength="4">
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" onclick="closeModal()">キャンセル</button>
+      <button class="modal-btn primary" onclick="confirmAdd()">登録</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// Utilities
+// ─────────────────────────────────────────────
+function uid(){return Math.random().toString(36).slice(2,9)}
+
+function showToast(msg){
+  const t=document.getElementById('copyToast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),1600);
+}
+
+function copyText(text){
+  return navigator.clipboard.writeText(text).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=text;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+// ─────────────────────────────────────────────
+// Default data
+// ─────────────────────────────────────────────
+// Structure: groups → [ { id, name, rows: { [emoji]: [hex, hex, ...] } } ]
+// rows is ordered array of { key: emoji, colors: [{id,t,b,label}] }
+const DEFAULT_GROUPS=[
+  {id:uid(),name:'🌃',rows:[
+    {key:'🐹',colors:[{id:uid(),t:'#1a1a2e',b:'#f6ae54'}]},
+    {key:'🥽',colors:[{id:uid(),t:'#1a1a2e',b:'#ffd700'}]},
+    {key:'🐸',colors:[{id:uid(),t:'#1a1a2e',b:'#c3d825'}]},
+    {key:'🩰',colors:[{id:uid(),t:'#1a1a2e',b:'#ffb6c1'}]},
+    {key:'👓',colors:[{id:uid(),t:'#1a1a2e',b:'#3b7960'}]},
+    {key:'🕶️',colors:[{id:uid(),t:'#1a1a2e',b:'#4169e1'}]},
+  ]},
+  {id:uid(),name:'🌆',rows:[
+    {key:'🦍',colors:[{id:uid(),t:'#1a1a2e',b:'#2f5d50'}]},
+    {key:'🐱',colors:[{id:uid(),t:'#1a1a2e',b:'#f4a460'}]},
+    {key:'🐰',colors:[{id:uid(),t:'#1a1a2e',b:'#eddc44'}]},
+    {key:'🦊',colors:[{id:uid(),t:'#1a1a2e',b:'#26499d'}]},
+    {key:'🧪',colors:[{id:uid(),t:'#1a1a2e',b:'#9fc24d'}]},
+    {key:'🎀',colors:[{id:uid(),t:'#1a1a2e',b:'#eb6ea0'}]},
+  ]},
+];
+
+// ─────────────────────────────────────────────
+// Sync via GitHub Gist
+// ─────────────────────────────────────────────
+let syncConfig={token:'',gistId:''};
+let pollTimer=null;
+let lastEtag='';
+let isSyncOwner=false;
+
+function setSyncBadge(state,label){
+  const badge=document.getElementById('syncBadge');
+  badge.className='sync-badge '+(state||'');
+  document.getElementById('syncLabel').textContent=label;
+}
+
+function loadSyncConfig(){
+  try{
+    const c=JSON.parse(localStorage.getItem('cp_sync')||'{}');
+    syncConfig.token=c.token||'';
+    syncConfig.gistId=c.gistId||'';
+  }catch(e){}
+}
+function saveSyncConfig(){
+  localStorage.setItem('cp_sync',JSON.stringify(syncConfig));
+}
+
+async function gistGet(){
+  if(!syncConfig.gistId||!syncConfig.token)return null;
+  try{
+    const headers={'Authorization':'token '+syncConfig.token,'Accept':'application/vnd.github.v3+json'};
+    if(lastEtag)headers['If-None-Match']=lastEtag;
+    const r=await fetch('https://api.github.com/gists/'+syncConfig.gistId,{headers});
+    if(r.status===304)return 'unchanged';
+    if(!r.ok)return null;
+    const etag=r.headers.get('ETag');
+    if(etag)lastEtag=etag;
+    const data=await r.json();
+    const content=data.files&&data.files['presets.json']&&data.files['presets.json'].content;
+    if(!content)return null;
+    return JSON.parse(content);
+  }catch(e){return null;}
+}
+
+async function gistPut(groupsData){
+  if(!syncConfig.gistId||!syncConfig.token)return false;
+  try{
+    const r=await fetch('https://api.github.com/gists/'+syncConfig.gistId,{
+      method:'PATCH',
+      headers:{'Authorization':'token '+syncConfig.token,'Content-Type':'application/json'},
+      body:JSON.stringify({files:{'presets.json':{content:JSON.stringify(groupsData)}}})
+    });
+    return r.ok;
+  }catch(e){return false;}
+}
+
+async function gistCreate(){
+  try{
+    const r=await fetch('https://api.github.com/gists',{
+      method:'POST',
+      headers:{'Authorization':'token '+syncConfig.token,'Content-Type':'application/json'},
+      body:JSON.stringify({description:'ColorPreview presets',public:false,files:{'presets.json':{content:JSON.stringify(groups)}}})
+    });
+    if(!r.ok)return null;
+    const d=await r.json();
+    return d.id;
+  }catch(e){return null;}
+}
+
+async function setupSync(){
+  const token=document.getElementById('gistTokenInput').value.trim();
+  const gistId=document.getElementById('gistIdInput').value.trim();
+  if(!token){alert('トークンを入力してください');return;}
+  syncConfig.token=token;
+  setSyncBadge('syncing','接続中…');
+  if(gistId){
+    // join existing
+    syncConfig.gistId=gistId;
+    const data=await gistGet();
+    if(data&&data!=='unchanged'){
+      groups=ensureIds(data);
+      renderGroups();
+      showToast('プリセットを読み込みました');
+    }
+    saveSyncConfig();
+    startPolling();
+    updateSyncShareUrl();
+  } else {
+    // create new gist
+    const newId=await gistCreate();
+    if(!newId){setSyncBadge('error','作成失敗');return;}
+    syncConfig.gistId=newId;
+    isSyncOwner=true;
+    saveSyncConfig();
+    startPolling();
+    updateSyncShareUrl();
+    showToast('Gistを作成しました。URLを相手に共有してください。');
+  }
+}
+
+function clearSync(){
+  stopPolling();
+  syncConfig={token:'',gistId:''};
+  saveSyncConfig();
+  lastEtag='';
+  setSyncBadge('','未接続');
+  document.getElementById('gistTokenInput').value='';
+  document.getElementById('gistIdInput').value='';
+  document.getElementById('syncShareUrlRow').style.display='none';
+}
+
+function updateSyncShareUrl(){
+  if(!syncConfig.gistId)return;
+  const base=location.href.split('?')[0].split('#')[0];
+  const url=base+'?gist='+syncConfig.gistId;
+  const row=document.getElementById('syncShareUrlRow');
+  row.style.display='flex';
+  document.getElementById('syncShareInput').value=url;
+}
+
+function copySyncUrl(){
+  const url=document.getElementById('syncShareInput').value;
+  copyText(url).then(()=>showToast('URLをコピーしました'));
+}
+
+function startPolling(){
+  stopPolling();
+  setSyncBadge('synced','同期中');
+  pollTimer=setInterval(async()=>{
+    const data=await gistGet();
+    if(data===null){setSyncBadge('error','エラー');return;}
+    if(data==='unchanged')return;
+    setSyncBadge('synced','同期中');
+    groups=ensureIds(data);
+    renderGroups();
+  },8000);
+}
+function stopPolling(){
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+}
+
+async function syncPush(){
+  if(!syncConfig.gistId||!syncConfig.token)return;
+  setSyncBadge('syncing','送信中…');
+  const ok=await gistPut(groups);
+  setSyncBadge(ok?'synced':'error',ok?'同期中':'送信失敗');
+  lastEtag=''; // force re-fetch next poll
+}
+
+function ensureIds(gs){
+  return gs.map(g=>({
+    id:g.id||uid(),
+    name:g.name||'',
+    rows:(g.rows||[]).map(r=>({
+      key:r.key||'?',
+      colors:(r.colors||[]).map(c=>({id:c.id||uid(),t:c.t,b:c.b}))
+    }))
+  }));
+}
+
+// ─────────────────────────────────────────────
+// Load groups: URL gist param → localStorage → default
+// ─────────────────────────────────────────────
+let groups=(()=>{
+  try{
+    const d=JSON.parse(localStorage.getItem('cp_groups5'));
+    if(d&&d.length)return ensureIds(d);
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DEFAULT_GROUPS));
+})();
+
+function saveGroups(){
+  localStorage.setItem('cp_groups5',JSON.stringify(groups));
+  syncPush();
+}
+
+// ─────────────────────────────────────────────
+// Color math
+// ─────────────────────────────────────────────
+const state={t:{h:229,s:44,v:18},b:{h:200,s:38,v:97}};
+
+function hexToHsv(hex){
+  let r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+  const max=Math.max(r,g,b),mn=Math.min(r,g,b),d=max-mn;
+  let h=0,s=max===0?0:d/max,v=max;
+  if(d){if(max===r)h=((g-b)/d+6)%6;else if(max===g)h=(b-r)/d+2;else h=(r-g)/d+4;h=Math.round(h*60);}
+  return[h,Math.round(s*100),Math.round(v*100)];
+}
+function hsvToHex(h,s,v){
+  s/=100;v/=100;
+  const f=n=>{const k=(n+h/60)%6;return v-v*s*Math.max(0,Math.min(k,4-k,1));};
+  const bx=x=>Math.round(x*255).toString(16).padStart(2,'0');
+  return'#'+bx(f(5))+bx(f(3))+bx(f(1));
+}
+function validHex(h){return/^#[0-9a-fA-F]{6}$/.test(h)}
+function getLum(hex){
+  const r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+  const l=c=>c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);
+  return 0.2126*l(r)+0.7152*l(g)+0.0722*l(b);
+}
+function getContrast(a,b){const l1=getLum(a),l2=getLum(b);return(Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05)}
+
+function applyHex(k,hex){
+  if(!validHex(hex))return;
+  const[h,s,v]=hexToHsv(hex);
+  state[k]={h,s,v};
+  document.getElementById(k==='t'?'tPicker':'bPicker').value=hex;
+  document.getElementById(k==='t'?'tHex':'bHex').value=hex;
+  syncUI(k);render();
+}
+function syncUI(k){
+  const{h,s,v}=state[k];
+  document.getElementById(k+'H').value=h;
+  document.getElementById(k+'S').value=s;
+  document.getElementById(k+'V').value=v;
+  document.getElementById(k+'Hval').textContent=h+'°';
+  document.getElementById(k+'Sval').textContent=s+'%';
+  document.getElementById(k+'Vval').textContent=v+'%';
+  const hex=hsvToHex(h,s,v);
+  document.getElementById(k==='t'?'tSwatch':'bSwatch').style.background=hex;
+  document.getElementById(k+'S').style.background=`linear-gradient(to right,${hsvToHex(h,0,v)},${hsvToHex(h,100,v)})`;
+  document.getElementById(k+'V').style.background=`linear-gradient(to right,${hsvToHex(h,s,0)},${hsvToHex(h,s,100)})`;
+}
+function fromSlider(k){
+  state[k].h=+document.getElementById(k+'H').value;
+  state[k].s=+document.getElementById(k+'S').value;
+  state[k].v=+document.getElementById(k+'V').value;
+  const hex=hsvToHex(state[k].h,state[k].s,state[k].v);
+  document.getElementById(k==='t'?'tPicker':'bPicker').value=hex;
+  document.getElementById(k==='t'?'tHex':'bHex').value=hex;
+  syncUI(k);render();
+}
+function swapColors(){
+  const th=document.getElementById('tHex').value;
+  const bh=document.getElementById('bHex').value;
+  applyHex('t',bh);applyHex('b',th);
+}
+function render(){
+  const tc=document.getElementById('tHex').value,bc=document.getElementById('bHex').value;
+  if(!validHex(tc)||!validHex(bc))return;
+  document.getElementById('preview').style.background=bc;
+  document.getElementById('preview').style.color=tc;
+  document.getElementById('tcDot').style.background=tc;
+  document.getElementById('bcDot').style.background=bc;
+  document.getElementById('tcCode').textContent=tc.toUpperCase();
+  document.getElementById('bcCode').textContent=bc.toUpperCase();
+  const tn=document.getElementById('tName').value;
+  const bn=document.getElementById('bName').value;
+  document.getElementById('tcName').textContent=tn?' ('+tn+')':'';
+  document.getElementById('bcName').textContent=bn?' ('+bn+')':'';
+  document.getElementById('ratioBadge').textContent=getContrast(tc,bc).toFixed(2)+' : 1';
+}
+
+// ─────────────────────────────────────────────
+// Copy helpers
+// ─────────────────────────────────────────────
+function copyHex(k){
+  const hex=document.getElementById(k==='t'?'tHex':'bHex').value.toUpperCase();
+  const btn=document.getElementById(k==='t'?'copyTBtn':'copyBBtn');
+  copyText(hex).then(()=>{
+    btn.classList.add('copied');btn.textContent='✓';
+    showToast(hex+' をコピーしました');
+    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='コピー';},1800);
+  });
+}
+function copyAndShowHex(k){
+  const hex=document.getElementById(k==='t'?'tcCode':'bcCode').textContent;
+  copyText(hex).then(()=>showToast(hex+' をコピーしました'));
+}
+
+// Apply preset color and copy hex
+let lastActiveChip=null;
+function applyPreset(chip,t,b){
+  applyHex('t',t);applyHex('b',b);
+  copyText(b.toUpperCase()).then(()=>showToast(b.toUpperCase()+' をコピーしました'));
+  if(lastActiveChip)lastActiveChip.classList.remove('active-chip');
+  chip.classList.add('active-chip');
+  lastActiveChip=chip;
+}
+
+// ─────────────────────────────────────────────
+// Render groups (emoji-row layout)
+// ─────────────────────────────────────────────
+let drag={type:null,gi:null};
+
+function renderGroups(){
+  const el=document.getElementById('groupsList');
+  el.innerHTML='';
+  groups.forEach((g,gi)=>{
+    const block=document.createElement('div');
+    block.className='group-block';
+
+    // header
+    const hdr=document.createElement('div');hdr.className='group-header';
+    const dh=document.createElement('span');dh.className='group-drag-handle';dh.textContent='⠿';dh.draggable=true;
+    dh.addEventListener('dragstart',e=>{drag={type:'group',gi};e.dataTransfer.effectAllowed='move';setTimeout(()=>block.classList.add('dragging'),0);});
+    dh.addEventListener('dragend',()=>{block.classList.remove('dragging');document.querySelectorAll('.drag-over-group').forEach(x=>x.classList.remove('drag-over-group'));});
+    const ni=document.createElement('input');ni.type='text';ni.className='group-name-input';ni.value=g.name;ni.placeholder='グループ名';
+    ni.addEventListener('input',()=>{groups[gi].name=ni.value;saveGroups();});
+    const mb=document.createElement('div');mb.className='group-move-btns';
+    if(gi>0){const u=mkBtn('↑','move-btn',()=>{swapArr(groups,gi-1,gi);saveGroups();renderGroups();});mb.appendChild(u);}
+    if(gi<groups.length-1){const d2=mkBtn('↓','move-btn',()=>{swapArr(groups,gi,gi+1);saveGroups();renderGroups();});mb.appendChild(d2);}
+    const delG=mkBtn('×','group-del-btn',()=>{if(!confirm('グループを削除しますか？'))return;groups.splice(gi,1);saveGroups();renderGroups();});
+    hdr.appendChild(dh);hdr.appendChild(ni);hdr.appendChild(mb);hdr.appendChild(delG);
+    hdr.addEventListener('dragover',e=>{if(drag.type==='group'&&drag.gi!==gi){e.preventDefault();block.classList.add('drag-over-group');}});
+    hdr.addEventListener('dragleave',()=>block.classList.remove('drag-over-group'));
+    hdr.addEventListener('drop',e=>{
+      e.preventDefault();block.classList.remove('drag-over-group');
+      if(drag.type==='group'&&drag.gi!==gi){const[m]=groups.splice(drag.gi,1);groups.splice(gi,0,m);drag={};saveGroups();renderGroups();}
+    });
+    block.appendChild(hdr);
+
+    // emoji rows
+    const rowsEl=document.createElement('div');rowsEl.className='emoji-rows';
+    (g.rows||[]).forEach((row,ri)=>{
+      const rowEl=document.createElement('div');rowEl.className='emoji-row';
+      const keyEl=document.createElement('span');keyEl.className='emoji-key';keyEl.textContent=row.key;
+      rowEl.appendChild(keyEl);
+      const swatchesEl=document.createElement('div');swatchesEl.className='emoji-swatches';
+      (row.colors||[]).forEach((c,ci)=>{
+        const chip=document.createElement('div');chip.className='swatch-chip';
+        const inner=document.createElement('div');inner.className='swatch-chip-inner';inner.style.background=c.b;
+        const tt=document.createElement('div');tt.className='swatch-chip-tooltip';
+        tt.textContent=c.t.toUpperCase()+'  /  '+c.b.toUpperCase();
+        const del=document.createElement('div');del.className='swatch-chip-del';del.textContent='×';
+        del.addEventListener('click',e=>{
+          e.stopPropagation();
+          row.colors.splice(ci,1);
+          if(row.colors.length===0)g.rows.splice(ri,1);
+          saveGroups();renderGroups();
+        });
+        chip.appendChild(inner);chip.appendChild(tt);chip.appendChild(del);
+        chip.addEventListener('click',()=>applyPreset(chip,c.t,c.b));
+        swatchesEl.appendChild(chip);
+      });
+      // add button for this row
+      const addChip=document.createElement('button');addChip.className='emoji-add-btn';addChip.title='ここに現在の色を追加';addChip.textContent='+';
+      addChip.addEventListener('click',()=>addColorToRow(gi,ri));
+      swatchesEl.appendChild(addChip);
+      rowEl.appendChild(swatchesEl);
+      rowsEl.appendChild(rowEl);
+    });
+    block.appendChild(rowsEl);
+
+    // add button
+    const addRow=document.createElement('div');addRow.className='group-add-row';
+    const addBtn=document.createElement('button');addBtn.className='group-add-preset';
+    addBtn.innerHTML='<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>&nbsp;現在の色を登録…';
+    addBtn.addEventListener('click',()=>openAddModal(gi));
+    addRow.appendChild(addBtn);
+    block.appendChild(addRow);
+
+    el.appendChild(block);
+  });
+}
+
+// Direct add to existing row
+function addColorToRow(gi,ri){
+  const t=document.getElementById('tHex').value;
+  const b=document.getElementById('bHex').value;
+  if(!validHex(t)||!validHex(b))return;
+  const row=groups[gi].rows[ri];
+  if(row.colors.some(c=>c.t===t&&c.b===b)){showToast('同じ色が既に登録されています');return;}
+  row.colors.push({id:uid(),t,b});
+  saveGroups();renderGroups();
+  showToast(b.toUpperCase()+' を '+row.key+' に追加しました');
+}
+
+function swapArr(arr,i,j){[arr[i],arr[j]]=[arr[j],arr[i]];}
+function mkBtn(txt,cls,fn){const b=document.createElement('button');b.className=cls;b.textContent=txt;b.addEventListener('click',fn);return b;}
+
+function addGroup(){
+  groups.push({id:uid(),name:'新しいグループ',rows:[]});
+  saveGroups();renderGroups();
+  setTimeout(()=>{const ins=document.querySelectorAll('.group-name-input');if(ins.length)ins[ins.length-1].select();},50);
+}
+
+// ─────────────────────────────────────────────
+// Modal
+// ─────────────────────────────────────────────
+let modalTargetGi=null;
+let selectedEmojiKey=null;
+
+function openAddModal(gi){
+  if(groups.length===0){alert('先にグループを追加してください');return;}
+  const tc=document.getElementById('tHex').value;
+  const bc=document.getElementById('bHex').value;
+  document.getElementById('modalDotT').style.background=validHex(tc)?tc:'#ccc';
+  document.getElementById('modalDotB').style.background=validHex(bc)?bc:'#ccc';
+  document.getElementById('modalInfo').innerHTML=(validHex(tc)?tc.toUpperCase():'—')+'<br>'+(validHex(bc)?bc.toUpperCase():'—');
+
+  const sel=document.getElementById('modalGroup');
+  sel.innerHTML='';
+  groups.forEach((g,i)=>{
+    const o=document.createElement('option');o.value=i;o.textContent=g.name||'（名前なし）';
+    if(i===(gi??0))o.selected=true;
+    sel.appendChild(o);
+  });
+  modalTargetGi=gi??0;
+  selectedEmojiKey=null;
+  refreshEmojiKeySelect();
+
+  document.getElementById('addModal').style.display='flex';
+}
+
+function onModalGroupChange(){
+  modalTargetGi=+document.getElementById('modalGroup').value;
+  selectedEmojiKey=null;
+  refreshEmojiKeySelect();
+}
+
+function refreshEmojiKeySelect(){
+  const gi=+document.getElementById('modalGroup').value;
+  const g=groups[gi];
+  const container=document.getElementById('emojiKeySelect');
+  container.innerHTML='';
+  const newBtn=document.createElement('button');
+  newBtn.type='button';newBtn.className='emoji-key-btn';newBtn.textContent='＋新規';
+  newBtn.addEventListener('click',()=>{
+    selectedEmojiKey='__new__';
+    container.querySelectorAll('.emoji-key-btn').forEach(b=>b.classList.remove('selected'));
+    newBtn.classList.add('selected');
+    document.getElementById('emojiNewInput').classList.add('visible');
+  });
+  container.appendChild(newBtn);
+  (g.rows||[]).forEach(row=>{
+    const btn=document.createElement('button');btn.type='button';btn.className='emoji-key-btn';btn.textContent=row.key;
+    btn.addEventListener('click',()=>{
+      selectedEmojiKey=row.key;
+      container.querySelectorAll('.emoji-key-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('emojiNewInput').classList.remove('visible');
+    });
+    container.appendChild(btn);
+  });
+}
+
+function closeModal(){document.getElementById('addModal').style.display='none';}
+
+function confirmAdd(){
+  const t=document.getElementById('tHex').value;
+  const b=document.getElementById('bHex').value;
+  if(!validHex(t)||!validHex(b))return;
+  const gi=+document.getElementById('modalGroup').value;
+  const g=groups[gi];
+  let key=selectedEmojiKey;
+  if(key==='__new__'||!key){
+    const v=document.getElementById('emojiNewInput').value.trim();
+    key=v||'⭐';
+  }
+  // find existing row with same key
+  let row=g.rows.find(r=>r.key===key);
+  if(!row){
+    row={key,colors:[]};
+    g.rows.push(row);
+  }
+  if(row.colors.some(c=>c.t===t&&c.b===b)){showToast('同じ色が既に登録されています');return;}
+  row.colors.push({id:uid(),t,b});
+  saveGroups();renderGroups();closeModal();
+  showToast(b.toUpperCase()+' を '+key+' に登録しました');
+}
+
+// ─────────────────────────────────────────────
+// Wire up inputs
+// ─────────────────────────────────────────────
+['tH','tS','tV'].forEach(id=>document.getElementById(id).addEventListener('input',()=>fromSlider('t')));
+['bH','bS','bV'].forEach(id=>document.getElementById(id).addEventListener('input',()=>fromSlider('b')));
+document.getElementById('tPicker').addEventListener('input',e=>applyHex('t',e.target.value));
+document.getElementById('bPicker').addEventListener('input',e=>applyHex('b',e.target.value));
+document.getElementById('tHex').addEventListener('input',e=>{if(validHex(e.target.value))applyHex('t',e.target.value);});
+document.getElementById('bHex').addEventListener('input',e=>{if(validHex(e.target.value))applyHex('b',e.target.value);});
+document.getElementById('tName').addEventListener('input',render);
+document.getElementById('bName').addEventListener('input',render);
+
+// ─────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────
+(function init(){
+  // Check URL for gist param (2nd user clicking share link)
+  const params=new URLSearchParams(location.search);
+  const urlGistId=params.get('gist');
+  loadSyncConfig();
+  if(urlGistId&&urlGistId!==syncConfig.gistId){
+    // Pre-fill gist ID from URL; user still needs to enter token
+    syncConfig.gistId=urlGistId;
+    document.getElementById('gistIdInput').value=urlGistId;
+    document.getElementById('syncNote').innerHTML=
+      '🔗 共有URLから Gist ID を読み込みました。<br>'
+      +'<a href="https://github.com/settings/tokens/new?scopes=gist&description=ColorPreview" target="_blank">GitHubでgistスコープのトークンを作成</a>して「接続/作成」を押してください。';
+  } else if(syncConfig.token&&syncConfig.gistId){
+    // Auto-reconnect
+    document.getElementById('gistTokenInput').value=syncConfig.token;
+    document.getElementById('gistIdInput').value=syncConfig.gistId;
+    startPolling();
+    updateSyncShareUrl();
+  }
+
+  syncUI('t');syncUI('b');render();renderGroups();
+})();
+</script>
+</body>
+</html>
