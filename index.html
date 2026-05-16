@@ -119,6 +119,9 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
   min-width:0;
 }
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   スウォッチチップ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .swatch-chip{
   position:relative;
   width:32px;
@@ -129,12 +132,14 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
   flex-shrink:0;
   transition:border-radius .2s ease, transform .15s, box-shadow .15s;
   overflow:visible;
-  -webkit-touch-callout: none; /* iPad長押しメニュー抑制 */
   -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 .swatch-chip:hover{transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .swatch-chip.active-chip{border-color:var(--text);box-shadow:0 0 0 2px var(--text)}
 
+/* ── 選択中チップ（上書き待機）: 白枠＋黒リング ── */
 .swatch-chip.selected-chip{
   border-color:#ffffff !important;
   box-shadow:
@@ -143,6 +148,7 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
   transform:scale(1.1);
 }
 
+/* 選択中チップのパルスリング */
 .swatch-chip.selected-chip::after{
   content:'';
   position:absolute;
@@ -194,6 +200,7 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 }
 .swatch-chip:hover .swatch-chip-tooltip{opacity:1}
 
+/* ── ロック済みチップ ── */
 .swatch-chip.locked{
   border-radius:5px !important;
 }
@@ -201,6 +208,7 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
   border-radius:3px;
 }
 
+/* スワップ選択ハイライト */
 .swatch-chip.selected-for-swap{
   border-color:#ffffff !important;
   box-shadow:
@@ -209,6 +217,7 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
   transform:scale(1.1);
 }
 
+/* 編集ボタン（チップ右下） */
 .chip-edit-btn{
   display:none;
   position:absolute;
@@ -233,17 +242,20 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .chip-edit-btn:hover{box-shadow:0 2px 6px rgba(0,0,0,0.35);transform:scale(1.15)}
 body.mode-edit .chip-edit-btn{display:flex}
 
+/* 行並び替えボタン */
 .row-reorder-btns{display:none;flex-direction:column;gap:1px;flex-shrink:0;margin-top:8px}
 .row-reorder-btn{background:none;border:1px solid var(--border);border-radius:3px;color:var(--muted);font-size:8px;width:16px;height:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all .12px;line-height:1}
 .row-reorder-btn:hover{background:var(--surface2);color:var(--text)}
 .row-reorder-btn:disabled{opacity:.25;cursor:default}
 body.mode-edit .row-reorder-btns{display:flex}
 
+/* 編集モード・ロックモード */
 body.mode-lock .swatch-chip.selected-for-lock-on{border-color:#d9363e;box-shadow:0 0 0 3px rgba(217,54,62,0.3);transform:scale(1.05)}
 body.mode-lock .swatch-chip.selected-for-lock-off{border-color:#3b7960;box-shadow:0 0 0 3px rgba(59,121,96,0.3);transform:scale(1.05)}
 body.mode-edit .emoji-key{border:1.5px dashed var(--muted);cursor:pointer}
 body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surface2)}
 
+/* 追加ボタン */
 .emoji-add-btn{
   width:32px;
   height:32px;
@@ -265,6 +277,7 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .group-add-preset{display:flex;align-items:center;gap:5px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;color:var(--muted);cursor:pointer;background:none;border:none;width:100%;transition:color .15s;padding:0}
 .group-add-preset:hover{color:var(--text)}
 
+/* === 同期設定（最下部） === */
 .sync-setup{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-top:20px}
 .sync-setup-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .sync-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -284,6 +297,7 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .sync-copy-btn{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:5px 12px;cursor:pointer;transition:opacity .15s;flex-shrink:0}
 .sync-copy-btn:hover{opacity:.85}
 
+/* トースト・モーダル */
 .copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,0,0,.8);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:8px 16px;border-radius:99px;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -311,22 +325,91 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .modal-btn.secondary{background:none;color:var(--muted)}
 .modal-btn.secondary:hover{color:var(--text)}
 
-#overwriteModal .modal { width: 300px; text-align: center; }
-#overwriteModal h3 { text-align: center; }
-#overwriteModal .modal-btns { justify-content: center; }
-.overwrite-compare { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; background: #d0d0d8; border: none; border-radius: var(--radius); padding: 20px 16px; }
-.overwrite-side { display: flex; flex-direction: column; align-items: center; gap: 7px; }
-.overwrite-side-label { font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
-.overwrite-chip-preview { width: 56px; height: 56px; border-radius: 50%; border: 2.5px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 600; box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 4px 12px rgba(0,0,0,.2); }
-.overwrite-chip-preview.locked-preview { border-radius: 10px; }
-.overwrite-arrow { font-size: 18px; color: rgba(255,255,255,0.7); flex-shrink: 0; line-height: 1; margin-top: 18px; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   上書き確認モーダル専用スタイル
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#overwriteModal .modal {
+  width: 300px;
+  text-align: center;
+}
+#overwriteModal h3 {
+  text-align: center;
+}
+#overwriteModal .modal-btns {
+  justify-content: center;
+}
+.overwrite-compare {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  background: #d0d0d8;
+  border: none;
+  border-radius: var(--radius);
+  padding: 20px 16px;
+}
+.overwrite-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+.overwrite-side-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+.overwrite-chip-preview {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2.5px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 4px 12px rgba(0,0,0,.2);
+}
+.overwrite-chip-preview.locked-preview {
+  border-radius: 10px;
+}
+.overwrite-arrow {
+  font-size: 18px;
+  color: rgba(255,255,255,0.7);
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 18px;
+}
 
-#addGroupModal .modal { width: 300px; }
-#addGroupModal h3 { text-align: center; margin-bottom: 16px; }
-#addGroupModal .modal-btns { justify-content: center; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   グループ追加モーダル
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#addGroupModal .modal {
+  width: 300px;
+}
+#addGroupModal h3 {
+  text-align: center;
+  margin-bottom: 16px;
+}
+#addGroupModal .modal-btns {
+  justify-content: center;
+}
 
-.group-block.drag-over { outline: 2px dashed var(--accent); outline-offset: 2px; }
-.group-block.dragging { opacity: .45; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   グループドラッグ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.group-block.drag-over {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
+}
+.group-block.dragging {
+  opacity: .45;
+}
 
 footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 </style>
@@ -391,7 +474,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   <div class="preview-wrap">
     <div class="preview-hint">クリックして文字を編集できます</div>
     <div class="preview-box" id="preview">
-      <div class="preview-large" contenteditable="true" spellcheck="false">あAaBbCc 123</div>
+      <div class="preview-large" contenteditable="true" stroke-width="0" spellcheck="false">あAaBbCc 123</div>
       <div class="preview-body" contenteditable="true" spellcheck="false">日本語と English が混在したサンプルテキストです。<br>This is a sample text for color preview.</div>
       <div class="preview-small" contenteditable="true" spellcheck="false">小さい文字サイズでの見やすさもチェックできます。Small text visibility check.</div>
     </div>
@@ -436,7 +519,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     <div class="groups-list" id="groupsList"></div>
   </div>
 
-  <div class="sync-setup" id="syncSetup">
+  <div class="sync-setup" id="syncSetup" style="display:none">
     <div class="sync-setup-title">🔗 プリセット同期設定（GitHub Gist使用）</div>
     <div class="sync-row">
       <input type="text" class="sync-input" id="gistTokenInput" placeholder="GitHub Personal Access Token (gist権限)" autocomplete="off">
@@ -447,16 +530,14 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       <button class="sync-action-btn secondary" onclick="clearSync()">切断</button>
     </div>
     <div class="sync-note" id="syncNote">
-      <a href="https://github.com/settings/tokens/new?scopes=gist&description=ColorPreview" target="_blank">① GitHubでgistスコープのトークンを作成</a> →
-      ② 1人目が「接続/作成」→ 共有URLをコピーして相手に送る
-    </div>
+      <a href="https://github.com/settings/tokens/new?scopes=gist&description=ColorPreview" target="_blank">① GitHubでgistスコープのトークンを作成</a> → ② 1人目が「接続/作成」→ 共有URLをコピーして相手に送る </div>
     <div class="sync-share-url" id="syncShareUrlRow" style="display:none">
       <input type="text" class="sync-share-input" id="syncShareInput" readonly>
       <button class="sync-copy-btn" onclick="copySyncUrl()">URLコピー</button>
     </div>
   </div>
 
-  <footer>スウォッチをタップ → プレビュー反映 ＋ コードコピー ／ 編集モードで位置入れ替え</footer>
+  <footer>スウォッチをタップ → プレビュー反映 ＋ コードコピー ／ 長押しで上書き保存</footer>
 </div>
 
 <div class="copy-toast" id="copyToast"></div>
@@ -496,359 +577,894 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
+<div class="modal-overlay" id="editRowModal" style="display:none" onclick="if(event.target===this)closeEditRowModal()">
+  <div class="modal">
+    <h3>行のキーを編集</h3>
+    <div class="modal-field">
+      <div class="modal-label">キー（絵文字や文字列）</div>
+      <input type="text" class="modal-input" id="editRowKeyInput" placeholder="例: 🍎" maxlength="10">
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" style="margin-right:auto; color:#cc4444; border-color:rgba(204,68,68,0.2)" onclick="deleteRow()">この行を削除</button>
+      <button class="modal-btn secondary" onclick="closeEditRowModal()">キャンセル</button>
+      <button class="modal-btn primary" onclick="saveRowKey()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="editChipModal" style="display:none" onclick="if(event.target===this)closeEditChipModal()">
+  <div class="modal">
+    <h3>チップの編集</h3>
+    <div class="modal-field">
+      <div class="modal-label">表示文字（ラベル）</div>
+      <input type="text" class="modal-input" id="editChipLabelInput" maxlength="10">
+    </div>
+    <div class="modal-field" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+      <div>
+        <div class="modal-label">文字色</div>
+        <input type="color" id="editChipTColor" style="width:100%; height:36px; border:1px solid var(--border); border-radius:6px; cursor:pointer;">
+      </div>
+      <div>
+        <div class="modal-label">背景色</div>
+        <input type="color" id="editChipBColor" style="width:100%; height:36px; border:1px solid var(--border); border-radius:6px; cursor:pointer;">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" style="margin-right:auto; color:#cc4444; border-color:rgba(204,68,68,0.2)" onclick="deleteChip()">削除</button>
+      <button class="modal-btn secondary" onclick="closeEditChipModal()">キャンセル</button>
+      <button class="modal-btn primary" onclick="saveChipEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="overwriteModal" style="display:none" onclick="if(event.target===this)closeOverwriteModal()">
+  <div class="modal">
+    <h3>チップを現在の色で上書き？</h3>
+    <p style="font-size:12px; color:var(--muted); margin-bottom:14px;">選択したスウォッチのカラーを、現在プレビューしている色に上書きします。</p>
+    <div class="overwrite-compare">
+      <div class="overwrite-side">
+        <div class="overwrite-side-label">変更前</div>
+        <div class="overwrite-chip-preview" id="owBefore">Aa</div>
+      </div>
+      <div class="overwrite-arrow">➔</div>
+      <div class="overwrite-side">
+        <div class="overwrite-side-label">現在選択中</div>
+        <div class="overwrite-chip-preview" id="owAfter">Aa</div>
+      </div>
+    </div>
+    <div class="modal-field" style="text-align:left">
+      <div class="modal-label">表示文字（ラベルの変更も可能）</div>
+      <input type="text" class="modal-input" id="owLabelInput" maxlength="10">
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" onclick="closeOverwriteModal()">キャンセル</button>
+      <button class="modal-btn primary" onclick="confirmOverwrite()">上書き保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addGroupModal" style="display:none" onclick="if(event.target===this)closeAddGroupModal()">
+  <div class="modal">
+    <h3>新規グループの追加</h3>
+    <div class="modal-field">
+      <div class="modal-label">グループ名</div>
+      <input type="text" class="modal-input" id="newGroupNameInput" placeholder="例: メインカラー" maxlength="30">
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" onclick="closeAddGroupModal()">キャンセル</button>
+      <button class="modal-btn primary" onclick="confirmAddGroup()">追加</button>
+    </div>
+  </div>
+</div>
+
 <script>
-let groups = [
-  { id: 'g1', name: 'UI Elements', items: [
-      { key: '🔘', swatches: [{ t: '#1a1a2e', b: '#e8f4f8', label: 'Main' }, { t: '#ffffff', b: '#3b7960', label: 'Btn' }] },
-      { key: '🏷️', swatches: [{ t: '#444455', b: '#f0f0f5', label: 'Tag' }] }
-  ]}
-];
-
-let appMode = 'normal'; // normal, lock, edit
-let selectedChip = null;
-let syncConfig = { token: '', gistId: '' };
-
+// アプリケーション状態
 const state = {
-  t: { h: 229, s: 44, v: 18, hex: '#1a1a2e' },
-  b: { h: 200, s: 38, v: 97, hex: '#e8f4f8' }
+  t: { h:229, s:44, v:18, hex:'#1a1a2e', name:'' },
+  b: { h:200, s:38, v:97, hex:'#e8f4f8', name:'' }
 };
 
-function hsvToHex(h, s, v) {
-  s /= 100; v /= 100;
-  const f = n => {
-    const k = (n + h / 60) % 6;
-    return v * (1 - s * Math.max(0, Math.min(k, 4 - k, 1)));
-  };
-  const r = Math.round(f(5) * 255), g = Math.round(f(3) * 255), b = Math.round(f(1) * 255);
-  return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
-}
+let appMode = 'normal'; // 'normal', 'lock', 'edit'
+let selectedChip = null; // { gIdx, rIdx, iIdx } 上書き待機用
+let dragGroupIdx = null; // ドラッグ中のグループインデックス
 
-function hexToHsv(hex) {
-  let r = parseInt(hex.slice(1, 3), 16) / 255;
-  let g = parseInt(hex.slice(3, 5), 16) / 255;
-  let b = parseInt(hex.slice(5, 7), 16) / 255;
-  let max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
-  let h, s = (max === 0 ? 0 : d / max), v = max;
-  if (max === min) h = 0;
-  else {
-    switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
+// モーダル編集ターゲット
+let activeEditRow = null;  // { gIdx, rIdx }
+let activeEditChip = null; // { gIdx, rIdx, iIdx }
+let activeOverwriteTarget = null; // { gIdx, rIdx, iIdx, targetChipElement }
+
+// 初期のデフォルトグループ構成
+let groups = [
+  {
+    name: "Group 1",
+    items: [
+      { key: "🎨", swatches: [ { t: "#3b7960", b: "#f0faf5", label: "Aa" }, { t: "#1a1a2e", b: "#ffffff", label: "Aa" } ] },
+      { key: "🍏", swatches: [ { t: "#2e5c48", b: "#ebebef", label: "Aa" } ] }
+    ]
+  }
+];
+
+// 同期設定
+let syncConfig = { token: '', gistId: '' };
+let isSyncSetupOpen = false;
+let syncIntervalId = null;
+let lastGistEtag = null;
+let isSyncingNow = false;
+
+// RGB -> HSV
+function rgb2hsv(r,g,b) {
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+  let h=0, s=(max===0?0:d/max), v=max;
+  if(max!==min){
+    switch(max){
+      case r: h=(g-b)/d+(g<b?6:0); break;
+      case g: h=(b-r)/d+2; break;
+      case b: h=(r-g)/d+4; break;
     }
-    h /= 6;
+    h/=6;
   }
-  return { h: Math.round(h * 360), s: Math.round(s * 100), v: Math.round(v * 100) };
+  return { h:Math.round(h*360)%360, s:Math.round(s*100), v:Math.round(v*100) };
 }
 
-function updateSyncShareUrl() {
-  const row = document.getElementById('syncShareUrlRow');
-  const input = document.getElementById('syncShareInput');
-  if (syncConfig.gistId) {
-    const url = new URL(window.location.href);
-    url.searchParams.set('gist', syncConfig.gistId);
-    input.value = url.toString();
-    row.style.display = 'flex';
-  } else {
-    row.style.display = 'none';
+// HSV -> RGB -> HEX
+function hsv2hex(h,s,v) {
+  h/=360; s/=100; v/=100;
+  let r=0, g=0, b=0;
+  const i=Math.floor(h*6), f=h*6-i, p=v*(1-s), q=v*(1-f*s), t=v*(1-(1-f)*s);
+  switch(i%6){
+    case 0: r=v; g=t; b=p; break;
+    case 1: r=q; g=v; b=p; break;
+    case 2: r=p; g=v; b=t; break;
+    case 3: r=p; g=q; b=v; break;
+    case 4: r=t; g=p; b=v; break;
+    case 5: r=v; g=p; b=q; break;
   }
+  const hex = [r,g,b].map(x => {
+    const s = Math.round(x*255).toString(16);
+    return s.length===1?'0'+s:s;
+  }).join('');
+  return '#'+hex;
 }
 
+// HEX -> HSV
+function hex2hsv(hex) {
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  if(hex.length!==6) return {h:0,s:0,v:0};
+  const num = parseInt(hex,16);
+  return rgb2hsv((num>>16)&255, (num>>8)&255, num&255);
+}
+
+// UI連動レンダリング
 function render() {
-  ['t', 'b'].forEach(k => {
-    const hex = state[k].hex;
-    document.getElementById(k + 'Swatch').style.backgroundColor = hex;
-    document.getElementById(k + 'Hex').value = hex;
-    document.getElementById(k + 'Picker').value = hex;
-    document.getElementById(k + 'Hval').textContent = state[k].h + '°';
-    document.getElementById(k + 'Sval').textContent = state[k].s + '%';
-    document.getElementById(k + 'Vval').textContent = state[k].v + '%';
-    document.getElementById(k + 'H').value = state[k].h;
-    document.getElementById(k + 'S').value = state[k].s;
-    document.getElementById(k + 'V').value = state[k].v;
-    
-    document.getElementById(k + 'cDot').style.backgroundColor = hex;
-    document.getElementById(k + 'cCode').textContent = hex;
-    document.getElementById(k + 'cName').textContent = document.getElementById(k + 'Name').value;
+  ['t','b'].forEach(k => {
+    const c = state[k];
+    document.getElementById(k+'Picker').value = c.hex;
+    document.getElementById(k+'Hex').value = c.hex;
+    document.getElementById(k+'H').value = c.h;
+    document.getElementById(k+'S').value = c.s;
+    document.getElementById(k+'V').value = c.v;
+    document.getElementById(k+'Hval').textContent = c.h+'°';
+    document.getElementById(k+'Sval').textContent = c.s+'%';
+    document.getElementById(k+'Vval').textContent = c.v+'%';
+    document.getElementById(k+'Swatch').style.backgroundColor = c.hex;
   });
+
   const p = document.getElementById('preview');
   p.style.color = state.t.hex;
   p.style.backgroundColor = state.b.hex;
+
+  document.getElementById('tcCode').textContent = state.t.hex.toUpperCase();
+  document.getElementById('bcCode').textContent = state.b.hex.toUpperCase();
+  document.getElementById('tcDot').style.backgroundColor = state.t.hex;
+  document.getElementById('bcDot').style.backgroundColor = state.b.hex;
+
+  const tn = document.getElementById('tName').value.trim();
+  const bn = document.getElementById('bName').value.trim();
+  document.getElementById('tcName').textContent = tn ? `(${tn})` : '';
+  document.getElementById('bcName').textContent = bn ? `(${bn})` : '';
 }
 
 function fromSlider(k) {
-  state[k].h = parseInt(document.getElementById(k + 'H').value);
-  state[k].s = parseInt(document.getElementById(k + 'S').value);
-  state[k].v = parseInt(document.getElementById(k + 'V').value);
-  state[k].hex = hsvToHex(state[k].h, state[k].s, state[k].v);
+  const h = parseInt(document.getElementById(k+'H').value);
+  const s = parseInt(document.getElementById(k+'S').value);
+  const v = parseInt(document.getElementById(k+'V').value);
+  state[k].h = h; state[k].s = s; state[k].v = v;
+  state[k].hex = hsv2hex(h,s,v);
   render();
 }
 
-function applyHex(k, hex) {
-  if (!/^#[0-9A-F]{6}$/i.test(hex)) return;
-  state[k].hex = hex.toUpperCase();
-  Object.assign(state[k], hexToHsv(hex));
+function applyHex(k, val) {
+  if(!val.startsWith('#')) val = '#'+val;
+  if(!/^#[0-9A-Fa-f]{6}$/.test(val)) return;
+  state[k].hex = val;
+  const hsv = hex2hsv(val);
+  Object.assign(state[k], hsv);
   render();
 }
 
 function swapColors() {
-  const temp = JSON.parse(JSON.stringify(state.t));
+  const tmp = JSON.parse(JSON.stringify(state.t));
   state.t = JSON.parse(JSON.stringify(state.b));
-  state.b = temp;
-  const tn = document.getElementById('tName').value, bn = document.getElementById('bName').value;
-  document.getElementById('tName').value = bn; document.getElementById('bName').value = tn;
+  state.b = tmp;
+  const tn = document.getElementById('tName').value;
+  document.getElementById('tName').value = document.getElementById('bName').value;
+  document.getElementById('bName').value = tn;
   render();
 }
 
+// 共通通知トースト
+function showToast(msg) {
+  const t = document.getElementById('copyToast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+function copyText(str) {
+  if(navigator.clipboard){ navigator.clipboard.writeText(str); }
+  else {
+    const el = document.createElement('textarea'); el.value = str;
+    document.body.appendChild(el); el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+  }
+}
+
+function copyHex(k) {
+  const hex = state[k].hex.toUpperCase(); copyText(hex);
+  const btn = document.getElementById(k==='t'?'copyTBtn':'copyBBtn');
+  btn.textContent = 'Copied!'; btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 1200);
+}
+
+function copyAndShowHex(k) {
+  const h = document.getElementById(k==='t'?'tcCode':'bcCode').textContent;
+  copyText(h); showToast(h+' をコピー');
+}
+
+// モード切り替え（ロック／編集）
 function toggleLockMode() {
   const btn = document.getElementById('lockModeBtn');
+  const icon = document.getElementById('lockModeIcon');
   const text = document.getElementById('lockModeText');
-  if (appMode !== 'lock') {
-    appMode = 'lock';
-    btn.classList.add('active-lock');
-    text.textContent = 'ロック取り消し'; // ★ ロック→ロック取り消し
-  } else {
+
+  if (appMode === 'lock') {
+    // 2回目のタップ（取り消し・解除）
     appMode = 'normal';
+    document.body.classList.remove('mode-lock');
     btn.classList.remove('active-lock');
-    text.textContent = 'ロック選択'; // ★ ロック取り消し→ロック選択
+    icon.textContent = '🔓';
+    text.textContent = 'ロック選択';
+  } else {
+    // 1回目のタップ
+    if(appMode === 'edit') toggleEditMode();
+    appMode = 'lock';
+    document.body.classList.add('mode-lock');
+    btn.classList.add('active-lock');
+    icon.textContent = '↩️';
+    text.textContent = 'ロック取り消し';
+    if(selectedChip) { selectedChip = null; renderGroups(); }
   }
 }
 
 function toggleEditMode() {
   const btn = document.getElementById('editModeBtn');
-  if (appMode !== 'edit') {
-    appMode = 'edit';
-    btn.classList.add('active');
-    btn.querySelector('span:last-child').textContent = '編集取り消し'; // ★ 編集→編集取り消し
-    document.body.classList.add('mode-edit');
-  } else {
+  if (appMode === 'edit') {
     appMode = 'normal';
-    btn.classList.remove('active');
-    btn.querySelector('span:last-child').textContent = '編集';
     document.body.classList.remove('mode-edit');
+    btn.classList.remove('active');
+  } else {
+    if(appMode === 'lock') toggleLockMode();
+    appMode = 'edit';
+    document.body.classList.add('mode-edit');
+    btn.classList.add('active');
+    if(selectedChip) { selectedChip = null; renderGroups(); }
   }
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// ロングタップ上書き判定ロジック
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-let longPressTimer;
-let isLongPressed = false;
+// プリセットチップ長押し（0.5秒）のイベントハンドラ定義
+function setupLongPress(el, clickCallback, longPressCallback) {
+  let pressTimer = null;
+  let isLongPress = false;
 
-function handleSwatchPress(gIdx, rIdx, sIdx) {
-  isLongPressed = false;
-  longPressTimer = setTimeout(() => {
-    isLongPressed = true;
-    // 0.5秒長押しで上書き保存実行
-    overwriteSwatch(gIdx, rIdx, sIdx);
-  }, 500);
-}
-
-function handleSwatchRelease() {
-  clearTimeout(longPressTimer);
-}
-
-function overwriteSwatch(gIdx, rIdx, sIdx) {
-  const item = groups[gIdx].items[rIdx].swatches[sIdx];
-  item.t = state.t.hex;
-  item.b = state.b.hex;
-  showToast('スウォッチを上書き保存しました');
-  renderGroups();
-  saveToGist();
-}
-
-function onSwatchClick(gIdx, rIdx, sIdx) {
-  // 長押しが成立していた場合は通常クリックを無視
-  if (isLongPressed) {
-    isLongPressed = false;
-    return;
+  function start(e) {
+    if (e.type === 'click' && e.button !== 0) return;
+    isLongPress = false;
+    if (pressTimer === null) {
+      pressTimer = setTimeout(() => {
+        isLongPress = true;
+        longPressCallback(e);
+      }, 500); // 0.5秒
+    }
   }
 
-  const item = groups[gIdx].items[rIdx].swatches[sIdx];
-  if (appMode === 'lock') {
-    item.locked = !item.locked;
-    renderGroups();
-    saveToGist();
-    return;
+  function cancel(e) {
+    if (pressTimer !== null) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
   }
-  applyHex('t', item.t);
-  applyHex('b', item.b);
-  showToast('反映: ' + item.t + ' / ' + item.b);
+
+  function clickHandler(e) {
+    if (pressTimer !== null) {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+    if (!isLongPress) {
+      clickCallback(e);
+    }
+    isLongPress = false;
+  }
+
+  el.addEventListener('mousedown', start);
+  el.addEventListener('touchstart', start, { passive: true });
+  el.addEventListener('click', clickHandler);
+  el.addEventListener('mouseout', cancel);
+  el.addEventListener('touchend', cancel);
+  el.addEventListener('touchcancel', cancel);
+  el.addEventListener('touchmove', cancel);
 }
 
+// グループ・行・チップのメイン描画
 function renderGroups() {
-  const container = document.getElementById('groupsList');
-  container.innerHTML = '';
+  const list = document.getElementById('groupsList');
+  list.innerHTML = '';
+
   groups.forEach((g, gIdx) => {
-    const gBlock = document.createElement('div');
-    gBlock.className = 'group-block';
-    let rowsHtml = '';
-    g.items.forEach((row, rIdx) => {
-      let swHtml = '';
-      row.swatches.forEach((s, sIdx) => {
-        swHtml += `
-          <div class="swatch-chip ${s.locked?'locked':''}" 
-               style="background:${s.b}; color:${s.t}"
-               onmousedown="handleSwatchPress(${gIdx},${rIdx},${sIdx})"
-               ontouchstart="handleSwatchPress(${gIdx},${rIdx},${sIdx})"
-               onmouseup="handleSwatchRelease()"
-               ontouchend="handleSwatchRelease()"
-               onmouseleave="handleSwatchRelease()"
-               onclick="onSwatchClick(${gIdx},${rIdx},${sIdx})">
-            <div class="swatch-chip-inner">${s.label || 'Aa'}</div>
-            <div class="swatch-chip-tooltip">${s.t} / ${s.b}</div>
-          </div>`;
-      });
-      rowsHtml += `
-        <div class="emoji-row">
-          <div class="emoji-key">${row.key}</div>
-          <div class="emoji-swatches">${swHtml}</div>
-        </div>`;
+    const block = document.createElement('div');
+    block.className = 'group-block';
+    block.setAttribute('draggable', 'true');
+    block.dataset.gidx = gIdx;
+
+    // グループドラッグイベント群
+    block.addEventListener('dragstart', e => {
+      if(appMode==='edit') {
+        dragGroupIdx = gIdx; block.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      } else { e.preventDefault(); }
     });
-    gBlock.innerHTML = `
-      <div class="group-header">
-        <span class="group-name-input">${g.name}</span>
-      </div>
-      <div class="emoji-rows">${rowsHtml}</div>
+    block.addEventListener('dragend', () => { block.classList.remove('dragging'); dragGroupIdx = null; });
+    block.addEventListener('dragover', e => { if(dragGroupIdx!==null && dragGroupIdx!==gIdx){ e.preventDefault(); block.classList.add('drag-over'); } });
+    block.addEventListener('dragleave', () => block.classList.remove('drag-over'));
+    block.addEventListener('drop', e => {
+      block.classList.remove('drag-over');
+      if(dragGroupIdx!==null && dragGroupIdx!==gIdx) {
+        const target = groups[dragGroupIdx];
+        groups.splice(dragGroupIdx, 1);
+        groups.splice(gIdx, 0, target);
+        renderGroups(); saveToGist();
+      }
+    });
+
+    const header = document.createElement('div');
+    header.className = 'group-header';
+    header.innerHTML = `
+      <span class="group-drag-handle" title="ドラッグで行の入れ替え">☰</span>
+      <input type="text" class="group-name-input" value="${g.name}" onchange="renameGroup(${gIdx}, this.value)" style="width:${Math.max(60, g.name.length*11)}px">
+      <button class="group-del-btn" onclick="deleteGroup(${gIdx})" title="グループを削除">×</button>
     `;
-    container.appendChild(gBlock);
+    block.appendChild(header);
+
+    const rowsWrap = document.createElement('div');
+    rowsWrap.className = 'emoji-rows';
+
+    g.items.forEach((item, rIdx) => {
+      const row = document.createElement('div');
+      row.className = 'emoji-row';
+
+      const keyEl = document.createElement('div');
+      keyEl.className = 'emoji-key';
+      keyEl.textContent = item.key;
+      keyEl.onclick = () => { if(appMode==='edit') openEditRowModal(gIdx, rIdx); };
+      row.appendChild(keyEl);
+
+      const swWrap = document.createElement('div');
+      swWrap.className = 'emoji-swatches';
+
+      item.swatches.forEach((sw, iIdx) => {
+        const isLocked = sw.label && sw.label.startsWith('L:');
+        const displayLabel = isLocked ? sw.label.substring(2) : (sw.label || 'Aa');
+
+        const chip = document.createElement('div');
+        chip.className = 'swatch-chip';
+        if(isLocked) chip.classList.add('locked');
+
+        // 通常表示の背景/文字色
+        if(isLocked) {
+          chip.style.backgroundColor = sw.t; // ロック時は枠に
+          chip.style.borderColor = sw.t;
+        } else {
+          chip.style.backgroundColor = sw.b;
+        }
+
+        // ロックモード選択時の特殊カラー
+        if(appMode === 'lock') {
+          if(isLocked) chip.classList.add('selected-for-lock-off');
+          else chip.classList.add('selected-for-lock-on');
+        }
+
+        // アクティブハイライト
+        if(state.t.hex.toLowerCase()===sw.t.toLowerCase() && state.b.hex.toLowerCase()===sw.b.toLowerCase()) {
+          chip.classList.add('active-chip');
+        }
+        if(selectedChip && selectedChip.gIdx===gIdx && selectedChip.rIdx===rIdx && selectedChip.iIdx===iIdx) {
+          chip.classList.add('selected-chip');
+        }
+
+        const inner = document.createElement('div');
+        inner.className = 'swatch-chip-inner';
+        inner.textContent = displayLabel;
+        if(isLocked) {
+          inner.style.backgroundColor = sw.b;
+          inner.style.color = sw.t;
+        } else {
+          inner.style.color = sw.t;
+        }
+        chip.appendChild(inner);
+
+        const tt = document.createElement('div');
+        tt.className = 'swatch-chip-tooltip';
+        tt.textContent = `T:${sw.t.toUpperCase()} B:${sw.b.toUpperCase()}`;
+        chip.appendChild(tt);
+
+        // 編集ギア
+        const editBtn = document.createElement('button');
+        editBtn.className = 'chip-edit-btn';
+        editBtn.innerHTML = '⚙️';
+        editBtn.onclick = (e) => { e.stopPropagation(); openEditChipModal(gIdx, rIdx, iIdx); };
+        chip.appendChild(editBtn);
+
+        // 長押し・通常クリックのセットアップ
+        setupLongPress(chip, 
+          // 通常クリック時
+          () => {
+            if(appMode === 'lock') {
+              if(isLocked) sw.label = displayLabel; // 解除
+              else sw.label = 'L:' + displayLabel;  // ロック
+              renderGroups(); saveToGist();
+            } else if(appMode === 'edit') {
+              // 編集モード時の通常クリックは無効化、ギアで編集
+            } else {
+              // 通常反映
+              applyHex('t', sw.t); applyHex('t', sw.t);
+              applyHex('b', sw.b); applyHex('b', sw.b);
+              document.getElementById('tName').value = '';
+              document.getElementById('bName').value = '';
+              render();
+              copyText(`文字: ${sw.t.toUpperCase()} / 背景: ${sw.b.toUpperCase()}`);
+              showToast(`プレビューに反映 ＆ コードをコピーしました`);
+            }
+          },
+          // ロングタップ(0.5秒)時 -> 現在の色で上書き確認
+          () => {
+            if(appMode === 'normal') {
+              openOverwriteModal(gIdx, rIdx, iIdx, chip);
+            }
+          }
+        );
+
+        swWrap.appendChild(chip);
+      });
+
+      // 行追加プラスボタン（編集モード時のみ末尾）
+      if(appMode==='edit') {
+        const addSw = document.createElement('button');
+        addSw.className = 'emoji-add-btn';
+        addSw.textContent = '＋';
+        addSw.title = 'カラーを追加';
+        addSw.onclick = () => openAddModalDirect(gIdx, rIdx);
+        swWrap.appendChild(addSw);
+      }
+
+      row.appendChild(swWrap);
+
+      // 行並び替えボタン
+      const reorderWrap = document.createElement('div');
+      reorderWrap.className = 'row-reorder-btns';
+      const upBtn = document.createElement('button');
+      upBtn.className = 'row-reorder-btn';
+      upBtn.textContent = '▲';
+      upBtn.disabled = (rIdx===0);
+      upBtn.onclick = () => moveRow(gIdx, rIdx, -1);
+      const downBtn = document.createElement('button');
+      downBtn.className = 'row-reorder-btn';
+      downBtn.textContent = '▼';
+      downBtn.disabled = (rIdx===g.items.length-1);
+      downBtn.onclick = () => moveRow(gIdx, rIdx, 1);
+      reorderWrap.appendChild(upBtn);
+      reorderWrap.appendChild(downBtn);
+      row.appendChild(reorderWrap);
+
+      rowsWrap.appendChild(row);
+    });
+
+    // 新規行追加プリセット
+    if(appMode==='edit') {
+      const addRowBar = document.createElement('div');
+      addRowBar.className = 'group-add-row';
+      addRowBar.innerHTML = `<button class="group-add-preset" onclick="openAddModalDirectRow(${gIdx})">＋ 新しい行(キー)を追加</button>`;
+      rowsWrap.appendChild(addRowBar);
+    }
+
+    block.appendChild(rowsWrap);
+    list.appendChild(block);
   });
 }
 
-function showToast(m) {
-  const t = document.getElementById('copyToast');
-  t.textContent = m; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
+// 操作ロジック
+function renameGroup(gIdx, newName) {
+  groups[gIdx].name = newName || `Group ${gIdx+1}`;
+  saveToGist(); renderGroups();
 }
-
-function copyHex(k) {
-  const val = document.getElementById(k + 'Hex').value;
-  navigator.clipboard.writeText(val);
-  const btn = document.getElementById(k === 't' ? 'copyTBtn' : 'copyBBtn');
-  btn.textContent = 'OK'; btn.classList.add('copied');
-  setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 1000);
-}
-
-function copyAndShowHex(k){
-  const h = document.getElementById(k==='t'?'tcCode':'bcCode').textContent;
-  navigator.clipboard.writeText(h);
-  showToast(h + ' をコピー');
-}
-
-// 同期関連
-async function saveToGist() {
-  if (!syncConfig.token || !syncConfig.gistId) return;
-  document.getElementById('syncBadge').className = 'sync-badge syncing';
-  try {
-    await fetch(`https://api.github.com/gists/${syncConfig.gistId}`, {
-      method: 'PATCH',
-      headers: { Authorization: `token ${syncConfig.token}` },
-      body: JSON.stringify({ files: { 'color_preview.json': { content: JSON.stringify(groups) } } })
-    });
-    document.getElementById('syncBadge').className = 'sync-badge synced';
-    document.getElementById('syncLabel').textContent = '同期済み';
-  } catch (e) {
-    document.getElementById('syncBadge').className = 'sync-badge error';
-    document.getElementById('syncLabel').textContent = 'エラー';
+function deleteGroup(gIdx) {
+  if(confirm(`グループ「${groups[gIdx].name}」を削除しますか？\n含まれるすべての色が消去されます。`)) {
+    groups.splice(gIdx,1); saveToGist(); renderGroups();
   }
+}
+function moveRow(gIdx, rIdx, dir) {
+  const target = groups[gIdx].items[rIdx];
+  groups[gIdx].items.splice(rIdx, 1);
+  groups[gIdx].items.splice(rIdx + dir, 0, target);
+  renderGroups(); saveToGist();
+}
+
+// 登録モーダル処理群
+let currentAddConfig = null; // { gIdx, rIdx } 直接指定用
+function openAddModal(config = null) {
+  currentAddConfig = config;
+  document.getElementById('addModal').style.display = 'flex';
+  document.getElementById('modalDotT').style.backgroundColor = state.t.hex;
+  document.getElementById('modalDotB').style.backgroundColor = state.b.hex;
+  document.getElementById('modalInfo').innerHTML = `文字: ${state.t.hex.toUpperCase()}<br>背景: ${state.b.hex.toUpperCase()}`;
+
+  const groupSel = document.getElementById('modalGroup');
+  groupSel.innerHTML = '';
+  groups.forEach((g,idx) => {
+    const opt = document.createElement('option'); opt.value = idx; opt.textContent = g.name;
+    groupSel.appendChild(opt);
+  });
+
+  if(config && config.gIdx !== null) {
+    groupSel.value = config.gIdx;
+    groupSel.disabled = true;
+  } else { groupSel.disabled = false; }
+
+  onModalGroupChange();
+  document.getElementById('addLabel').value = '';
+}
+function openAddModalDirect(gIdx, rIdx) { openAddModal({ gIdx, rIdx }); }
+function openAddModalDirectRow(gIdx) { openAddModal({ gIdx, rIdx: null }); }
+
+function closeModal() { document.getElementById('addModal').style.display = 'none'; currentAddConfig = null; }
+
+function onModalGroupChange() {
+  const gIdx = parseInt(document.getElementById('modalGroup').value);
+  const wrap = document.getElementById('emojiKeySelect');
+  wrap.innerHTML = '';
+  document.getElementById('emojiNewInput').classList.remove('visible');
+
+  if(isNaN(gIdx) || !groups[gIdx]) return;
+
+  groups[gIdx].items.forEach((item) => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-key-btn';
+    btn.textContent = item.key;
+    btn.onclick = () => {
+      document.querySelectorAll('.emoji-key-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('emojiNewInput').classList.remove('visible');
+    };
+    wrap.appendChild(btn);
+  });
+
+  if(currentAddConfig && currentAddConfig.rIdx !== null) {
+    const targetKey = groups[gIdx].items[currentAddConfig.rIdx].key;
+    Array.from(wrap.children).forEach(btn => {
+      if(btn.textContent === targetKey) btn.classList.add('selected');
+    });
+  }
+}
+
+function activateNewEmoji() {
+  document.querySelectorAll('.emoji-key-btn').forEach(b=>b.classList.remove('selected'));
+  const input = document.getElementById('emojiNewInput');
+  input.classList.add('visible'); input.value = ''; input.focus();
+}
+
+function confirmAdd() {
+  const gIdx = parseInt(document.getElementById('modalGroup').value);
+  const label = document.getElementById('addLabel').value.trim() || 'Aa';
+
+  let rowKey = '';
+  const selectedBtn = document.querySelector('.emoji-key-btn.selected');
+  if(selectedBtn) { rowKey = selectedBtn.textContent; }
+  else { rowKey = document.getElementById('emojiNewInput').value.trim(); }
+
+  if(!rowKey) return alert('行のキー（絵文字や文字）を選択または入力してください。');
+
+  let rowItem = groups[gIdx].items.find(i => i.key === rowKey);
+  if(!rowItem) {
+    rowItem = { key: rowKey, swatches: [] };
+    groups[gIdx].items.push(rowItem);
+  }
+  rowItem.swatches.push({ t: state.t.hex, b: state.b.hex, label });
+
+  renderGroups(); saveToGist(); closeModal();
+}
+
+// 行編集モーダル
+function openEditRowModal(gIdx, rIdx) {
+  activeEditRow = { gIdx, rIdx };
+  document.getElementById('editRowModal').style.display = 'flex';
+  document.getElementById('editRowKeyInput').value = groups[gIdx].items[rIdx].key;
+}
+function closeEditRowModal() { document.getElementById('editRowModal').style.display = 'none'; activeEditRow = null; }
+function saveRowKey() {
+  if(!activeEditRow) return;
+  const k = document.getElementById('editRowKeyInput').value.trim();
+  if(!k) return alert('キーを入力してください');
+  groups[activeEditRow.gIdx].items[activeEditRow.rIdx].key = k;
+  renderGroups(); saveToGist(); closeEditRowModal();
+}
+function deleteRow() {
+  if(!activeEditRow) return;
+  if(confirm('この行と含まれるカラーをすべて削除しますか？')) {
+    groups[activeEditRow.gIdx].items.splice(activeEditRow.rIdx, 1);
+    renderGroups(); saveToGist(); closeEditRowModal();
+  }
+}
+
+// チップ個別編集モーダル
+function openEditChipModal(gIdx, rIdx, iIdx) {
+  activeEditChip = { gIdx, rIdx, iIdx };
+  const sw = groups[gIdx].items[rIdx].swatches[iIdx];
+  document.getElementById('editChipModal').style.display = 'flex';
+  const isLocked = sw.label && sw.label.startsWith('L:');
+  document.getElementById('editChipLabelInput').value = isLocked ? sw.label.substring(2) : (sw.label || 'Aa');
+  document.getElementById('editChipTColor').value = sw.t;
+  document.getElementById('editChipBColor').value = sw.b;
+}
+function closeEditChipModal() { document.getElementById('editChipModal').style.display = 'none'; activeEditChip = null; }
+function saveChipEdit() {
+  if(!activeEditChip) return;
+  const sw = groups[activeEditChip.gIdx].items[activeEditChip.rIdx].swatches[activeEditChip.iIdx];
+  const isLocked = sw.label && sw.label.startsWith('L:');
+  const rawLabel = document.getElementById('editChipLabelInput').value.trim() || 'Aa';
+  sw.label = isLocked ? 'L:' + rawLabel : rawLabel;
+  sw.t = document.getElementById('editChipTColor').value;
+  sw.b = document.getElementById('editChipBColor').value;
+  renderGroups(); saveToGist(); closeEditChipModal();
+}
+function deleteChip() {
+  if(!activeEditChip) return;
+  groups[activeEditChip.gIdx].items[activeEditChip.rIdx].swatches.splice(activeEditChip.iIdx, 1);
+  renderGroups(); saveToGist(); closeEditChipModal();
+}
+
+// 上書き確認モーダル
+function openOverwriteModal(gIdx, rIdx, iIdx, chipEl) {
+  activeOverwriteTarget = { gIdx, rIdx, iIdx, chipEl };
+  const sw = groups[gIdx].items[rIdx].swatches[iIdx];
+  const isLocked = sw.label && sw.label.startsWith('L:');
+  const pureLabel = isLocked ? sw.label.substring(2) : (sw.label || 'Aa');
+
+  const modal = document.getElementById('overwriteModal');
+  modal.style.display = 'flex';
+
+  // 変更前
+  const owBefore = document.getElementById('owBefore');
+  owBefore.className = isLocked ? 'overwrite-chip-preview locked-preview' : 'overwrite-chip-preview';
+  owBefore.textContent = pureLabel;
+  if(isLocked) {
+    owBefore.style.backgroundColor = sw.t;
+    owBefore.style.borderColor = sw.t;
+    owBefore.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:${sw.b};color:${sw.t};border-radius:6px;">${pureLabel}</div>`;
+  } else {
+    owBefore.style.backgroundColor = sw.b;
+    owBefore.style.color = sw.t;
+  }
+
+  // 変更後（現在のプレビュー色）
+  const owAfter = document.getElementById('owAfter');
+  owAfter.className = isLocked ? 'overwrite-chip-preview locked-preview' : 'overwrite-chip-preview';
+  owAfter.textContent = pureLabel;
+  if(isLocked) {
+    owAfter.style.backgroundColor = state.t.hex;
+    owAfter.style.borderColor = state.t.hex;
+    owAfter.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:${state.b.hex};color:${state.t.hex};border-radius:6px;">${pureLabel}</div>`;
+  } else {
+    owAfter.style.backgroundColor = state.b.hex;
+    owAfter.style.color = state.t.hex;
+  }
+
+  document.getElementById('owLabelInput').value = pureLabel;
+}
+function closeOverwriteModal() { document.getElementById('overwriteModal').style.display = 'none'; activeOverwriteTarget = null; }
+function confirmOverwrite() {
+  if(!activeOverwriteTarget) return;
+  const { gIdx, rIdx, iIdx } = activeOverwriteTarget;
+  const sw = groups[gIdx].items[rIdx].swatches[iIdx];
+  const isLocked = sw.label && sw.label.startsWith('L:');
+  const userLabel = document.getElementById('owLabelInput').value.trim() || 'Aa';
+
+  sw.t = state.t.hex;
+  sw.b = state.b.hex;
+  sw.label = isLocked ? 'L:' + userLabel : userLabel;
+
+  renderGroups(); saveToGist(); closeOverwriteModal();
+  showToast('現在の色でスウォッチを上書き保存しました');
+}
+
+// グループ追加モーダル
+function openAddGroupModal() { document.getElementById('addGroupModal').style.display = 'flex'; document.getElementById('newGroupNameInput').value = ''; }
+function closeAddGroupModal() { document.getElementById('addGroupModal').style.display = 'none'; }
+function confirmAddGroup() {
+  const name = document.getElementById('newGroupNameInput').value.trim() || '新規グループ';
+  groups.push({ name, items: [] });
+  renderGroups(); saveToGist(); closeAddGroupModal();
+  if(appMode !== 'edit') toggleEditMode(); // 編集を促すため自動でON
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 同期・バックエンド（GitHub Gist）
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function toggleSyncSetupPanel() {
+  const panel = document.getElementById('syncSetup');
+  isSyncSetupOpen = !isSyncSetupOpen;
+  panel.style.display = isSyncSetupOpen ? 'block' : 'none';
+}
+
+function loadSyncConfig() {
+  const saved = localStorage.getItem('cp_sync_cfg');
+  if(saved) {
+    syncConfig = JSON.parse(saved);
+    document.getElementById('gistTokenInput').value = syncConfig.token || '';
+    document.getElementById('gistIdInput').value = syncConfig.gistId || '';
+  }
+  const localGroups = localStorage.getItem('cp_groups');
+  if(localGroups) { try{ groups = JSON.parse(localGroups); }catch(e){} }
+}
+
+function saveSyncConfig() { localStorage.setItem('cp_sync_cfg', JSON.stringify(syncConfig)); }
+
+function updateBadge(status, text) {
+  const b = document.getElementById('syncBadge');
+  const lbl = document.getElementById('syncLabel');
+  b.className = 'sync-badge ' + status;
+  lbl.textContent = text;
+}
+
+function updateSyncShareUrl() {
+  const row = document.getElementById('syncShareUrlRow');
+  const input = document.getElementById('syncShareInput');
+  if(syncConfig.gistId) {
+    row.style.display = 'flex';
+    input.value = window.location.origin + window.location.pathname + '?gist=' + syncConfig.gistId;
+  } else { row.style.display = 'none'; }
+}
+
+function copySyncUrl() {
+  const input = document.getElementById('syncShareInput');
+  input.select(); copyText(input.value); showToast('共有用URLをコピーしました！');
 }
 
 async function setupSync() {
   const token = document.getElementById('gistTokenInput').value.trim();
-  const id = document.getElementById('gistIdInput').value.trim();
-  if (!token) return alert('Tokenが必要です');
-  syncConfig.token = token;
-  if (id) {
-    syncConfig.gistId = id;
-    const res = await fetch(`https://api.github.com/gists/${id}`, { headers: { Authorization: `token ${token}` } });
-    const data = await res.json();
-    groups = JSON.parse(data.files['color_preview.json'].content);
-  } else {
-    const res = await fetch('https://api.github.com/gists', {
-      method: 'POST',
-      headers: { Authorization: `token ${token}` },
-      body: JSON.stringify({ public: false, files: { 'color_preview.json': { content: JSON.stringify(groups) } } })
-    });
-    const data = await res.json();
-    syncConfig.gistId = data.id;
+  let gistId = document.getElementById('gistIdInput').value.trim();
+
+  if(!token) return alert('GitHub Personal Access Tokenを入力してください');
+  syncConfig.token = token; syncConfig.gistId = gistId; saveSyncConfig();
+
+  updateBadge('syncing', '接続中...');
+  
+  try {
+    if(!gistId) {
+      // 新規作成
+      const res = await fetch('https://api.github.com/gists', {
+        method: 'POST',
+        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: "Color Preview Presets Sync",
+          public: false,
+          files: { "color_preview_presets.json": { content: JSON.stringify(groups, null, 2) } }
+        })
+      });
+      if(!res.ok) throw new Error('Gistの新規作成に失敗しました');
+      const data = await res.json();
+      syncConfig.gistId = data.id; saveSyncConfig();
+      document.getElementById('gistIdInput').value = data.id;
+      showToast('Gistを新規作成し、同期を開始しました！');
+    } else {
+      // 既存へ接続
+      const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+        headers: { 'Authorization': `token ${token}` }
+      });
+      if(!res.ok) throw new Error('指定されたGistの取得に失敗しました。IDかトークンが不正です。');
+      const data = await res.json();
+      if(data.files["color_preview_presets.json"]) {
+        groups = JSON.parse(data.files["color_preview_presets.json"].content);
+        localStorage.setItem('cp_groups', JSON.stringify(groups));
+        renderGroups();
+      }
+      showToast('既存のGistに接続し、同期データを読み込みました！');
+    }
+    updateSyncShareUrl(); startPolling();
+  } catch(e) {
+    console.error(e); updateBadge('error', '接続エラー'); alert(e.message);
   }
-  localStorage.setItem('cp_sync', JSON.stringify(syncConfig));
-  updateSyncShareUrl();
-  renderGroups();
-  saveToGist();
 }
 
 function clearSync() {
-  localStorage.removeItem('cp_sync');
-  syncConfig = { token: '', gistId: '' };
-  location.reload();
+  stopPolling();
+  syncConfig = { token: '', gistId: '' }; saveSyncConfig();
+  document.getElementById('gistTokenInput').value = '';
+  document.getElementById('gistIdInput').value = '';
+  updateBadge('normal', '未接続'); updateSyncShareUrl();
+  showToast('同期を切断しました（ローカルデータは残ります）');
 }
 
-function toggleSyncSetupPanel() {
-  const s = document.getElementById('syncSetup');
-  s.style.display = s.style.display === 'none' ? 'block' : 'none';
+function startPolling() {
+  stopPolling(); fetchGistLatest();
+  syncIntervalId = setInterval(fetchGistLatest, 10000); // 10秒おきに最新チェック
+}
+function stopPolling() { if(syncIntervalId) { clearInterval(syncIntervalId); syncIntervalId = null; } }
+
+async function fetchGistLatest() {
+  if(!syncConfig.token || !syncConfig.gistId || isSyncingNow) return;
+  isSyncingNow = true;
+  try {
+    const headers = { 'Authorization': `token ${syncConfig.token}` };
+    if(lastGistEtag) { headers['If-None-Match'] = lastGistEtag; }
+    
+    const res = await fetch(`https://api.github.com/gists/${syncConfig.gistId}`, { headers });
+    if(res.status === 304) { updateBadge('synced', '同期中'); isSyncingNow = false; return; } // 変更なし
+    if(!res.ok) throw new Error();
+    
+    lastGistEtag = res.headers.get('ETag');
+    const data = await res.json();
+    if(data.files["color_preview_presets.json"]) {
+      const remoteGroups = JSON.parse(data.files["color_preview_presets.json"].content);
+      if(JSON.stringify(remoteGroups) !== JSON.stringify(groups)) {
+        groups = remoteGroups;
+        localStorage.setItem('cp_groups', JSON.stringify(groups));
+        renderGroups(); showToast('リモートの最新データを受信しました');
+      }
+    }
+    updateBadge('synced', '同期中');
+  } catch(e) { updateBadge('error', '同期エラー'); }
+  isSyncingNow = false;
 }
 
-function copySyncUrl() {
-  navigator.clipboard.writeText(document.getElementById('syncShareInput').value);
-  showToast('共有URLをコピーしました');
-}
-
-// モーダル
-function openAddModal() {
-  const m = document.getElementById('addModal');
-  m.style.display = 'flex';
-  document.getElementById('modalDotT').style.backgroundColor = state.t.hex;
-  document.getElementById('modalDotB').style.backgroundColor = state.b.hex;
-  document.getElementById('modalInfo').textContent = `${state.t.hex} / ${state.b.hex}`;
-  const sel = document.getElementById('modalGroup');
-  sel.innerHTML = groups.map((g, i) => `<option value="${i}">${g.name}</option>`).join('');
-  onModalGroupChange();
-}
-
-function onModalGroupChange() {
-  const gIdx = document.getElementById('modalGroup').value;
-  const container = document.getElementById('emojiKeySelect');
-  container.innerHTML = groups[gIdx].items.map((item, i) => 
-    `<div class="emoji-key-btn" onclick="selectEmojiKey(${i}, this)">${item.key}</div>`
-  ).join('');
-}
-
-let selectedKeyIdx = null;
-function selectEmojiKey(idx, el) {
-  selectedKeyIdx = idx;
-  document.querySelectorAll('.emoji-key-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function closeModal() { document.getElementById('addModal').style.display = 'none'; }
-
-function confirmAdd() {
-  const gIdx = document.getElementById('modalGroup').value;
-  const label = document.getElementById('addLabel').value || 'Aa';
-  if (selectedKeyIdx === null) return alert('行を選択してください');
-  groups[gIdx].items[selectedKeyIdx].swatches.push({ t: state.t.hex, b: state.b.hex, label });
-  renderGroups();
-  saveToGist();
-  closeModal();
+async function saveToGist() {
+  localStorage.setItem('cp_groups', JSON.stringify(groups));
+  if(!syncConfig.token || !syncConfig.gistId) return;
+  try {
+    updateBadge('syncing', '保存中...');
+    const res = await fetch(`https://api.github.com/gists/${syncConfig.gistId}`, {
+      method: 'PATCH',
+      headers: { 'Authorization': `token ${syncConfig.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        files: { "color_preview_presets.json": { content: JSON.stringify(groups, null, 2) } }
+      })
+    });
+    if(res.ok) {
+      const data = await res.json(); lastGistEtag = res.headers.get('ETag');
+      updateBadge('synced', '同期中');
+    } else { updateBadge('error', '保存エラー'); }
+  } catch(e) { updateBadge('error', '保存エラー'); }
 }
 
 // 初期化
 (function init() {
-  const saved = localStorage.getItem('cp_sync');
-  if (saved) {
-    syncConfig = JSON.parse(saved);
-    document.getElementById('gistTokenInput').value = syncConfig.token;
-    document.getElementById('gistIdInput').value = syncConfig.gistId;
-    setupSync();
-  }
   const params = new URLSearchParams(location.search);
-  if (params.get('gist')) {
-    document.getElementById('gistIdInput').value = params.get('gist');
-    toggleSyncSetupPanel();
-  }
-  render();
-  renderGroups();
+  const urlGistId = params.get('gist');
+  loadSyncConfig();
+  if (urlGistId) { syncConfig.gistId = urlGistId; document.getElementById('gistIdInput').value = urlGistId; }
+  
+  render(); renderGroups();
+
+  if (syncConfig.token && syncConfig.gistId) { startPolling(); updateSyncShareUrl(); }
+  else if (urlGistId) { toggleSyncSetupPanel(); }
 })();
 
 ['tH','tS','tV'].forEach(id=>document.getElementById(id).oninput=()=>fromSlider('t'));
@@ -857,8 +1473,14 @@ document.getElementById('tPicker').oninput=e=>applyHex('t',e.target.value);
 document.getElementById('bPicker').oninput=e=>applyHex('b',e.target.value);
 document.getElementById('tHex').oninput=e=>applyHex('t',e.target.value);
 document.getElementById('bHex').oninput=e=>applyHex('b',e.target.value);
-document.getElementById('tName').oninput=render; 
-document.getElementById('bName').oninput=render;
+document.getElementById('tName').oninput=render; document.getElementById('bName').oninput=render;
+
+// チップ以外タップで選択解除
+document.addEventListener('click', () => {
+  if (appMode === 'normal' && selectedChip) {
+    selectedChip = null; renderGroups();
+  }
+});
 </script>
 </body>
 </html>
