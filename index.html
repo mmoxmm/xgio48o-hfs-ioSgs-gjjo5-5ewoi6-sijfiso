@@ -111,8 +111,8 @@ body.mode-edit .group-drag-handle{display:block}
 .group-del-btn:hover{color:#d9363e}
 body.mode-edit .group-del-btn{display:block}
 
-.emoji-rows{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
-.emoji-row{display:flex;align-items:flex-start;gap:8px;flex-wrap:nowrap}
+.emoji-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;position:relative;padding-right:0}
+body.mode-edit .emoji-row{padding-right:0}
 .emoji-key{font-size:15px;flex-shrink:0;width:auto;min-width:28px;text-align:center;padding:2px 4px;border-radius:4px;border:1px solid transparent;transition:all .15s;line-height:32px}
 
 .emoji-swatches{
@@ -125,7 +125,7 @@ body.mode-edit .group-del-btn{display:block}
 .swatch-chip{
   position:relative;width:32px;height:32px;border-radius:50%;
   border:1.5px solid rgba(0,0,0,.08);cursor:pointer;flex-shrink:0;
-  transition:border-radius .2s ease,transform .15s,box-shadow .15s;
+  transition:transform .15s,box-shadow .15s;
   overflow:visible;
   -webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation;
 }
@@ -141,12 +141,20 @@ body.mode-edit .group-del-btn{display:block}
   font-size:9px;padding:3px 6px;border-radius:4px;white-space:nowrap;
   pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;
 }
-.swatch-chip:hover .swatch-chip-tooltip{opacity:1}
+/* テキストが空のときは表示しない */
+.swatch-chip:hover .swatch-chip-tooltip:not(:empty){opacity:1}
+
+/* ロック済みチップは常に四角 — 解除まで維持 */
 .swatch-chip.locked{border-radius:5px !important}
-.swatch-chip.locked .swatch-chip-inner{border-radius:3px}
-.swatch-chip.selected-for-swap{
+.swatch-chip.locked .swatch-chip-inner{border-radius:3px !important}
+
+/* ロックモード時：ロック済みに薄い赤枠 */
+body.mode-lock .swatch-chip.locked{border-color:rgba(217,54,62,.4);box-shadow:0 0 0 1px rgba(217,54,62,.2)}
+
+/* swap選択ハイライトは編集モード時のみ有効 */
+body.mode-edit .swatch-chip.selected-for-swap{
   border-color:#ffffff !important;
-  box-shadow:0 0 0 2px #ffffff,0 0 0 4.5px rgba(255,255,255,0.45) !important;
+  box-shadow:0 0 0 2px #ffffff,0 0 0 4.5px rgba(0,0,0,0.35) !important;
   transform:scale(1.1);
 }
 .chip-edit-btn{
@@ -160,21 +168,45 @@ body.mode-edit .group-del-btn{display:block}
 .chip-edit-btn:hover{box-shadow:0 2px 6px rgba(0,0,0,0.35);transform:scale(1.15)}
 body.mode-edit .chip-edit-btn{display:flex}
 
-.row-reorder-btns{display:none;flex-direction:column;gap:1px;flex-shrink:0;margin-top:8px}
-.row-reorder-btn{background:none;border:1px solid var(--border);border-radius:3px;color:var(--muted);font-size:8px;width:16px;height:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1}
-.row-reorder-btn:hover{background:var(--surface2);color:var(--text)}
-.row-reorder-btn:disabled{opacity:.25;cursor:default}
-body.mode-edit .row-reorder-btns{display:flex}
+/* 行ドラッグ用ハンドル（編集モード時のみ表示） */
+.emoji-rows{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.emoji-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;border-radius:6px;transition:background .12s}
+.row-drag-handle{
+  display:none;
+  width:14px;flex-shrink:0;
+  color:#fff;font-size:11px;cursor:grab;user-select:none;
+  background:#1a1a2e;border-radius:3px;
+  align-items:center;justify-content:center;
+  height:28px;letter-spacing:-1px;
+  transition:opacity .12s;
+}
+.row-drag-handle:active{cursor:grabbing}
+.row-drag-handle:hover{opacity:.7}
+body.mode-edit .row-drag-handle{display:flex}
+.emoji-row.row-dragging{opacity:.4}
+.emoji-row.row-drag-over{background:var(--accent-light);outline:1px dashed var(--accent);outline-offset:1px}
+.emoji-row.row-dragging *{pointer-events:none}
 
 body.mode-edit .emoji-key{border:1.5px dashed var(--muted);cursor:pointer}
 body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surface2)}
 
+/* 行末 ＋ ボタン — 常時表示・小さめ丸 */
 .emoji-add-btn{
-  width:32px;height:32px;border-radius:6px;border:1.5px dashed var(--border);
-  background:none;color:var(--muted);font-size:16px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:1;
+  width:28px;height:28px;border-radius:50%;border:1.5px dashed var(--border);
+  background:none;color:var(--muted);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;line-height:1;
 }
-.emoji-add-btn:hover{border-color:#aaa;color:var(--text);background:var(--surface2)}
+.emoji-add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+/* スライダー ±1 ステップボタン */
+.slider-step-btn{
+  flex-shrink:0;width:18px;height:18px;border:none;background:none;
+  color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  padding:0;border-radius:3px;transition:color .12s,background .12s;line-height:1;
+}
+.slider-step-btn:hover{color:var(--text);background:var(--surface2)}
+.slider-step-btn:active{transform:scale(.85)}
 .group-add-row{padding:6px 12px;border-top:1px solid var(--border)}
 .group-add-preset{display:flex;align-items:center;gap:5px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;color:var(--muted);cursor:pointer;background:none;border:none;width:100%;transition:color .15s;padding:0}
 .group-add-preset:hover{color:var(--text)}
@@ -310,9 +342,27 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       </div>
       <input type="text" class="name-input" id="tName" placeholder="色の名前（任意）" maxlength="30">
       <div class="sliders">
-        <div class="slider-group"><span class="slider-name">H</span><input type="range" id="tH" min="0" max="359" value="229" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><span class="slider-val" id="tHval">229°</span></div>
-        <div class="slider-group"><span class="slider-name">S</span><input type="range" id="tS" min="0" max="100" value="44"><span class="slider-val" id="tSval">44%</span></div>
-        <div class="slider-group"><span class="slider-name">V</span><input type="range" id="tV" min="0" max="100" value="18"><span class="slider-val" id="tVval">18%</span></div>
+        <div class="slider-group">
+          <span class="slider-name">H</span>
+          <button class="slider-step-btn" onclick="stepSlider('tH','t',-1)" title="-1">◀</button>
+          <input type="range" id="tH" min="0" max="359" value="229" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)">
+          <button class="slider-step-btn" onclick="stepSlider('tH','t',1)" title="+1">▶</button>
+          <span class="slider-val" id="tHval">229°</span>
+        </div>
+        <div class="slider-group">
+          <span class="slider-name">S</span>
+          <button class="slider-step-btn" onclick="stepSlider('tS','t',-1)" title="-1">◀</button>
+          <input type="range" id="tS" min="0" max="100" value="44">
+          <button class="slider-step-btn" onclick="stepSlider('tS','t',1)" title="+1">▶</button>
+          <span class="slider-val" id="tSval">44%</span>
+        </div>
+        <div class="slider-group">
+          <span class="slider-name">V</span>
+          <button class="slider-step-btn" onclick="stepSlider('tV','t',-1)" title="-1">◀</button>
+          <input type="range" id="tV" min="0" max="100" value="18">
+          <button class="slider-step-btn" onclick="stepSlider('tV','t',1)" title="+1">▶</button>
+          <span class="slider-val" id="tVval">18%</span>
+        </div>
       </div>
     </div>
     <div class="panel">
@@ -329,9 +379,27 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       </div>
       <input type="text" class="name-input" id="bName" placeholder="色の名前（任意）" maxlength="30">
       <div class="sliders">
-        <div class="slider-group"><span class="slider-name">H</span><input type="range" id="bH" min="0" max="359" value="200" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><span class="slider-val" id="bHval">200°</span></div>
-        <div class="slider-group"><span class="slider-name">S</span><input type="range" id="bS" min="0" max="100" value="38"><span class="slider-val" id="bSval">38%</span></div>
-        <div class="slider-group"><span class="slider-name">V</span><input type="range" id="bV" min="0" max="100" value="97"><span class="slider-val" id="bVval">97%</span></div>
+        <div class="slider-group">
+          <span class="slider-name">H</span>
+          <button class="slider-step-btn" onclick="stepSlider('bH','b',-1)" title="-1">◀</button>
+          <input type="range" id="bH" min="0" max="359" value="200" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)">
+          <button class="slider-step-btn" onclick="stepSlider('bH','b',1)" title="+1">▶</button>
+          <span class="slider-val" id="bHval">200°</span>
+        </div>
+        <div class="slider-group">
+          <span class="slider-name">S</span>
+          <button class="slider-step-btn" onclick="stepSlider('bS','b',-1)" title="-1">◀</button>
+          <input type="range" id="bS" min="0" max="100" value="38">
+          <button class="slider-step-btn" onclick="stepSlider('bS','b',1)" title="+1">▶</button>
+          <span class="slider-val" id="bSval">38%</span>
+        </div>
+        <div class="slider-group">
+          <span class="slider-name">V</span>
+          <button class="slider-step-btn" onclick="stepSlider('bV','b',-1)" title="-1">◀</button>
+          <input type="range" id="bV" min="0" max="100" value="97">
+          <button class="slider-step-btn" onclick="stepSlider('bV','b',1)" title="+1">▶</button>
+          <span class="slider-val" id="bVval">97%</span>
+        </div>
       </div>
     </div>
   </div>
@@ -422,15 +490,15 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     </div>
     <div class="modal-field" style="display:flex;gap:8px;align-items:flex-end;">
       <div style="flex:1;">
-        <div class="modal-label">グループ</div>
-        <select class="group-select" id="modalGroup" onchange="onModalGroupChange()"></select>
+        <div class="modal-label" style="text-align:center;">グループ</div>
+        <select class="group-select" id="modalGroup" onchange="onModalGroupChange()" style="text-align:center;"></select>
       </div>
       <div style="flex:1;">
         <button class="modal-btn secondary" style="width:100%;padding:7px 0;border-color:var(--border);" onclick="activateNewEmoji()">＋ 新規キーを追加</button>
       </div>
     </div>
     <div class="modal-field">
-      <div class="modal-label">行のキーを選択</div>
+      <div class="modal-label">グループのキーを選択</div>
       <div class="emoji-key-select" id="emojiKeySelect"></div>
       <input type="text" class="emoji-new-input" id="emojiNewInput" placeholder="文字や絵文字を入力" maxlength="10">
     </div>
@@ -861,26 +929,56 @@ function renderGroups() {
     const rowsEl = document.createElement('div');
     rowsEl.className = 'emoji-rows';
 
+    let dragSrcRi = null;
+
     g.rows.forEach((row, ri) => {
       const rowEl = document.createElement('div');
       rowEl.className = 'emoji-row';
 
-      const reorderBtns = document.createElement('div');
-      reorderBtns.className = 'row-reorder-btns';
-      const upBtn = document.createElement('button');
-      upBtn.className = 'row-reorder-btn'; upBtn.textContent = '▲'; upBtn.title = '上へ';
-      upBtn.disabled = ri === 0;
+      // ドラッグハンドル（編集モード時のみ表示）
+      const handle = document.createElement('div');
+      handle.className = 'row-drag-handle';
+      handle.textContent = '⠿';
+      handle.title = 'ドラッグして並び替え';
+
+      // 行ドラッグ＆ドロップ
+      rowEl.setAttribute('draggable', 'true');
       ;(function(cGi, cRi) {
-        upBtn.onclick = e => { e.stopPropagation(); moveRow(cGi, cRi, -1); };
+        rowEl.addEventListener('dragstart', e => {
+          if (appMode !== 'edit') { e.preventDefault(); return; }
+          dragSrcRi = cRi;
+          rowEl.classList.add('row-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', String(cRi));
+        });
+        rowEl.addEventListener('dragend', () => {
+          dragSrcRi = null;
+          rowEl.classList.remove('row-dragging');
+          rowsEl.querySelectorAll('.emoji-row').forEach(r => r.classList.remove('row-drag-over'));
+        });
+        rowEl.addEventListener('dragover', e => {
+          if (appMode !== 'edit' || dragSrcRi === null || dragSrcRi === cRi) return;
+          e.preventDefault();
+          rowsEl.querySelectorAll('.emoji-row').forEach(r => r.classList.remove('row-drag-over'));
+          rowEl.classList.add('row-drag-over');
+        });
+        rowEl.addEventListener('dragleave', e => {
+          if (!rowEl.contains(e.relatedTarget)) rowEl.classList.remove('row-drag-over');
+        });
+        rowEl.addEventListener('drop', e => {
+          e.preventDefault();
+          rowEl.classList.remove('row-drag-over');
+          if (dragSrcRi === null || dragSrcRi === cRi) return;
+          const rows = groups[cGi].rows;
+          const moved = rows.splice(dragSrcRi, 1)[0];
+          const insertAt = dragSrcRi < cRi ? cRi - 1 : cRi;
+          rows.splice(insertAt, 0, moved);
+          dragSrcRi = null;
+          saveGroups(); renderGroups();
+        });
       })(gi, ri);
-      const dnBtn = document.createElement('button');
-      dnBtn.className = 'row-reorder-btn'; dnBtn.textContent = '▼'; dnBtn.title = '下へ';
-      dnBtn.disabled = ri === g.rows.length - 1;
-      ;(function(cGi, cRi) {
-        dnBtn.onclick = e => { e.stopPropagation(); moveRow(cGi, cRi, 1); };
-      })(gi, ri);
-      reorderBtns.append(upBtn, dnBtn);
-      rowEl.append(reorderBtns);
+
+      rowEl.append(handle);
 
       const keySpan = document.createElement('span');
       keySpan.className = 'emoji-key';
@@ -911,8 +1009,14 @@ function renderGroups() {
         const tt = document.createElement('div');
         tt.className = 'swatch-chip-tooltip';
         const updateTooltip = () => {
-          if (appMode === 'lock') tt.textContent = c.locked ? '🔓 タップで解除' : '🔒 タップでロック';
-          else tt.textContent = c.locked ? '🔒 ロック中' : '';
+          // 通常モード：ツールチップなし（ロック状態も表示しない）
+          if (appMode === 'lock') {
+            tt.textContent = c.locked ? '🔓 タップで解除' : '🔒 タップでロック';
+          } else if (appMode === 'edit') {
+            tt.textContent = c.locked ? '🔒 ロック中' : '';
+          } else {
+            tt.textContent = '';
+          }
         };
         updateTooltip();
         chip.addEventListener('mouseenter', updateTooltip);
@@ -1264,6 +1368,13 @@ function showToast(m) {
 function copyHex(k){ const h=document.getElementById(k+'Hex').value; copyText(h); showToast(h+' をコピー'); }
 function copyAndShowHex(k){ const h=document.getElementById(k==='t'?'tcCode':'bcCode').textContent; copyText(h); showToast(h+' をコピー'); }
 
+function stepSlider(id, k, delta) {
+  const el = document.getElementById(id);
+  const min = +el.min, max = +el.max;
+  el.value = Math.min(max, Math.max(min, +el.value + delta));
+  fromSlider(k);
+}
+
 ['tH','tS','tV'].forEach(id=>document.getElementById(id).oninput=()=>fromSlider('t'));
 ['bH','bS','bV'].forEach(id=>document.getElementById(id).oninput=()=>fromSlider('b'));
 document.getElementById('tPicker').oninput=e=>applyHex('t',e.target.value);
@@ -1272,6 +1383,17 @@ document.getElementById('tHex').oninput=e=>applyHex('t',e.target.value);
 document.getElementById('bHex').oninput=e=>applyHex('b',e.target.value);
 document.getElementById('tName').oninput=render;
 document.getElementById('bName').oninput=render;
+
+// チップ外クリックで swap 選択解除
+document.addEventListener('click', e => {
+  if (appMode === 'edit' && swapSelected !== null) {
+    // クリック先が .swatch-chip 内でなければ解除
+    if (!e.target.closest('.swatch-chip')) {
+      swapSelected = null;
+      renderGroups();
+    }
+  }
+});
 
 (function init() {
   const params = new URLSearchParams(location.search);
