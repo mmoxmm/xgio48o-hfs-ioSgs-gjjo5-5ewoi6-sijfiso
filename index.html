@@ -93,12 +93,13 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .icon-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
 .icon-btn.active-lock{background:#d9363e;color:#fff;border-color:#d9363e}
 
-/* === グループ横並び === */
+/* === グループ横並び（1列最大3つに制限） === */
 .groups-list{display:flex;flex-direction:row;gap:12px;align-items:flex-start;flex-wrap:wrap}
-.group-block{flex:1;min-width:200px}
-@media(max-width:540px){.groups-list{flex-direction:column}}
+.group-block{flex:0 1 calc(33.333% - 8px);min-width:240px}
+@media(max-width:768px){.group-block{flex:0 1 calc(50% - 6px)}}
+@media(max-width:540px){.groups-list{flex-direction:column}.group-block{flex:1;width:100%}}
 
-.group-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.group-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:outline .15s, opacity .15s}
 .group-header{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surface2);border-bottom:1px solid var(--border);justify-content:center;position:relative}
 .group-drag-handle{cursor:grab;color:var(--muted);font-size:13px;user-select:none;flex-shrink:0;display:none;position:absolute;left:10px}
 .group-drag-handle:active{cursor:grabbing}
@@ -300,43 +301,33 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,0,0,.8);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:8px 16px;border-radius:99px;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ポップアップ（上書きモーダルデザインに完全統一）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(2px)}
-.modal{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.12)}
-.modal h3{font-size:15px;font-weight:700;margin-bottom:14px}
+.modal{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px;width:300px;box-shadow:0 8px 32px rgba(0,0,0,.12);text-align:center}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:14px;text-align:center}
 .modal-preview{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:14px}
 .modal-preview-swatches{display:flex;gap:4px;flex-shrink:0}
-.modal-preview-dot{width:26px;height:26px;border-radius:5px;border:1px solid var(--border)}
+.modal-preview-dot{width:26px;height:26px;border-radius:50%;border:1px solid var(--border)}
 .modal-preview-info{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7}
-.modal-field{margin-bottom:12px}
-.modal-label{font-size:11px;color:var(--muted);letter-spacing:.05em;margin-bottom:5px}
-.modal-input,.group-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .15s}
+.modal-field{margin-bottom:12px;text-align:left}
+.modal-label{font-size:11px;color:var(--muted);letter-spacing:.05em;margin-bottom:5px;text-align:center;display:block}
+.modal-input,.group-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .15s;text-align:center}
 .modal-input:focus,.group-select:focus{border-color:#999}
-.emoji-key-select{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.emoji-key-select{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;justify-content:center}
 .emoji-key-btn{font-size:18px;padding:4px 6px;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;background:var(--surface);transition:all .12s;line-height:1}
 .emoji-key-btn:hover{background:var(--surface2)}
 .emoji-key-btn.selected{border-color:var(--text);background:var(--surface2)}
-.emoji-new-input{margin-top:6px;display:none;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:14px;padding:6px 10px;outline:none}
+.emoji-new-input{margin-top:6px;display:none;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:14px;padding:6px 10px;outline:none;text-align:center}
 .emoji-new-input.visible{display:block}
-.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.modal-btns{display:flex;gap:8px;justify-content:center;margin-top:16px}
 .modal-btn{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border);transition:all .15s}
 .modal-btn.primary{background:var(--text);color:#fff;border-color:var(--text)}
 .modal-btn.primary:hover{opacity:.85}
 .modal-btn.secondary{background:none;color:var(--muted)}
 .modal-btn.secondary:hover{color:var(--text)}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   上書き確認モーダル専用スタイル
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#overwriteModal .modal {
-  width: 300px;
-  text-align: center;
-}
-#overwriteModal h3 {
-  text-align: center;
-}
-#overwriteModal .modal-btns {
-  justify-content: center;
-}
 .overwrite-compare {
   display: flex;
   align-items: center;
@@ -386,24 +377,10 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   グループ追加モーダル
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#addGroupModal .modal {
-  width: 300px;
-}
-#addGroupModal h3 {
-  text-align: center;
-  margin-bottom: 16px;
-}
-#addGroupModal .modal-btns {
-  justify-content: center;
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    グループドラッグ
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .group-block.drag-over {
-  outline: 2px dashed var(--accent);
+  outline: 2px dashed var(--muted);
   outline-offset: 2px;
 }
 .group-block.dragging {
@@ -512,13 +489,13 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           登録
         </button>
-        <button class="icon-btn" onclick="addGroup()">＋ グループ</button>
+        <button class="icon-btn" onclick="openAddGroupModal()">＋ グループ</button>
       </div>
     </div>
     <div class="groups-list" id="groupsList"></div>
   </div>
 
-  <div class="sync-setup" id="syncSetup">
+  <div class="sync-setup" id="syncSetup" style="display:none">
     <div class="sync-setup-title">🔗 プリセット同期設定（GitHub Gist使用）</div>
     <div class="sync-row">
       <input type="text" class="sync-input" id="gistTokenInput" placeholder="GitHub Personal Access Token (gist権限)" autocomplete="off">
@@ -538,7 +515,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     </div>
   </div>
 
-  <footer>スウォッチをタップ → プレビュー反映 ＋ コードコピー ／ 編集モードで位置入れ替え</footer>
+  <footer>チップをタップ → プレビュー反映 ＋ コードコピー ／ 編集モードで位置入れ替え</footer>
 </div>
 
 <div class="copy-toast" id="copyToast"></div>
@@ -579,6 +556,21 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
+<!-- 新規グループ作成モーダル -->
+<div class="modal-overlay" id="addGroupModal" style="display:none" onclick="if(event.target===this)closeAddGroupModal()">
+  <div class="modal">
+    <h3>新規グループを作成</h3>
+    <div class="modal-field">
+      <label class="modal-label">グループ名</label>
+      <input type="text" class="modal-input" id="groupNameInput" placeholder="例: 🏙️ / サイトA" maxlength="20">
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn secondary" onclick="closeAddGroupModal()">キャンセル</button>
+      <button class="modal-btn primary" onclick="confirmAddGroup()">作成</button>
+    </div>
+  </div>
+</div>
+
 <!-- 行編集モーダル -->
 <div class="modal-overlay" id="editRowModal" style="display:none" onclick="if(event.target===this)closeEditRowModal()">
   <div class="modal">
@@ -587,12 +579,12 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       <label class="modal-label">文字・絵文字</label>
       <input type="text" class="modal-input" id="editRowInput" maxlength="10">
     </div>
-    <div class="modal-btns" style="justify-content: space-between;">
-      <button class="modal-btn" style="color:#d9363e; border-color:#d9363e; background:none;" onclick="deleteEditRow()">行ごと削除</button>
-      <div style="display:flex; gap:8px;">
-        <button class="modal-btn secondary" onclick="closeEditRowModal()">キャンセル</button>
-        <button class="modal-btn primary" onclick="saveEditRow()">保存</button>
+    <div class="modal-btns" style="flex-direction: column; gap: 8px;">
+      <div style="display:flex; gap:8px; width:100%;">
+        <button class="modal-btn secondary" style="flex:1;" onclick="closeEditRowModal()">キャンセル</button>
+        <button class="modal-btn primary" style="flex:1;" onclick="saveEditRow()">保存</button>
       </div>
+      <button class="modal-btn" style="color:#d9363e; border-color:#d9363e; background:none; width:100%;" onclick="deleteEditRow()">行ごと削除</button>
     </div>
   </div>
 </div>
@@ -606,55 +598,46 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       <input type="text" class="modal-input" id="editLabel" maxlength="10" placeholder="例: ccf / img / 本番">
     </div>
     <div style="display:flex; gap:10px; margin-bottom:16px;">
-       <div style="flex:1">
-         <label class="modal-label">文字色</label>
-         <div style="display:flex; gap:4px;">
-           <input type="color" id="editTPicker" style="width:28px; height:28px; padding:0; border:none; cursor:pointer;">
-           <input type="text" class="modal-input" id="editT" maxlength="7" style="padding:4px 8px;">
-         </div>
-       </div>
-       <div style="flex:1">
-         <label class="modal-label">背景色</label>
-         <div style="display:flex; gap:4px;">
-           <input type="color" id="editBPicker" style="width:28px; height:28px; padding:0; border:none; cursor:pointer;">
-           <input type="text" class="modal-input" id="editB" maxlength="7" style="padding:4px 8px;">
-         </div>
-       </div>
+        <div style="flex:1">
+          <label class="modal-label">文字色</label>
+          <div style="display:flex; gap:4px; align-items:center;">
+            <input type="color" id="editTPicker" style="width:28px; height:28px; padding:0; border:none; cursor:pointer; border-radius:50%; flex-shrink:0;">
+            <input type="text" class="modal-input" id="editT" maxlength="7" style="padding:4px 8px;">
+          </div>
+        </div>
+        <div style="flex:1">
+          <label class="modal-label">背景色</label>
+          <div style="display:flex; gap:4px; align-items:center;">
+            <input type="color" id="editBPicker" style="width:28px; height:28px; padding:0; border:none; cursor:pointer; border-radius:50%; flex-shrink:0;">
+            <input type="text" class="modal-input" id="editB" maxlength="7" style="padding:4px 8px;">
+          </div>
+        </div>
     </div>
-    <div class="modal-btns" style="justify-content: space-between;">
-      <button class="modal-btn" style="color:#d9363e; border-color:#d9363e; background:none;" onclick="deleteEditSwatch()">削除</button>
-      <div style="display:flex; gap:8px;">
-        <button class="modal-btn secondary" onclick="closeEditSwatchModal()">キャンセル</button>
-        <button class="modal-btn primary" onclick="saveEditSwatch()">保存</button>
+    <div class="modal-btns" style="flex-direction: column; gap: 8px;">
+      <div style="display:flex; gap:8px; width:100%;">
+        <button class="modal-btn secondary" style="flex:1;" onclick="closeEditSwatchModal()">キャンセル</button>
+        <button class="modal-btn primary" style="flex:1;" onclick="saveEditSwatch()">保存</button>
       </div>
+      <button class="modal-btn" style="color:#d9363e; border-color:#d9363e; background:none; width:100%;" onclick="deleteEditSwatch()">削除</button>
     </div>
   </div>
 </div>
 
-<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     上書き確認モーダル（新規追加）
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<!-- 上書き確認モーダル -->
 <div class="modal-overlay" id="overwriteModal" style="display:none" onclick="if(event.target===this)closeOverwriteModal()">
   <div class="modal">
     <h3>色を上書きしますか？</h3>
-
     <div class="overwrite-compare">
-      <!-- 変更前 -->
       <div class="overwrite-side">
         <div class="overwrite-side-label">変更前</div>
         <div class="overwrite-chip-preview" id="owBefore"></div>
       </div>
-
-      <!-- 矢印 -->
       <div class="overwrite-arrow">→</div>
-
-      <!-- 変更後 -->
       <div class="overwrite-side">
         <div class="overwrite-side-label">変更後</div>
         <div class="overwrite-chip-preview" id="owAfter"></div>
       </div>
     </div>
-
     <div class="modal-btns">
       <button class="modal-btn secondary" onclick="closeOverwriteModal()">キャンセル</button>
       <button class="modal-btn primary" onclick="confirmOverwrite()">上書き保存</button>
@@ -751,8 +734,7 @@ let selectedForLock = [];
 let swapSelected = null;
 let selectedChip = null;
 
-// 上書き確認用の状態保持
-let pendingOverwrite = null; // { c, gi, ri, ci, newT, newB }
+let pendingOverwrite = null;
 
 function toggleLockMode() {
   if (appMode !== 'lock') {
@@ -785,15 +767,15 @@ function toggleEditMode() {
     selectedChip = null;
     document.getElementById('editModeBtn').classList.add('active');
     document.body.classList.add('mode-edit');
-    showToast('▲▼で行並び替え／スウォッチタップで色を入れ替え／✏️で色を編集');
+    showToast('▲▼で行並び替え／チップタップで色を入れ替え／✏️で色を編集');
   } else {
     appMode = 'normal';
     swapSelected = null;
     selectedChip = null;
     document.getElementById('editModeBtn').classList.remove('active');
     document.body.classList.remove('mode-edit');
-    renderGroups();
   }
+  renderGroups();
 }
 
 function getChipLabel(c) {
@@ -840,51 +822,81 @@ function applyChipLabelStyle(inner, label) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function openOverwriteModal(c, gi, ri, ci, newT, newB) {
   pendingOverwrite = { c, gi, ri, ci, newT, newB };
-
   const label = getChipLabel(c);
 
-  // 変更前チップ
   const before = document.getElementById('owBefore');
-  before.style.background = c.b;
-  before.style.color = c.t;
-  before.textContent = label;
+  before.style.background = c.b; before.style.color = c.t; before.textContent = label;
 
-  // 変更後チップ
   const after = document.getElementById('owAfter');
-  after.style.background = newB;
-  after.style.color = newT;
-  after.textContent = label;
+  after.style.background = newB; after.style.color = newT; after.textContent = label;
 
-  // ロック済みチップはborder-radiusを四角に
   if (c.locked) {
-    before.classList.add('locked-preview');
-    after.classList.add('locked-preview');
+    before.classList.add('locked-preview'); after.classList.add('locked-preview');
   } else {
-    before.classList.remove('locked-preview');
-    after.classList.remove('locked-preview');
+    before.classList.remove('locked-preview'); after.classList.remove('locked-preview');
   }
-
   document.getElementById('overwriteModal').style.display = 'flex';
 }
 
 function closeOverwriteModal() {
-  pendingOverwrite = null;
-  selectedChip = null;
-  renderGroups();
+  pendingOverwrite = null; selectedChip = null; renderGroups();
   document.getElementById('overwriteModal').style.display = 'none';
 }
 
 function confirmOverwrite() {
   if (!pendingOverwrite) return;
   const { c, newT, newB } = pendingOverwrite;
-  c.t = newT;
-  c.b = newB;
-  saveGroups();
-  selectedChip = null;
-  renderGroups();
+  c.t = newT; c.b = newB; saveGroups();
+  selectedChip = null; renderGroups();
   showToast('上書き保存しました ✓');
   pendingOverwrite = null;
   document.getElementById('overwriteModal').style.display = 'none';
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// グループドラッグ＆ドロップ用変数と処理
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let draggedGroupIdx = null;
+
+function handleGroupDragStart(e, index) {
+  if (appMode !== 'edit') { e.preventDefault(); return; }
+  draggedGroupIdx = index;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleGroupDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  const blocks = document.querySelectorAll('.group-block');
+  blocks.forEach(b => b.classList.remove('drag-over'));
+  draggedGroupIdx = null;
+}
+
+function handleGroupDragOver(e) {
+  if (appMode !== 'edit') return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+
+function handleGroupDragEnter(e) {
+  if (appMode !== 'edit') return;
+  e.currentTarget.classList.add('drag-over');
+}
+
+function handleGroupDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function handleGroupDrop(e, targetIndex) {
+  if (appMode !== 'edit' || draggedGroupIdx === null) return;
+  e.preventDefault();
+  if (draggedGroupIdx !== targetIndex) {
+    const draggedGroup = groups[draggedGroupIdx];
+    groups.splice(draggedGroupIdx, 1);
+    groups.splice(targetIndex, 0, draggedGroup);
+    saveGroups();
+    renderGroups();
+  }
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -893,13 +905,25 @@ function confirmOverwrite() {
 function renderGroups() {
   const el = document.getElementById('groupsList'); el.innerHTML = '';
   groups.forEach((g, gi) => {
-    const block = document.createElement('div'); block.className = 'group-block';
+    const block = document.createElement('div'); 
+    block.className = 'group-block';
+    
+    // ドラッグ＆ドロップ用属性・イベント設定
+    block.draggable = (appMode === 'edit');
+    block.addEventListener('dragstart', (e) => handleGroupDragStart(e, gi));
+    block.addEventListener('dragend', handleGroupDragEnd);
+    block.addEventListener('dragover', handleGroupDragOver);
+    block.addEventListener('dragenter', handleGroupDragEnter);
+    block.addEventListener('dragleave', handleGroupDragLeave);
+    block.addEventListener('drop', (e) => handleGroupDrop(e, gi));
 
     const hdr = document.createElement('div'); hdr.className = 'group-header';
     hdr.innerHTML = `<span class="group-drag-handle">⠿</span><input type="text" class="group-name-input" value="${g.name}">`;
     hdr.querySelector('input').oninput = e => { g.name = e.target.value; saveGroups(); };
     hdr.append(mkBtn('×', 'group-del-btn', () => {
-      if (confirm('グループを削除しますか？')) { groups.splice(gi, 1); saveGroups(); renderGroups(); }
+      if (confirm(`「${g.name}」グループを削除しますか？\n含まれるカラーもすべて消去されます。`)) { 
+        groups.splice(gi, 1); saveGroups(); renderGroups(); 
+      }
     }));
     block.append(hdr);
 
@@ -938,7 +962,12 @@ function renderGroups() {
         const tt = document.createElement('div'); tt.className = 'swatch-chip-tooltip'; tt.textContent = `${c.t} / ${c.b}`;
         chip.addEventListener('mouseenter', () => {
           if (appMode === 'lock') {
-            tt.textContent = c.locked ? '解除' : 'ロック';
+            const idx = selectedForLock.findIndex(x => x.c === c);
+            if (idx > -1) {
+              tt.textContent = c.locked ? '解除取り消し' : 'ロック取り消し';
+            } else {
+              tt.textContent = c.locked ? '解除' : 'ロック';
+            }
           } else {
             tt.textContent = `${c.t} / ${c.b}`;
           }
@@ -956,16 +985,17 @@ function renderGroups() {
           e.stopPropagation();
           if (appMode === 'lock') {
             const isLocked = c.locked;
-            const lockClass = isLocked ? 'selected-for-lock-off' : 'selected-for-lock-on';
             const idx = selectedForLock.findIndex(x => x.c === c);
             if (idx > -1) {
               selectedForLock.splice(idx, 1);
               chip.classList.remove('selected-for-lock-on', 'selected-for-lock-off');
+              tt.textContent = isLocked ? '解除' : 'ロック';
             } else {
               selectedForLock.push({ r: row, c });
+              const lockClass = isLocked ? 'selected-for-lock-off' : 'selected-for-lock-on';
               chip.classList.add(lockClass);
+              tt.textContent = isLocked ? '解除取り消し' : 'ロック取り消し';
             }
-
           } else if (appMode === 'edit') {
             if (swapSelected === null) {
               swapSelected = { gi, ri, ci };
@@ -979,23 +1009,14 @@ function renderGroups() {
               swapSelected = null;
               showToast('色の位置を入れ替えました ↔');
             }
-
           } else {
-            // normalモード
-            const isSame = selectedChip &&
-              selectedChip.gi === gi && selectedChip.ri === ri && selectedChip.ci === ci;
-
+            const isSame = selectedChip && selectedChip.gi === gi && selectedChip.ri === ri && selectedChip.ci === ci;
             if (isSame) {
-              // 同じチップを再タップ → 上書き確認モーダルを開く
-              if (c.locked) {
-                showToast('🔒 ロック中のため上書きできません');
-                return;
-              }
+              if (c.locked) { showToast('🔒 ロック中のため上書きできません'); return; }
               const newT = document.getElementById('tHex').value;
               const newB = document.getElementById('bHex').value;
               openOverwriteModal(c, gi, ri, ci, newT, newB);
             } else {
-              // 別チップをタップ → プレビューに反映して選択状態へ
               selectedChip = { gi, ri, ci };
               applyHex('t', c.t); applyHex('b', c.b);
               copyText(c.b.toUpperCase());
@@ -1007,8 +1028,7 @@ function renderGroups() {
 
         chip.append(inner, tt, editBtn);
         if (c.locked) chip.classList.add('locked');
-        if (appMode === 'normal' && selectedChip &&
-            selectedChip.gi === gi && selectedChip.ri === ri && selectedChip.ci === ci) {
+        if (appMode === 'normal' && selectedChip && selectedChip.gi === gi && selectedChip.ri === ri && selectedChip.ci === ci) {
           chip.classList.add('selected-chip');
         }
         swatchesEl.append(chip);
@@ -1035,7 +1055,21 @@ function renderGroups() {
 
 function mkBtn(txt, cls, fn) { const b = document.createElement('button'); b.className = cls; b.textContent = txt; b.onclick = fn; return b; }
 
-function addGroup() { groups.push({ id: uid(), name: '新規', rows: [] }); saveGroups(); renderGroups(); }
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// グループ追加モーダル関連
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function openAddGroupModal() {
+  document.getElementById('groupNameInput').value = '';
+  document.getElementById('addGroupModal').style.display = 'flex';
+}
+function closeAddGroupModal() {
+  document.getElementById('addGroupModal').style.display = 'none';
+}
+function confirmAddGroup() {
+  const name = document.getElementById('groupNameInput').value.trim();
+  groups.push({ id: uid(), name: name || '新規', rows: [] });
+  saveGroups(); renderGroups(); closeAddGroupModal();
+}
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 色を登録モーダル
@@ -1292,7 +1326,6 @@ document.getElementById('tHex').oninput=e=>applyHex('t',e.target.value);
 document.getElementById('bHex').oninput=e=>applyHex('b',e.target.value);
 document.getElementById('tName').oninput=render; document.getElementById('bName').oninput=render;
 
-// チップ以外タップで選択解除
 document.addEventListener('click', () => {
   if (appMode === 'normal' && selectedChip) {
     selectedChip = null;
