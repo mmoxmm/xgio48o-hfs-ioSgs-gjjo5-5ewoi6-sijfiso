@@ -120,7 +120,7 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .swatch-chip.locked .swatch-chip-inner{border-radius:3px !important}
 body.mode-lock .swatch-chip.locked{border-color:rgba(217,54,62,.4);box-shadow:0 0 0 1px rgba(217,54,62,.2)}
 body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;box-shadow:0 0 0 2px #ffffff,0 0 0 4.5px rgba(0,0,0,0.35) !important;transform:scale(1.1)}
-.swatch-chip.copy-text-mode::after{content:'T';position:absolute;bottom:-2px;right:-2px;width:10px;height:10px;background:var(--text);color:#fff;font-family:'DM Mono',monospace;font-size:6px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:10px;text-align:center;pointer-events:none;border:1px solid var(--bg)}
+/* ← T バッジは完全に削除 */
 .emoji-add-btn{width:28px;height:28px;border-radius:50%;border:1.5px dashed var(--border);background:none;color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:1}
 .emoji-add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .group-add-row{padding:6px 12px;border-top:1px solid var(--border)}
@@ -173,8 +173,13 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 .modal-btn.secondary:hover{color:var(--text)}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   長押し編集モーダル  リデザイン
-   順: ①プレビュー ②色設定 ③表示テキスト ④コピー対象 ⑤フッター
+   長押し編集モーダル
+   ① プレビュー（鍵アイコン左上）
+   ② 見比えボタン
+   ③ 色設定
+   ④ 表示テキスト
+   ⑤ コピー対象
+   ⑥ フッター
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #longPressEditModal .modal{
   width:380px;max-width:95vw;
@@ -189,7 +194,33 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
   gap:0;
   transition:background .2s;
   padding:24px 20px 14px;
+  position:relative;
 }
+
+/* 鍵アイコン（左上） */
+.lp-lock-icon-btn{
+  position:absolute;top:10px;left:12px;
+  width:28px;height:28px;border-radius:50%;
+  border:none;cursor:pointer;
+  display:none; /* ロック中のみ表示 */
+  align-items:center;justify-content:center;
+  font-size:14px;line-height:1;
+  box-shadow:0 2px 8px rgba(0,0,0,.22);
+  transition:transform .15s,box-shadow .15s;
+  z-index:5;
+  padding:0;
+}
+.lp-lock-icon-btn:hover{transform:scale(1.12);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.lp-lock-icon-btn.is-locked{
+  background:#1a1a2e; /* 黒 = ロック */
+  color:#fff;
+}
+.lp-lock-icon-btn.is-unlocked-temp{
+  background:#ffffff; /* 白 = 一時解除 */
+  color:#1a1a2e;
+  border:1.5px solid rgba(0,0,0,.12);
+}
+
 .lp-chip-big{
   width:76px;height:76px;border-radius:50%;
   border:3px solid rgba(255,255,255,.9);
@@ -293,31 +324,6 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 .lp-copy-btn+.lp-copy-btn{border-left:1px solid var(--border)}
 .lp-copy-btn.active{background:var(--text);color:#fff}
 .lp-copy-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid rgba(0,0,0,.12);flex-shrink:0;vertical-align:middle}
-
-/* ロックバナー */
-.lp-lock-banner{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:8px;padding:7px 14px;
-  background:rgba(217,54,62,.10);
-  border-bottom:1px solid rgba(217,54,62,.18);
-}
-.lp-lock-banner.unlocked-temp{
-  background:rgba(59,121,96,.10);
-  border-bottom-color:rgba(59,121,96,.22);
-}
-.lp-lock-info{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#c0392b}
-.lp-lock-banner.unlocked-temp .lp-lock-info{color:var(--accent)}
-.lp-lock-icon{font-size:13px;line-height:1}
-.lp-lock-toggle{
-  font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
-  padding:4px 10px;border-radius:99px;cursor:pointer;transition:all .15s;
-  border:1px solid rgba(217,54,62,.4);color:#c0392b;background:rgba(217,54,62,.08);
-}
-.lp-lock-toggle:hover{background:rgba(217,54,62,.18)}
-.lp-lock-banner.unlocked-temp .lp-lock-toggle{
-  border-color:rgba(59,121,96,.4);color:var(--accent);background:rgba(59,121,96,.08);
-}
-.lp-lock-banner.unlocked-temp .lp-lock-toggle:hover{background:rgba(59,121,96,.18)}
 
 /* ⑤ フッター */
 .lp-footer{
@@ -500,28 +506,21 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 </div>
 
 <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     長押し編集モーダル（リデザイン）
+     長押し編集モーダル
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 <div class="modal-overlay" id="longPressEditModal" style="display:none" onclick="if(event.target===this)closeLpModal()">
   <div class="modal">
 
-    <!-- ① プレビュー（チップ大 ＋ 見比えボタン） -->
+    <!-- ① プレビュー（鍵アイコン左上 ＋ チップ大 ＋ 見比えボタン） -->
     <div class="lp-canvas" id="lpCanvas">
+      <!-- 鍵アイコン：ロック中のみ表示、クリックで一時解除トグル -->
+      <button class="lp-lock-icon-btn" id="lpLockIconBtn" onclick="lpToggleLock()" title="クリックで一時解除 / 再ロック">🔒</button>
       <div class="lp-chip-big" id="lpChipBig"></div>
       <div class="lp-compare-bar">
         <button class="lp-compare-btn active-compare" id="lpBtnNew" onclick="lpCompareTo('new')">新しい色</button>
         <span class="lp-compare-sep">↔</span>
         <button class="lp-compare-btn" id="lpBtnOld" onclick="lpCompareTo('old')">元に戻す</button>
       </div>
-    </div>
-
-    <!-- ロックバナー（ロック中のみ表示） -->
-    <div class="lp-lock-banner" id="lpLockBanner" style="display:none">
-      <div class="lp-lock-info">
-        <span class="lp-lock-icon" id="lpLockIcon">🔒</span>
-        <span id="lpLockMsg">ロック中 — 編集は保護されています</span>
-      </div>
-      <button class="lp-lock-toggle" id="lpLockToggleBtn" onclick="lpToggleLock()">一時解除</button>
     </div>
 
     <div class="lp-body">
@@ -552,7 +551,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         </div>
       </div>
 
-      <!-- ③ チップの表示テキスト（プレビュー兼用） -->
+      <!-- ③ チップの表示テキスト -->
       <div class="lp-sec">
         <div class="lp-sec-title">チップの表示テキスト（＝プレビュー）</div>
         <input type="text" class="lp-label-input" id="lpLabelInput" maxlength="10" placeholder="空欄で「Aa」（リアルタイムプレビュー）">
@@ -784,11 +783,9 @@ function lpUpdatePreview() {
   canvas.style.background = b;
   chip.style.background = b;
   chip.style.color = t;
-  // チップの表示テキスト入力をプレビューに反映
   const rawText = document.getElementById('lpLabelInput').value.trim();
   const displayText = rawText || (lpTarget ? getChipLabel(lpTarget.c) : 'Aa');
   chip.textContent = displayText;
-  // コピードット
   document.getElementById('lpCopyBDot').style.background = b;
   document.getElementById('lpCopyTDot').style.background = t;
 }
@@ -805,6 +802,17 @@ function updateLpOverwriteBtn() {
   const tVal = document.getElementById('lpTHex').value;
   const btn = document.getElementById('lpOverwriteBtn');
   const label = document.getElementById('lpOverwriteLabel');
+
+  // ロック中（一時解除なし）なら無効
+  if (lpTarget && lpTarget.c.locked && !lpTarget.tempUnlocked) {
+    btn.disabled = true;
+    btn.style.background = 'var(--surface2)';
+    btn.style.color = 'var(--muted)';
+    btn.style.borderColor = 'var(--border)';
+    label.textContent = '🔒 ロック解除が必要です';
+    return;
+  }
+
   const ok = validHex(bVal) && validHex(tVal);
   btn.disabled = !ok;
   if (ok) {
@@ -820,52 +828,53 @@ function updateLpOverwriteBtn() {
   }
 }
 
-function lpUpdateLockBanner() {
+// ━━━ 鍵アイコンの更新 ━━━
+function lpUpdateLockIcon() {
   if (!lpTarget) return;
-  const banner = document.getElementById('lpLockBanner');
-  const icon = document.getElementById('lpLockIcon');
-  const msg = document.getElementById('lpLockMsg');
-  const btn = document.getElementById('lpLockToggleBtn');
+  const iconBtn = document.getElementById('lpLockIconBtn');
   const chip = document.getElementById('lpChipBig');
-  if (lpTarget.c.locked && !lpTarget.tempUnlocked) {
-    // ロック中
-    banner.style.display = 'flex';
-    banner.classList.remove('unlocked-temp');
-    icon.textContent = '🔒';
-    msg.textContent = 'ロック中 — 編集は保護されています';
-    btn.textContent = '一時解除';
+
+  if (!lpTarget.c.locked) {
+    // ロックなし → アイコン非表示
+    iconBtn.style.display = 'none';
+    chip.classList.remove('is-locked');
+  } else if (lpTarget.c.locked && !lpTarget.tempUnlocked) {
+    // ロック中 → 黒背景・鍵閉
+    iconBtn.style.display = 'flex';
+    iconBtn.className = 'lp-lock-icon-btn is-locked';
+    iconBtn.textContent = '🔒';
+    iconBtn.title = 'クリックで一時解除';
     chip.classList.add('is-locked');
-    // 色・削除を無効化
-    document.getElementById('lpOverwriteBtn').disabled = true;
-    document.getElementById('lpOverwriteLabel').textContent = '🔒 ロック解除が必要です';
-    document.getElementById('lpOverwriteBtn').style.background = 'var(--surface2)';
-    document.getElementById('lpOverwriteBtn').style.color = 'var(--muted)';
-    document.getElementById('lpOverwriteBtn').style.borderColor = 'var(--border)';
-  } else if (lpTarget.c.locked && lpTarget.tempUnlocked) {
-    // 一時解除中
-    banner.style.display = 'flex';
-    banner.classList.add('unlocked-temp');
-    icon.textContent = '🔓';
-    msg.textContent = '一時解除中 — 保存時に再ロックされます';
-    btn.textContent = '再ロック';
-    chip.classList.remove('is-locked');
-    updateLpOverwriteBtn();
   } else {
-    // 非ロック
-    banner.style.display = 'none';
+    // 一時解除中 → 白背景・鍵開
+    iconBtn.style.display = 'flex';
+    iconBtn.className = 'lp-lock-icon-btn is-unlocked-temp';
+    iconBtn.textContent = '🔓';
+    iconBtn.title = 'クリックで再ロック';
     chip.classList.remove('is-locked');
-    updateLpOverwriteBtn();
   }
 }
 
 function lpToggleLock() {
   if (!lpTarget) return;
   lpTarget.tempUnlocked = !lpTarget.tempUnlocked;
-  lpUpdateLockBanner();
+  lpUpdateLockIcon();
+  updateLpOverwriteBtn();
+  if (lpTarget.tempUnlocked) {
+    showToast('一時解除中 — 保存時に再ロックされます');
+  } else {
+    showToast('再ロックしました');
+  }
 }
 
 function openLpModal(c, gi, ri, ci) {
-  lpTarget = { c, gi, ri, ci, pendingCopyTarget: c.copyTarget || 'b', tempUnlocked: false };
+  lpTarget = {
+    c, gi, ri, ci,
+    // ★ Bug fix: pendingCopyTarget を正しく c.copyTarget で初期化
+    pendingCopyTarget: c.copyTarget || 'b',
+    pendingLabel: c.label || '',
+    tempUnlocked: false
+  };
   lpOldB = c.b;
   lpOldT = c.t;
   lpCompareMode = 'new';
@@ -874,10 +883,10 @@ function openLpModal(c, gi, ri, ci) {
   const rawLabel = (c.label && c.label.trim() && c.label.trim() !== 'Aa') ? c.label.trim() : '';
   document.getElementById('lpLabelInput').value = rawLabel;
 
-  // コピー対象
+  // コピー対象：正しく c.copyTarget で初期化
   setLpCopyTarget(c.copyTarget || 'b');
 
-  // 色フィールド：現在のプレビュー色（bHex/tHex）を「新しい色」として自動セット
+  // 色フィールド
   const previewB = document.getElementById('bHex').value;
   const previewT = document.getElementById('tHex').value;
   const initB = validHex(previewB) ? previewB : c.b;
@@ -895,7 +904,7 @@ function openLpModal(c, gi, ri, ci) {
   document.getElementById('lpBtnNew').classList.add('active-compare');
   document.getElementById('lpBtnOld').classList.remove('active-compare');
 
-  lpUpdateLockBanner();
+  lpUpdateLockIcon();
   updateLpOverwriteBtn();
   lpUpdatePreview();
   document.getElementById('longPressEditModal').style.display = 'flex';
@@ -946,9 +955,9 @@ document.getElementById('lpTHex').addEventListener('input', e => {
   updateLpOverwriteBtn();
 });
 
-// lpLabelInput の入力をリアルタイムでチッププレビューに反映
 document.getElementById('lpLabelInput').addEventListener('input', lpUpdatePreview);
 
+// ━━━ 上書き保存（色 + label + copyTarget を一括） ━━━
 function lpOverwrite() {
   if (!lpTarget) return;
   const bVal = document.getElementById('lpBHex').value;
@@ -958,17 +967,32 @@ function lpOverwrite() {
   if (bVal.toLowerCase() === lpTarget.c.b.toLowerCase() && tVal.toLowerCase() === lpTarget.c.t.toLowerCase()) {
     showToast('色は変わっていません'); return;
   }
+
+  // ★ label と copyTarget も pendingOverwrite に含める
+  const rawLabel = document.getElementById('lpLabelInput').value.trim();
+  const pendingLabel = rawLabel === 'Aa' ? '' : rawLabel;
+  const pendingCopyTarget = lpTarget.pendingCopyTarget || 'b';
+
   const savedTarget = lpTarget;
   closeLpModal();
-  pendingOverwrite = { c: savedTarget.c, newT: tVal, newB: bVal };
+
+  pendingOverwrite = {
+    c: savedTarget.c,
+    newT: tVal,
+    newB: bVal,
+    newLabel: pendingLabel,
+    newCopyTarget: pendingCopyTarget
+  };
+
   const label = getChipLabel(savedTarget.c);
   const before = document.getElementById('owBefore');
   before.style.background = savedTarget.c.b; before.style.color = savedTarget.c.t; before.textContent = label;
   const after = document.getElementById('owAfter');
-  after.style.background = bVal; after.style.color = tVal; after.textContent = label;
+  after.style.background = bVal; after.style.color = tVal; after.textContent = pendingLabel || label;
   document.getElementById('overwriteModal').style.display = 'flex';
 }
 
+// ━━━ 設定のみ保存（色は変えない） ━━━
 function lpSaveSettings() {
   if (!lpTarget) return;
   const rawLabel = document.getElementById('lpLabelInput').value.trim();
@@ -990,10 +1014,15 @@ function lpDelete() {
 }
 
 function closeOverwriteModal() { pendingOverwrite = null; document.getElementById('overwriteModal').style.display = 'none'; }
+
+// ★ confirmOverwrite: 色 + label + copyTarget を全部上書き
 function confirmOverwrite() {
   if (!pendingOverwrite) return;
-  const { c, newT, newB } = pendingOverwrite;
-  c.t = newT; c.b = newB;
+  const { c, newT, newB, newLabel, newCopyTarget } = pendingOverwrite;
+  c.t = newT;
+  c.b = newB;
+  if (newLabel !== undefined) c.label = newLabel;
+  if (newCopyTarget !== undefined) c.copyTarget = newCopyTarget;
   saveGroups(); renderGroups(); showToast('色を上書きしました ✓');
   pendingOverwrite = null; document.getElementById('overwriteModal').style.display = 'none';
 }
@@ -1143,7 +1172,7 @@ function renderGroups() {
         const chip = document.createElement('div'); chip.className = 'swatch-chip';
         if (swapSelected && swapSelected.gi === gi && swapSelected.ri === ri && swapSelected.ci === ci) chip.classList.add('selected-for-swap');
         if (c.locked) chip.classList.add('locked');
-        if (c.copyTarget === 't') chip.classList.add('copy-text-mode');
+        // ★ Tバッジを完全削除 — copy-text-mode クラスを付けない
         const inner = document.createElement('div'); inner.className = 'swatch-chip-inner';
         inner.style.background = c.b; inner.style.color = c.t;
         const label = getChipLabel(c); inner.textContent = label;
