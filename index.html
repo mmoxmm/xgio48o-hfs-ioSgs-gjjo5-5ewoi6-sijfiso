@@ -93,21 +93,25 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .icon-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
 .icon-btn.active-lock{background:#d9363e;color:#fff;border-color:#d9363e}
 
-/* === グループ横並び === */
+/* === グループ横並び（最大3列、柔軟折り返し） === */
 .groups-list{display:flex;flex-direction:row;gap:12px;align-items:flex-start;flex-wrap:wrap}
-.group-block{flex:1;min-width:200px}
-@media(max-width:540px){.groups-list{flex-direction:column}}
+.group-block{flex:1 1 calc(33.333% - 8px);min-width:200px}
+@media(max-width:540px){.groups-list{flex-direction:column}.group-block{flex:1 1 100%;min-width:0}}
 
 .group-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .group-header{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surface2);border-bottom:1px solid var(--border);justify-content:center;position:relative}
-/* ★ ドラッグハンドル：常に表示 */
-.group-drag-handle{cursor:grab;color:var(--muted);font-size:13px;user-select:none;flex-shrink:0;position:absolute;left:10px;display:block}
+
+/* ドラッグハンドル：編集モード時のみ表示 */
+.group-drag-handle{cursor:grab;color:var(--muted);font-size:13px;user-select:none;flex-shrink:0;position:absolute;left:10px;display:none}
 .group-drag-handle:active{cursor:grabbing}
+body.mode-edit .group-drag-handle{display:block}
+
 .group-name-input{flex:none;background:transparent;border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);outline:none;text-align:center;width:auto;min-width:40px;max-width:160px}
-/* ★ 削除ボタン：常に表示 */
-.group-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0 2px;line-height:1;transition:color .12s;flex-shrink:0;position:absolute;right:10px;display:block}
+
+/* 削除ボタン：編集モード時のみ表示 */
+.group-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;padding:0 2px;line-height:1;transition:color .12s;flex-shrink:0;position:absolute;right:10px;display:none}
 .group-del-btn:hover{color:#cc4444}
-/* 編集モード時は不要なので上書きしない（常時表示のため） */
+body.mode-edit .group-del-btn{display:block}
 
 .emoji-rows{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
 .emoji-row{display:flex;align-items:flex-start;gap:8px;flex-wrap:nowrap}
@@ -135,35 +139,13 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
   flex-shrink:0;
   transition:border-radius .2s ease, transform .15s, box-shadow .15s;
   overflow:visible;
+  -webkit-touch-callout:none;
+  -webkit-user-select:none;
+  user-select:none;
+  touch-action:manipulation;
 }
 .swatch-chip:hover{transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .swatch-chip.active-chip{border-color:var(--text);box-shadow:0 0 0 2px var(--text)}
-
-/* ── 選択中チップ（上書き待機）: 白枠＋黒リング ── */
-.swatch-chip.selected-chip{
-  border-color:#ffffff !important;
-  box-shadow:
-    0 0 0 2px #ffffff,
-    0 0 0 4.5px rgba(255,255,255,0.45) !important;
-  transform:scale(1.1);
-}
-
-/* 選択中チップのパルスリング */
-.swatch-chip.selected-chip::after{
-  content:'';
-  position:absolute;
-  inset:-5px;
-  border-radius:10px;
-  border:2px solid #1a1a2e;
-  opacity:0;
-  animation:chip-pulse 1.8s ease-in-out infinite;
-  pointer-events:none;
-}
-@keyframes chip-pulse{
-  0%{opacity:.5;transform:scale(1);}
-  60%{opacity:0;transform:scale(1.35);}
-  100%{opacity:0;transform:scale(1.35);}
-}
 
 .swatch-chip-inner{
   width:100%;
@@ -297,17 +279,20 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .sync-copy-btn{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:5px 12px;cursor:pointer;transition:opacity .15s;flex-shrink:0}
 .sync-copy-btn:hover{opacity:.85}
 
-/* トースト・モーダル */
+/* トースト */
 .copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,0,0,.8);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:8px 16px;border-radius:99px;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   モーダル共通（上書きモーダルに揃える）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(2px)}
 .modal{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.12)}
-.modal h3{font-size:15px;font-weight:700;margin-bottom:14px}
-.modal-preview{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;margin-bottom:14px}
-.modal-preview-swatches{display:flex;gap:4px;flex-shrink:0}
-.modal-preview-dot{width:26px;height:26px;border-radius:5px;border:1px solid var(--border)}
-.modal-preview-info{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:14px;text-align:center}
+.modal-preview{display:flex;align-items:center;justify-content:center;gap:10px;background:#d0d0d8;border:none;border-radius:var(--radius);padding:14px 12px;margin-bottom:14px}
+.modal-preview-swatches{display:flex;gap:6px;flex-shrink:0}
+.modal-preview-dot{width:28px;height:28px;border-radius:50%;border:2px solid #ffffff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.modal-preview-info{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.85);line-height:1.7}
 .modal-field{margin-bottom:12px}
 .modal-label{font-size:11px;color:var(--muted);letter-spacing:.05em;margin-bottom:5px}
 .modal-input,.group-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;padding:7px 10px;outline:none;transition:border-color .15s}
@@ -318,7 +303,7 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .emoji-key-btn.selected{border-color:var(--text);background:var(--surface2)}
 .emoji-new-input{margin-top:6px;display:none;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Syne',sans-serif;font-size:14px;padding:6px 10px;outline:none}
 .emoji-new-input.visible{display:block}
-.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.modal-btns{display:flex;gap:8px;justify-content:center;margin-top:16px}
 .modal-btn{font-family:'Syne',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid var(--border);transition:all .15s}
 .modal-btn.primary{background:var(--text);color:#fff;border-color:var(--text)}
 .modal-btn.primary:hover{opacity:.85}
@@ -326,91 +311,35 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .modal-btn.secondary:hover{color:var(--text)}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   上書き確認モーダル専用スタイル
+   上書き確認モーダル
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#overwriteModal .modal {
-  width: 300px;
-  text-align: center;
+#overwriteModal .modal{width:300px;text-align:center}
+.overwrite-compare{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  margin-bottom:20px;background:#d0d0d8;border:none;
+  border-radius:var(--radius);padding:20px 16px;
 }
-#overwriteModal h3 {
-  text-align: center;
+.overwrite-side{display:flex;flex-direction:column;align-items:center;gap:7px}
+.overwrite-side-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.85)}
+.overwrite-chip-preview{
+  width:56px;height:56px;border-radius:50%;
+  border:2.5px solid #ffffff;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;
+  box-shadow:0 0 0 1px rgba(0,0,0,.1),0 4px 12px rgba(0,0,0,.2);
 }
-#overwriteModal .modal-btns {
-  justify-content: center;
-}
-/* ★ 灰色背景に白枠（変更前後とも） */
-.overwrite-compare {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  background: #d0d0d8;   /* ← 灰色背景 */
-  border: none;
-  border-radius: var(--radius);
-  padding: 20px 16px;
-}
-.overwrite-side {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 7px;
-}
-.overwrite-side-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.85);
-}
-.overwrite-chip-preview {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 2.5px solid #ffffff;  /* ★ 白枠 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'IBM Plex Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 0 0 1px rgba(0,0,0,.1), 0 4px 12px rgba(0,0,0,.2);
-}
-.overwrite-chip-preview.locked-preview {
-  border-radius: 10px;
-}
-.overwrite-arrow {
-  font-size: 18px;
-  color: rgba(255,255,255,0.7);  /* ★ 矢印も白系 */
-  flex-shrink: 0;
-  line-height: 1;
-  margin-top: 18px;
-}
+.overwrite-arrow{font-size:18px;color:rgba(255,255,255,0.7);flex-shrink:0;line-height:1;margin-top:18px}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    グループ追加モーダル
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#addGroupModal .modal {
-  width: 300px;
-}
-#addGroupModal h3 {
-  text-align: center;
-  margin-bottom: 16px;
-}
-#addGroupModal .modal-btns {
-  justify-content: center;
-}
+#addGroupModal .modal{width:300px}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    グループドラッグ
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-.group-block.drag-over {
-  outline: 2px dashed var(--accent);
-  outline-offset: 2px;
-}
-.group-block.dragging {
-  opacity: .45;
-}
+.group-block.drag-over{outline:2px dashed #777;outline-offset:2px}
+.group-block.dragging{opacity:.45}
 
 footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 </style>
@@ -540,7 +469,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     </div>
   </div>
 
-  <footer>スウォッチをタップ → プレビュー反映 ＋ コードコピー ／ 編集モードで位置入れ替え</footer>
+  <footer>チップをタップ → プレビュー反映 ／ ロングタップ（0.5秒）で上書き保存 ／ 編集モードで位置入れ替え</footer>
 </div>
 
 <div class="copy-toast" id="copyToast"></div>
@@ -633,13 +562,10 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     上書き確認モーダル
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<!-- 上書き確認モーダル -->
 <div class="modal-overlay" id="overwriteModal" style="display:none" onclick="if(event.target===this)closeOverwriteModal()">
   <div class="modal">
     <h3>色を上書きしますか？</h3>
-
     <div class="overwrite-compare">
       <div class="overwrite-side">
         <div class="overwrite-side-label">変更前</div>
@@ -651,7 +577,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         <div class="overwrite-chip-preview" id="owAfter"></div>
       </div>
     </div>
-
     <div class="modal-btns">
       <button class="modal-btn secondary" onclick="closeOverwriteModal()">キャンセル</button>
       <button class="modal-btn primary" onclick="confirmOverwrite()">上書き保存</button>
@@ -659,20 +584,18 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     グループ追加モーダル（★新規）
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<!-- グループ追加モーダル -->
 <div class="modal-overlay" id="addGroupModal" style="display:none" onclick="if(event.target===this)closeAddGroupModal()">
   <div class="modal" style="width:300px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <h3 style="margin-bottom:0;">グループを追加</h3>
+      <h3 style="margin-bottom:0;flex:1;">グループを追加</h3>
       <button onclick="closeAddGroupModal()" style="background:none;border:none;font-size:18px;color:var(--muted);cursor:pointer;line-height:1;padding:0 2px;" title="キャンセル">×</button>
     </div>
     <div class="modal-field">
-      <div class="modal-label">グループ名（絵文字や文字）</div>
-      <input type="text" class="modal-input" id="addGroupNameInput" maxlength="20" placeholder="例: 🌸 / ダーク / brand">
+      <div class="modal-label" style="text-align:center;">グループ名（絵文字や文字）</div>
+      <input type="text" class="modal-input" id="addGroupNameInput" maxlength="20" placeholder="例: 🌸 / ダーク / brand" style="text-align:center;">
     </div>
-    <div class="modal-btns" style="justify-content:center;">
+    <div class="modal-btns">
       <button class="modal-btn secondary" onclick="closeAddGroupModal()">キャンセル</button>
       <button class="modal-btn primary" onclick="confirmAddGroup()">追加</button>
     </div>
@@ -766,16 +689,18 @@ function ensureIds(gs) {
 let appMode = 'normal';
 let selectedForLock = [];
 let swapSelected = null;
-let selectedChip = null;
 
 // 上書き確認用の状態保持
 let pendingOverwrite = null;
+
+// ロングタップ
+let longPressTimer = null;
+let longPressActive = false;
 
 function toggleLockMode() {
   if (appMode !== 'lock') {
     if (appMode === 'edit') { swapSelected = null; toggleEditMode(); }
     appMode = 'lock';
-    selectedChip = null;
     selectedForLock = [];
     document.getElementById('lockModeBtn').classList.add('active-lock');
     document.getElementById('lockModeIcon').textContent = '🔒';
@@ -799,14 +724,13 @@ function toggleEditMode() {
   if (appMode !== 'edit') {
     if (appMode === 'lock') toggleLockMode();
     appMode = 'edit';
-    selectedChip = null;
     document.getElementById('editModeBtn').classList.add('active');
     document.body.classList.add('mode-edit');
-    showToast('▲▼で行並び替え／スウォッチタップで色を入れ替え／✏️で色を編集');
+    renderGroups();
+    showToast('▲▼で行並び替え／ドラッグでグループ移動／✏️で色を編集');
   } else {
     appMode = 'normal';
     swapSelected = null;
-    selectedChip = null;
     document.getElementById('editModeBtn').classList.remove('active');
     document.body.classList.remove('mode-edit');
     renderGroups();
@@ -869,21 +793,11 @@ function openOverwriteModal(c, gi, ri, ci, newT, newB) {
   after.style.color = newT;
   after.textContent = label;
 
-  if (c.locked) {
-    before.classList.add('locked-preview');
-    after.classList.add('locked-preview');
-  } else {
-    before.classList.remove('locked-preview');
-    after.classList.remove('locked-preview');
-  }
-
   document.getElementById('overwriteModal').style.display = 'flex';
 }
 
 function closeOverwriteModal() {
   pendingOverwrite = null;
-  selectedChip = null;
-  renderGroups();
   document.getElementById('overwriteModal').style.display = 'none';
 }
 
@@ -893,7 +807,6 @@ function confirmOverwrite() {
   c.t = newT;
   c.b = newB;
   saveGroups();
-  selectedChip = null;
   renderGroups();
   showToast('上書き保存しました ✓');
   pendingOverwrite = null;
@@ -901,7 +814,7 @@ function confirmOverwrite() {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// グループ追加モーダル（★新規）
+// グループ追加モーダル
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function openAddGroupModal() {
   document.getElementById('addGroupNameInput').value = '';
@@ -922,14 +835,13 @@ function confirmAddGroup() {
   showToast('グループを追加しました');
 }
 
-// Enterキーで確定
 document.getElementById('addGroupNameInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') confirmAddGroup();
   if (e.key === 'Escape') closeAddGroupModal();
 });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// グループ描画（★ドラッグ有効化）
+// グループ描画
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let dragSrcGi = null;
 
@@ -938,10 +850,12 @@ function renderGroups() {
   groups.forEach((g, gi) => {
     const block = document.createElement('div');
     block.className = 'group-block';
-    block.draggable = true;
 
-    // ── ドラッグイベント ──
+    // ドラッグは編集モード時のみ有効
+    block.draggable = appMode === 'edit';
+
     block.addEventListener('dragstart', e => {
+      if (appMode !== 'edit') { e.preventDefault(); return; }
       dragSrcGi = gi;
       block.classList.add('dragging');
       e.dataTransfer.effectAllowed = 'move';
@@ -951,6 +865,7 @@ function renderGroups() {
       document.querySelectorAll('.group-block').forEach(b => b.classList.remove('dragging', 'drag-over'));
     });
     block.addEventListener('dragover', e => {
+      if (appMode !== 'edit') return;
       e.preventDefault();
       e.dataTransfer.dropEffect = 'move';
       document.querySelectorAll('.group-block').forEach(b => b.classList.remove('drag-over'));
@@ -968,10 +883,22 @@ function renderGroups() {
     });
 
     const hdr = document.createElement('div'); hdr.className = 'group-header';
-    hdr.innerHTML = `<span class="group-drag-handle" title="ドラッグで並び替え">⠿</span><input type="text" class="group-name-input" value="${g.name}">`;
-    hdr.querySelector('input').oninput = e => { g.name = e.target.value; saveGroups(); };
 
-    // ★ 削除ボタン：確認ポップアップ付き
+    // ドラッグハンドル（CSS で編集モード時のみ表示）
+    const dragHandle = document.createElement('span');
+    dragHandle.className = 'group-drag-handle';
+    dragHandle.title = 'ドラッグで並び替え';
+    dragHandle.textContent = '⠿';
+    hdr.append(dragHandle);
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'group-name-input';
+    nameInput.value = g.name;
+    nameInput.oninput = e => { g.name = e.target.value; saveGroups(); };
+    hdr.append(nameInput);
+
+    // 削除ボタン（CSS で編集モード時のみ表示）
     const delBtn = document.createElement('button');
     delBtn.className = 'group-del-btn';
     delBtn.textContent = '×';
@@ -1020,10 +947,18 @@ function renderGroups() {
         inner.textContent = label;
         applyChipLabelStyle(inner, label);
 
-        const tt = document.createElement('div'); tt.className = 'swatch-chip-tooltip'; tt.textContent = `${c.t} / ${c.b}`;
+        const tt = document.createElement('div'); tt.className = 'swatch-chip-tooltip';
+        tt.textContent = `${c.t} / ${c.b}`;
+
+        // ツールチップ：ロックモードでは選択状態に応じてテキスト変更
         chip.addEventListener('mouseenter', () => {
           if (appMode === 'lock') {
-            tt.textContent = c.locked ? '解除' : 'ロック';
+            const isPending = selectedForLock.some(x => x.c === c);
+            if (isPending) {
+              tt.textContent = c.locked ? '解除取り消し' : 'ロック取り消し';
+            } else {
+              tt.textContent = c.locked ? '解除' : 'ロック';
+            }
           } else {
             tt.textContent = `${c.t} / ${c.b}`;
           }
@@ -1037,18 +972,50 @@ function renderGroups() {
           openEditSwatchModal(gi, ri, ci);
         };
 
+        // ━━━━━━ ロングタップ（0.5秒）で上書きモーダル ━━━━━━
+        chip.addEventListener('pointerdown', e => {
+          if (appMode !== 'normal') return;
+          longPressActive = false;
+          if (longPressTimer) clearTimeout(longPressTimer);
+          longPressTimer = setTimeout(() => {
+            longPressActive = true;
+            longPressTimer = null;
+            if (navigator.vibrate) navigator.vibrate(20);
+            const newT = document.getElementById('tHex').value;
+            const newB = document.getElementById('bHex').value;
+            openOverwriteModal(c, gi, ri, ci, newT, newB);
+          }, 500);
+        });
+
+        chip.addEventListener('pointerup', () => {
+          if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+        });
+        chip.addEventListener('pointerleave', () => {
+          if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+        });
+        chip.addEventListener('pointercancel', () => {
+          if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+          longPressActive = false;
+        });
+        chip.addEventListener('contextmenu', e => e.preventDefault());
+
+        // ━━━━━━ クリック（通常タップ） ━━━━━━
         chip.onclick = e => {
           e.stopPropagation();
+
           if (appMode === 'lock') {
-            const isLocked = c.locked;
-            const lockClass = isLocked ? 'selected-for-lock-off' : 'selected-for-lock-on';
             const idx = selectedForLock.findIndex(x => x.c === c);
             if (idx > -1) {
+              // 2回目タップ：取り消し
               selectedForLock.splice(idx, 1);
               chip.classList.remove('selected-for-lock-on', 'selected-for-lock-off');
+              showToast(c.locked ? '解除を取り消し' : 'ロックを取り消し');
             } else {
+              // 1回目タップ：予定に追加
               selectedForLock.push({ r: row, c });
+              const lockClass = c.locked ? 'selected-for-lock-off' : 'selected-for-lock-on';
               chip.classList.add(lockClass);
+              showToast(c.locked ? '🔓 解除予定に追加' : '🔒 ロック予定に追加');
             }
 
           } else if (appMode === 'edit') {
@@ -1066,33 +1033,16 @@ function renderGroups() {
             }
 
           } else {
-            const isSame = selectedChip &&
-              selectedChip.gi === gi && selectedChip.ri === ri && selectedChip.ci === ci;
-
-            if (isSame) {
-              if (c.locked) {
-                showToast('🔒 ロック中のため上書きできません');
-                return;
-              }
-              const newT = document.getElementById('tHex').value;
-              const newB = document.getElementById('bHex').value;
-              openOverwriteModal(c, gi, ri, ci, newT, newB);
-            } else {
-              selectedChip = { gi, ri, ci };
-              applyHex('t', c.t); applyHex('b', c.b);
-              copyText(c.b.toUpperCase());
-              showToast(c.b.toUpperCase() + ' を反映');
-              renderGroups();
-            }
+            // 通常モード：ロングタップでなければプレビュー反映
+            if (longPressActive) { longPressActive = false; return; }
+            applyHex('t', c.t); applyHex('b', c.b);
+            copyText(c.b.toUpperCase());
+            showToast(c.b.toUpperCase() + ' を反映');
           }
         };
 
         chip.append(inner, tt, editBtn);
         if (c.locked) chip.classList.add('locked');
-        if (appMode === 'normal' && selectedChip &&
-            selectedChip.gi === gi && selectedChip.ri === ri && selectedChip.ci === ci) {
-          chip.classList.add('selected-chip');
-        }
         swatchesEl.append(chip);
       });
 
@@ -1100,7 +1050,6 @@ function renderGroups() {
       addRowBtn.title = '現在の色を追加';
       addRowBtn.onclick = () => {
         const t = document.getElementById('tHex').value, b = document.getElementById('bHex').value;
-        selectedChip = null;
         row.colors.push({ id: uid(), t, b, locked: false, label: '' }); saveGroups(); renderGroups();
       };
       swatchesEl.append(addRowBtn);
@@ -1114,8 +1063,6 @@ function renderGroups() {
     el.append(block);
   });
 }
-
-function mkBtn(txt, cls, fn) { const b = document.createElement('button'); b.className = cls; b.textContent = txt; b.onclick = fn; return b; }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 色を登録モーダル
@@ -1371,14 +1318,6 @@ document.getElementById('bPicker').oninput=e=>applyHex('b',e.target.value);
 document.getElementById('tHex').oninput=e=>applyHex('t',e.target.value);
 document.getElementById('bHex').oninput=e=>applyHex('b',e.target.value);
 document.getElementById('tName').oninput=render; document.getElementById('bName').oninput=render;
-
-// チップ以外タップで選択解除
-document.addEventListener('click', () => {
-  if (appMode === 'normal' && selectedChip) {
-    selectedChip = null;
-    renderGroups();
-  }
-});
 
 (function init() {
   const params = new URLSearchParams(location.search);
