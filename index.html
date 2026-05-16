@@ -39,7 +39,7 @@ h1 span{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
 .panel-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 
 .swatch-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-.swatch{width:44px;height:44px;border-radius:50%;border:2px solid rgba(0,0,0,.07);flex-shrink:0;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);transition:transform .15s,box-shadow .15s}
+.swatch(width:44px;height:44px;border-radius:50%;border:2px solid rgba(0,0,0,.07);flex-shrink:0;position:relative;overflow:hidden;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);transition:transform .15s,box-shadow .15s}
 .swatch:hover{transform:scale(1.08);box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .swatch input[type=color]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer}
 .hex-wrap{flex:1;min-width:0}
@@ -93,11 +93,28 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .icon-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
 .icon-btn.active-lock{background:#d9363e;color:#fff;border-color:#d9363e}
 
-/* === グループ横並び（1列最大3つに制限） === */
+/* === グループ横並び（1列最大3つに制限、2つの時は均等2分割） === */
 .groups-list{display:flex;flex-direction:row;gap:12px;align-items:flex-start;flex-wrap:wrap}
-.group-block{flex:0 1 calc(33.333% - 8px);min-width:240px}
-@media(max-width:768px){.group-block{flex:0 1 calc(50% - 6px)}}
-@media(max-width:540px){.groups-list{flex-direction:column}.group-block{flex:1;width:100%}}
+.group-block{flex:1;flex-grow:1;flex-shrink:1;flex-basis:240px;min-width:240px;max-width:100%}
+
+/* 2つしか無い時は50%ずつに綺麗に広げる */
+.groups-list:not(:has(.group-block:nth-child(3))):has(.group-block:nth-child(2)) .group-block {
+  max-width: calc(50% - 6px);
+}
+/* 3つ以上ある時は最大3列（33.333%）に制限 */
+.groups-list:has(.group-block:nth-child(3)) .group-block {
+  max-width: calc(33.333% - 8px);
+}
+
+@media(max-width:768px){
+  .groups-list:has(.group-block:nth-child(3)) .group-block {
+    max-width: calc(50% - 6px);
+  }
+}
+@media(max-width:540px){
+  .groups-list{flex-direction:column}
+  .group-block{flex:1;width:100%;max-width:100% !important}
+}
 
 .group-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:outline .15s, opacity .15s}
 .group-header{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surface2);border-bottom:1px solid var(--border);justify-content:center;position:relative}
@@ -908,7 +925,6 @@ function renderGroups() {
     const block = document.createElement('div'); 
     block.className = 'group-block';
     
-    // ドラッグ＆ドロップ用属性・イベント設定
     block.draggable = (appMode === 'edit');
     block.addEventListener('dragstart', (e) => handleGroupDragStart(e, gi));
     block.addEventListener('dragend', handleGroupDragEnd);
