@@ -214,34 +214,18 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
   cursor:pointer;transition:all .15s;
   background:rgba(255,255,255,.18);color:rgba(255,255,255,.9);
   text-align:center;backdrop-filter:blur(2px);
+  text-shadow:0 1px 4px rgba(0,0,0,.55);
+  box-shadow:0 1px 6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.15);
 }
 .lp-compare-btn.active-compare{
-  background:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.88);
   color:var(--text);
-  border-color:rgba(255,255,255,.9);
+  border-color:rgba(255,255,255,.95);
+  text-shadow:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.6);
 }
 .lp-compare-btn:not(.active-compare):hover{background:rgba(255,255,255,.3)}
-.lp-compare-sep{font-size:11px;color:rgba(255,255,255,.6);flex-shrink:0}
-
-/* プレビュー文字入力 */
-.lp-text-row{
-  width:100%;padding:10px 16px 14px;
-  background:var(--bg);
-  border-bottom:1px solid var(--border);
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-}
-.lp-text-label{
-  font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);
-}
-.lp-text-input{
-  width:100%;background:var(--surface);
-  border:1px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;
-  padding:6px 10px;outline:none;transition:border-color .15s;text-align:center;
-}
-.lp-text-input:focus{border-color:var(--accent)}
-.lp-text-input::placeholder{color:var(--muted);font-family:'Syne',sans-serif;font-size:11px}
+.lp-compare-sep{font-size:11px;color:rgba(255,255,255,.9);flex-shrink:0;text-shadow:0 1px 4px rgba(0,0,0,.55)}
 
 /* ボディ */
 .lp-body{padding:14px 16px 0}
@@ -506,12 +490,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       </div>
     </div>
 
-    <!-- プレビュー文字入力（背景色と同じ色帯の下に白面で） -->
-    <div class="lp-text-row">
-      <div class="lp-text-label">プレビュー文字</div>
-      <input type="text" class="lp-text-input" id="lpTextInput" placeholder="チップに表示させたい文字を入力" maxlength="40">
-    </div>
-
     <div class="lp-body">
 
       <!-- ② 色設定 -->
@@ -540,10 +518,10 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         </div>
       </div>
 
-      <!-- ③ チップの表示テキスト -->
+      <!-- ③ チップの表示テキスト（プレビュー兼用） -->
       <div class="lp-sec">
-        <div class="lp-sec-title">チップの表示テキスト</div>
-        <input type="text" class="lp-label-input" id="lpLabelInput" maxlength="10" placeholder="空欄で「Aa」">
+        <div class="lp-sec-title">チップの表示テキスト（＝プレビュー）</div>
+        <input type="text" class="lp-label-input" id="lpLabelInput" maxlength="10" placeholder="空欄で「Aa」（リアルタイムプレビュー）">
       </div>
 
       <!-- ④ タップ時コピー対象 -->
@@ -772,7 +750,8 @@ function lpUpdatePreview() {
   canvas.style.background = b;
   chip.style.background = b;
   chip.style.color = t;
-  const rawText = document.getElementById('lpTextInput').value.trim();
+  // チップの表示テキスト入力をプレビューに反映
+  const rawText = document.getElementById('lpLabelInput').value.trim();
   const displayText = rawText || (lpTarget ? getChipLabel(lpTarget.c) : 'Aa');
   chip.textContent = displayText;
   // コピードット
@@ -820,18 +799,19 @@ function openLpModal(c, gi, ri, ci) {
   // コピー対象
   setLpCopyTarget(c.copyTarget || 'b');
 
-  // 色フィールド：チップの現在色をデフォルト値に
-  document.getElementById('lpBHex').value = c.b;
-  document.getElementById('lpBPicker').value = c.b;
-  document.getElementById('lpBSwatch').style.background = c.b;
-  document.getElementById('lpTHex').value = c.t;
-  document.getElementById('lpTPicker').value = c.t;
-  document.getElementById('lpTSwatch').style.background = c.t;
+  // 色フィールド：現在のプレビュー色（bHex/tHex）を「新しい色」として自動セット
+  const previewB = document.getElementById('bHex').value;
+  const previewT = document.getElementById('tHex').value;
+  const initB = validHex(previewB) ? previewB : c.b;
+  const initT = validHex(previewT) ? previewT : c.t;
+  document.getElementById('lpBHex').value = initB;
+  document.getElementById('lpBPicker').value = initB;
+  document.getElementById('lpBSwatch').style.background = initB;
+  document.getElementById('lpTHex').value = initT;
+  document.getElementById('lpTPicker').value = initT;
+  document.getElementById('lpTSwatch').style.background = initT;
   document.getElementById('lpBHex').classList.remove('invalid');
   document.getElementById('lpTHex').classList.remove('invalid');
-
-  // プレビューテキストはクリア
-  document.getElementById('lpTextInput').value = '';
 
   // ロック状態
   const chip = document.getElementById('lpChipBig');
@@ -890,7 +870,9 @@ document.getElementById('lpTHex').addEventListener('input', e => {
   } else { e.target.classList.add('invalid'); }
   updateLpOverwriteBtn();
 });
-document.getElementById('lpTextInput').addEventListener('input', lpUpdatePreview);
+
+// lpLabelInput の入力をリアルタイムでチッププレビューに反映
+document.getElementById('lpLabelInput').addEventListener('input', lpUpdatePreview);
 
 function lpOverwrite() {
   if (!lpTarget) return;
