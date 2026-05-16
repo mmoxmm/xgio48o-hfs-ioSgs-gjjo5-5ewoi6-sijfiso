@@ -470,10 +470,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         <button class="icon-btn" id="editModeBtn" onclick="toggleEditMode()">
           <span>↕️</span> <span>位置を並び替え</span>
         </button>
-        <button class="icon-btn" onclick="openAddModal(null)">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          登録
-        </button>
+
         <button class="icon-btn" onclick="openAddGroupModal()">＋ グループ</button>
       </div>
     </div>
@@ -508,7 +505,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 <!-- 色を登録モーダル -->
 <div class="modal-overlay" id="addModal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal">
-    <h3>現在の色を登録</h3>
+    <h3>新規登録</h3>
     <!-- チッププレビュー -->
     <div class="modal-preview" style="gap:14px;">
       <div id="modalChipPreview" style="
@@ -680,7 +677,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     </div>
     <div class="modal-field">
       <div class="modal-label">グループ名（絵文字や文字）</div>
-      <input type="text" class="modal-input" id="addGroupNameInput" maxlength="20" placeholder="例: 🌸 / ダーク / brand">
+      <input type="text" class="modal-input" id="addGroupNameInput" maxlength="20" placeholder="グループ名">
     </div>
     <div class="modal-btns">
       <button class="modal-btn secondary" onclick="closeAddGroupModal()">キャンセル</button>
@@ -1381,7 +1378,7 @@ function renderGroups() {
     const addRow = document.createElement('div');
     addRow.className = 'group-add-row';
     const addBtn = document.createElement('button');
-    addBtn.className = 'group-add-preset'; addBtn.innerHTML = '＋ 現在の色を登録…';
+    addBtn.className = 'group-add-preset'; addBtn.innerHTML = '＋ 新規登録…';
     ;(function(cGi) { addBtn.onclick = () => openAddModal(cGi); })(gi);
     addRow.append(addBtn);
     block.append(addRow);
