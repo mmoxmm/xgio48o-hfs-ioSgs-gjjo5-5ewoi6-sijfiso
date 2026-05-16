@@ -111,9 +111,41 @@ body.mode-edit .group-drag-handle{display:block}
 .group-del-btn:hover{color:#d9363e}
 body.mode-edit .group-del-btn{display:block}
 
-.emoji-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;position:relative;padding-right:0}
-body.mode-edit .emoji-row{padding-right:0}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   行レイアウト
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.emoji-rows{padding:10px 12px;display:flex;flex-direction:column;gap:8px;position:relative}
+.emoji-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;border-radius:6px;transition:background .12s}
+
+/* ハンドルはフロー外 — グループ枠の左端に absolute で貼り付け */
+.row-drag-handle{
+  display:none;
+  position:absolute;
+  left:0;
+  width:10px;
+  /* top/height は JS で各行に合わせてセット */
+  background:#aaa;
+  color:#fff;
+  font-size:9px;
+  cursor:grab;
+  user-select:none;
+  align-items:center;
+  justify-content:center;
+  letter-spacing:-1px;
+  border-radius:0 3px 3px 0;
+  transition:background .12s;
+  z-index:2;
+}
+.row-drag-handle:active{cursor:grabbing;background:#777}
+.row-drag-handle:hover{background:#777}
+body.mode-edit .row-drag-handle{display:flex}
+.emoji-row.row-dragging{opacity:.4}
+.emoji-row.row-drag-over{background:var(--accent-light);outline:1px dashed var(--accent);outline-offset:1px}
+.emoji-row.row-dragging *{pointer-events:none}
+
 .emoji-key{font-size:15px;flex-shrink:0;width:auto;min-width:28px;text-align:center;padding:2px 4px;border-radius:4px;border:1px solid transparent;transition:all .15s;line-height:32px}
+body.mode-edit .emoji-key{border:1.5px dashed var(--muted);cursor:pointer}
+body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surface2)}
 
 .emoji-swatches{
   display:flex;gap:4px;flex-wrap:wrap;align-items:flex-start;flex:1;min-width:0;
@@ -141,17 +173,13 @@ body.mode-edit .emoji-row{padding-right:0}
   font-size:9px;padding:3px 6px;border-radius:4px;white-space:nowrap;
   pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;
 }
-/* テキストが空のときは表示しない */
 .swatch-chip:hover .swatch-chip-tooltip:not(:empty){opacity:1}
 
-/* ロック済みチップは常に四角 — 解除まで維持 */
 .swatch-chip.locked{border-radius:5px !important}
 .swatch-chip.locked .swatch-chip-inner{border-radius:3px !important}
 
-/* ロックモード時：ロック済みに薄い赤枠 */
 body.mode-lock .swatch-chip.locked{border-color:rgba(217,54,62,.4);box-shadow:0 0 0 1px rgba(217,54,62,.2)}
 
-/* swap選択ハイライトは編集モード時のみ有効 */
 body.mode-edit .swatch-chip.selected-for-swap{
   border-color:#ffffff !important;
   box-shadow:0 0 0 2px #ffffff,0 0 0 4.5px rgba(0,0,0,0.35) !important;
@@ -168,29 +196,7 @@ body.mode-edit .swatch-chip.selected-for-swap{
 .chip-edit-btn:hover{box-shadow:0 2px 6px rgba(0,0,0,0.35);transform:scale(1.15)}
 body.mode-edit .chip-edit-btn{display:flex}
 
-/* 行ドラッグ用ハンドル（編集モード時のみ表示） */
-.emoji-rows{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
-.emoji-row{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;border-radius:6px;transition:background .12s}
-.row-drag-handle{
-  display:none;
-  width:14px;flex-shrink:0;
-  color:#fff;font-size:11px;cursor:grab;user-select:none;
-  background:#1a1a2e;border-radius:3px;
-  align-items:center;justify-content:center;
-  height:28px;letter-spacing:-1px;
-  transition:opacity .12s;
-}
-.row-drag-handle:active{cursor:grabbing}
-.row-drag-handle:hover{opacity:.7}
-body.mode-edit .row-drag-handle{display:flex}
-.emoji-row.row-dragging{opacity:.4}
-.emoji-row.row-drag-over{background:var(--accent-light);outline:1px dashed var(--accent);outline-offset:1px}
-.emoji-row.row-dragging *{pointer-events:none}
-
-body.mode-edit .emoji-key{border:1.5px dashed var(--muted);cursor:pointer}
-body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surface2)}
-
-/* 行末 ＋ ボタン — 常時表示・小さめ丸 */
+/* 行末 ＋ ボタン */
 .emoji-add-btn{
   width:28px;height:28px;border-radius:50%;border:1.5px dashed var(--border);
   background:none;color:var(--muted);font-size:14px;cursor:pointer;
@@ -242,20 +248,20 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .modal{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.14)}
 .modal h3{font-size:15px;font-weight:700;margin-bottom:14px;text-align:center}
 
-/* ━━ 色登録モーダルのプレビュー ━━ */
 .modal-preview{
   display:flex;align-items:center;justify-content:center;gap:10px;
   background:#d0d0d8;border:none;border-radius:var(--radius);
   padding:14px 12px;margin-bottom:14px;
 }
-.modal-preview-swatches{display:flex;gap:8px;flex-shrink:0;align-items:center}
-/* FIX: 正円保証 */
+.modal-preview-swatches{display:flex;gap:8px;flex-shrink:0;align-items:center;align-self:center}
 .modal-preview-dot{
-  width:28px;height:28px;min-width:28px;min-height:28px;
+  width:28px;height:28px;
+  min-width:28px;min-height:28px;max-width:28px;max-height:28px;
   border-radius:50%;
   border:2px solid rgba(255,255,255,.9);
   box-shadow:0 1px 6px rgba(0,0,0,.2);
-  flex-shrink:0;
+  flex:0 0 28px;
+  align-self:center;
 }
 .modal-preview-info{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.85);line-height:1.7;text-align:center}
 
@@ -276,9 +282,6 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .modal-btn.secondary{background:none;color:var(--muted)}
 .modal-btn.secondary:hover{color:var(--text)}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   上書き確認モーダル
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #overwriteModal .modal{width:300px;text-align:center}
 .overwrite-compare{
   display:flex;align-items:center;justify-content:center;gap:10px;
@@ -297,14 +300,8 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 }
 .overwrite-arrow{font-size:18px;color:rgba(255,255,255,.7);flex-shrink:0;line-height:1;margin-top:18px}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   グループ削除確認モーダル
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #deleteGroupModal .modal{width:300px;text-align:center}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   グループドラッグ
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .group-block.drag-over{outline:2px dashed var(--accent);outline-offset:2px}
 .group-block.dragging{opacity:.45;cursor:grabbing}
 
@@ -536,7 +533,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   <div class="modal">
     <h3>カラーを編集</h3>
     <div class="modal-field">
-      <label class="modal-label">チップの表示文字（任意・空欄で「Aa」）</label>
+      <label class="modal-label" style="display:block;text-align:center;">チップの表示文字（任意・空欄で「Aa」）</label>
       <input type="text" class="modal-input" id="editLabel" maxlength="10" placeholder="例: ccf / img / 本番">
     </div>
     <div style="display:flex;gap:10px;margin-bottom:16px;">
@@ -587,7 +584,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- グループ削除確認モーダル（overlay クリックで閉じない：誤操作防止） -->
+<!-- グループ削除確認モーダル -->
 <div class="modal-overlay" id="deleteGroupModal" style="display:none">
   <div class="modal" style="width:300px;text-align:center;">
     <h3 style="color:#d9363e;">グループを削除しますか？</h3>
@@ -753,14 +750,6 @@ function doSwapColors(a, b) {
   saveGroups(); renderGroups();
 }
 
-function moveRow(gi, ri, dir) {
-  const rows = groups[gi].rows;
-  const ni = ri + dir;
-  if (ni < 0 || ni >= rows.length) return;
-  [rows[ri], rows[ni]] = [rows[ni], rows[ri]];
-  saveGroups(); renderGroups();
-}
-
 function applyChipLabelStyle(inner, label) {
   if (!label) return;
   const visualLen = [...label].reduce((n, ch) => n + (ch.codePointAt(0) > 0x7F ? 2 : 1), 0);
@@ -797,7 +786,6 @@ function confirmOverwrite() {
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // グループ削除確認モーダル
-// FIX: オブジェクト参照ではなくインデックスで管理
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let deleteGroupIndex = -1;
 
@@ -857,7 +845,6 @@ function renderGroups() {
     block.className = 'group-block';
     block.setAttribute('draggable', 'true');
 
-    // ドラッグ（編集モード限定）
     block.addEventListener('dragstart', e => {
       if (appMode !== 'edit') { e.preventDefault(); return; }
       dragSrcGi = gi;
@@ -909,7 +896,6 @@ function renderGroups() {
     nameInput.addEventListener('mousedown', e => e.stopPropagation());
     hdr.append(nameInput);
 
-    // FIX: 削除ボタン — gi を引数としてそのまま渡す（クロージャで確実にキャプチャ）
     const delBtn = document.createElement('button');
     delBtn.className = 'group-del-btn';
     delBtn.textContent = '×';
@@ -935,14 +921,16 @@ function renderGroups() {
       const rowEl = document.createElement('div');
       rowEl.className = 'emoji-row';
 
-      // ドラッグハンドル（編集モード時のみ表示）
+      // ドラッグハンドル（常にDOMに存在、visibility で制御）
       const handle = document.createElement('div');
       handle.className = 'row-drag-handle';
       handle.textContent = '⠿';
       handle.title = 'ドラッグして並び替え';
 
-      // 行ドラッグ＆ドロップ
-      rowEl.setAttribute('draggable', 'true');
+      // 行ドラッグ＆ドロップ（ハンドルを掴んだときだけ draggable ON）
+      rowEl.setAttribute('draggable', 'false');
+      handle.addEventListener('mousedown', () => { rowEl.setAttribute('draggable', 'true'); });
+      handle.addEventListener('mouseleave', () => { if (!dragSrcRi) rowEl.setAttribute('draggable', 'false'); });
       ;(function(cGi, cRi) {
         rowEl.addEventListener('dragstart', e => {
           if (appMode !== 'edit') { e.preventDefault(); return; }
@@ -953,6 +941,7 @@ function renderGroups() {
         });
         rowEl.addEventListener('dragend', () => {
           dragSrcRi = null;
+          rowEl.setAttribute('draggable', 'false');
           rowEl.classList.remove('row-dragging');
           rowsEl.querySelectorAll('.emoji-row').forEach(r => r.classList.remove('row-drag-over'));
         });
@@ -978,7 +967,14 @@ function renderGroups() {
         });
       })(gi, ri);
 
-      rowEl.append(handle);
+      // ハンドルは rowsEl に absolute で後付け（rowEl のフローに影響しない）
+      rowsEl.append(handle);
+      requestAnimationFrame(() => {
+        const rowTop = rowEl.offsetTop;
+        const rowH = rowEl.offsetHeight;
+        handle.style.top = rowTop + 'px';
+        handle.style.height = rowH + 'px';
+      });
 
       const keySpan = document.createElement('span');
       keySpan.className = 'emoji-key';
@@ -1009,7 +1005,6 @@ function renderGroups() {
         const tt = document.createElement('div');
         tt.className = 'swatch-chip-tooltip';
         const updateTooltip = () => {
-          // 通常モード：ツールチップなし（ロック状態も表示しない）
           if (appMode === 'lock') {
             tt.textContent = c.locked ? '🔓 タップで解除' : '🔒 タップでロック';
           } else if (appMode === 'edit') {
@@ -1384,10 +1379,8 @@ document.getElementById('bHex').oninput=e=>applyHex('b',e.target.value);
 document.getElementById('tName').oninput=render;
 document.getElementById('bName').oninput=render;
 
-// チップ外クリックで swap 選択解除
 document.addEventListener('click', e => {
   if (appMode === 'edit' && swapSelected !== null) {
-    // クリック先が .swatch-chip 内でなければ解除
     if (!e.target.closest('.swatch-chip')) {
       swapSelected = null;
       renderGroups();
