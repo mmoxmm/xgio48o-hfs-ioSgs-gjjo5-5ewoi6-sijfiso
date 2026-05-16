@@ -886,11 +886,9 @@ function openLpModal(c, gi, ri, ci) {
   // コピー対象：正しく c.copyTarget で初期化
   setLpCopyTarget(c.copyTarget || 'b');
 
-  // 色フィールド
-  const previewB = document.getElementById('bHex').value;
-  const previewT = document.getElementById('tHex').value;
-  const initB = validHex(previewB) ? previewB : c.b;
-  const initT = validHex(previewT) ? previewT : c.t;
+  // 色フィールド：チップ自身の色で初期化（スライダー色とは無関係）
+  const initB = c.b;
+  const initT = c.t;
   document.getElementById('lpBHex').value = initB;
   document.getElementById('lpBPicker').value = initB;
   document.getElementById('lpBSwatch').style.background = initB;
@@ -964,31 +962,30 @@ function lpOverwrite() {
   const tVal = document.getElementById('lpTHex').value;
   if (!validHex(bVal) || !validHex(tVal)) { showToast('有効な HEX 値を入力してください'); return; }
   if (lpTarget.c.locked && !lpTarget.tempUnlocked) { showToast('🔒 一時解除してから操作してください'); return; }
-  if (bVal.toLowerCase() === lpTarget.c.b.toLowerCase() && tVal.toLowerCase() === lpTarget.c.t.toLowerCase()) {
-    showToast('色は変わっていません'); return;
-  }
 
-  // ★ label と copyTarget も pendingOverwrite に含める
+  // closeLpModal() で lpTarget=null になる前に必要な値を全部退避
   const rawLabel = document.getElementById('lpLabelInput').value.trim();
   const pendingLabel = rawLabel === 'Aa' ? '' : rawLabel;
   const pendingCopyTarget = lpTarget.pendingCopyTarget || 'b';
+  const savedC       = lpTarget.c;
+  const oldB         = lpTarget.c.b;
+  const oldT         = lpTarget.c.t;
+  const oldChipLabel = getChipLabel(lpTarget.c);
 
-  const savedTarget = lpTarget;
   closeLpModal();
 
   pendingOverwrite = {
-    c: savedTarget.c,
+    c: savedC,
     newT: tVal,
     newB: bVal,
     newLabel: pendingLabel,
     newCopyTarget: pendingCopyTarget
   };
 
-  const label = getChipLabel(savedTarget.c);
   const before = document.getElementById('owBefore');
-  before.style.background = savedTarget.c.b; before.style.color = savedTarget.c.t; before.textContent = label;
+  before.style.background = oldB; before.style.color = oldT; before.textContent = oldChipLabel;
   const after = document.getElementById('owAfter');
-  after.style.background = bVal; after.style.color = tVal; after.textContent = pendingLabel || label;
+  after.style.background = bVal; after.style.color = tVal; after.textContent = pendingLabel || oldChipLabel;
   document.getElementById('overwriteModal').style.display = 'flex';
 }
 
