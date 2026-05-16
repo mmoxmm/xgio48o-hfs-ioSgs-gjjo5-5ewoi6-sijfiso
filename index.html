@@ -814,20 +814,8 @@ function renderGroups() {
                 showToast('🔒 ロック中のため上書きできません');
                 return;
               }
-              const newT = document.getElementById('tHex').value;
-              const newB = document.getElementById('bHex').value;
-              const ok = confirm(
-                `このチップを現在の色で上書きしますか？\n\n` +
-                `文字色: ${c.t} → ${newT}\n` +
-                `背景色: ${c.b} → ${newB}`
-              );
-              if (ok) {
-                c.t = newT; c.b = newB;
-                saveGroups();
-                selectedChip = null;
-                renderGroups();
-                showToast('上書き保存しました ✓');
-              }
+              // チップ上に確認UIを表示
+              showChipConfirm(chip, c, gi, ri, ci);
             } else {
               selectedChip = { gi, ri, ci };
               applyHex('t', c.t); applyHex('b', c.b);
@@ -867,6 +855,53 @@ function renderGroups() {
 }
 
 function mkBtn(txt, cls, fn) { const b = document.createElement('button'); b.className = cls; b.textContent = txt; b.onclick = fn; return b; }
+
+function showChipConfirm(chip, c, gi, ri, ci) {
+  // 既存の確認UIがあれば除去
+  chip.querySelectorAll('.chip-confirm').forEach(el => el.remove());
+
+  const newT = document.getElementById('tHex').value;
+  const newB = document.getElementById('bHex').value;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'chip-confirm';
+  overlay.style.cssText = `
+    position:absolute; inset:0; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; gap:3px;
+    background:rgba(0,0,0,0.45); z-index:10;
+  `;
+
+  const okBtn = document.createElement('button');
+  okBtn.textContent = '✓';
+  okBtn.style.cssText = `
+    width:13px; height:13px; border-radius:50%; border:none;
+    background:#3b7960; color:#fff; font-size:8px; font-weight:700;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    padding:0; line-height:1; flex-shrink:0;
+  `;
+  okBtn.onclick = e => {
+    e.stopPropagation();
+    c.t = newT; c.b = newB;
+    saveGroups(); selectedChip = null; renderGroups();
+    showToast('上書き保存しました ✓');
+  };
+
+  const ngBtn = document.createElement('button');
+  ngBtn.textContent = '✕';
+  ngBtn.style.cssText = `
+    width:13px; height:13px; border-radius:50%; border:none;
+    background:#d9363e; color:#fff; font-size:8px; font-weight:700;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    padding:0; line-height:1; flex-shrink:0;
+  `;
+  ngBtn.onclick = e => {
+    e.stopPropagation();
+    selectedChip = null; renderGroups();
+  };
+
+  overlay.append(okBtn, ngBtn);
+  chip.append(overlay);
+}
 function addGroup() { groups.push({ id: uid(), name: '新規', rows: [] }); saveGroups(); renderGroups(); }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
