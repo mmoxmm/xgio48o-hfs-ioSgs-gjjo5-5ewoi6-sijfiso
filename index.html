@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Color Preview — 文字色 × 背景色チェッカー</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -108,30 +108,70 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .emoji-row{display:flex;align-items:flex-start;gap:8px;flex-wrap:nowrap}
 .emoji-key{font-size:15px;flex-shrink:0;width:auto;min-width:28px;text-align:center;padding:2px 4px;border-radius:4px;border:1px solid transparent;transition:all .15s;line-height:32px}
 
-/*
-  スウォッチ群：固定幅なし → 枠に合わせて自動折り返し
-  チップサイズは 32px 固定、gap:4px で自然に流れる
-*/
 .emoji-swatches{
   display:flex;
   gap:4px;
   flex-wrap:wrap;
   align-items:flex-start;
-  /* max-width を外して枠いっぱいに広がるようにする */
   flex:1;
   min-width:0;
 }
 
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   チップフォント: IBM Plex Sans に変更
+   視認性重視・gが欠けない高さを確保
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .swatch-chip{position:relative;width:32px;height:32px;border-radius:6px;border:1.5px solid rgba(0,0,0,.08);cursor:pointer;flex-shrink:0;transition:all .15s;overflow:visible}
 .swatch-chip:hover{transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .swatch-chip.active-chip{border-color:var(--text);box-shadow:0 0 0 2px var(--text)}
-.swatch-chip-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-weight:700;user-select:none;border-radius:4px;overflow:hidden;text-align:center}
+/* 通常モード「選択中」ハイライト */
+.swatch-chip.selected-chip{
+  border-color:var(--accent) !important;
+  box-shadow:0 0 0 2.5px var(--accent) !important;
+  transform:scale(1.1);
+}
+.swatch-chip-inner{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Sans', sans-serif;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  user-select:none;
+  border-radius:4px;
+  overflow:hidden;
+  text-align:center;
+  /* デスセンダー（g,p,y等）が切れないよう行高を確保 */
+  line-height:1.2;
+  padding:2px 1px 3px;
+}
 .swatch-chip-tooltip{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,.75);color:#fff;font-family:'DM Mono',monospace;font-size:9px;padding:3px 6px;border-radius:4px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10}
 .swatch-chip:hover .swatch-chip-tooltip{opacity:1}
 .swatch-chip.locked{border:2px solid #555 !important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);}
 
 /* スワップ選択ハイライト */
 .swatch-chip.selected-for-swap{border:2px solid var(--accent)!important;box-shadow:0 0 0 3px rgba(59,121,96,0.35)!important;transform:scale(1.1);}
+
+/* 通常モード：選択中チップのハイライト */
+.swatch-chip.selected-chip{
+  border:2px solid var(--text)!important;
+  box-shadow:0 0 0 3px rgba(26,26,46,0.22)!important;
+  transform:scale(1.1);
+}
+/* 選択中チップに「2回タップで保存」を示すパルスリング */
+.swatch-chip.selected-chip::after{
+  content:'';
+  position:absolute;
+  inset:-4px;
+  border-radius:9px;
+  border:2px solid var(--text);
+  opacity:0;
+  animation:chip-pulse 1.8s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes chip-pulse{
+  0%{opacity:.5;transform:scale(1);}
+  60%{opacity:0;transform:scale(1.35);}
+  100%{opacity:0;transform:scale(1.
 
 /* 編集ボタン（チップ右下）*/
 .chip-edit-btn{display:none;position:absolute;bottom:0;right:0;width:13px;height:13px;background:rgba(0,0,0,0.6);color:#fff;border:none;border-radius:3px 0 4px 0;font-size:8px;cursor:pointer;align-items:center;justify-content:center;z-index:4;padding:0;line-height:1;transition:background .12s}
@@ -150,7 +190,7 @@ body.mode-lock .swatch-chip.selected-for-lock{border-color:#d9363e;box-shadow:0 
 body.mode-edit .emoji-key{border:1.5px dashed var(--muted);cursor:pointer}
 body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surface2)}
 
-.emoji-add-btn{width:28px;height:28px;border-radius:6px;border:1.5px dashed var(--border);background:none;color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;flex-shrink:0}
+.emoji-add-btn{width:28px;height:28px;border-radius:6px;border:1.5px dashed var(--border);background:none;color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12px;flex-shrink:0}
 .emoji-add-btn:hover{border-color:#aaa;color:var(--text);background:var(--surface2)}
 .group-add-row{padding:6px 12px;border-top:1px solid var(--border)}
 .group-add-preset{display:flex;align-items:center;gap:5px;font-size:11px;font-family:'Syne',sans-serif;font-weight:600;color:var(--muted);cursor:pointer;background:none;border:none;width:100%;transition:color .15s;padding:0}
@@ -311,7 +351,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     <div class="groups-list" id="groupsList"></div>
   </div>
 
-  <!-- 同期設定：設定済みなら非表示、バッジクリックかエラーで再表示 -->
   <div class="sync-setup" id="syncSetup">
     <div class="sync-setup-title">🔗 プリセット同期設定（GitHub Gist使用）</div>
     <div class="sync-row">
@@ -363,7 +402,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       <input type="text" class="emoji-new-input" id="emojiNewInput" placeholder="文字や絵文字を入力" maxlength="10">
     </div>
     <div class="modal-field">
-      <div class="modal-label">チップの表示文字（空欄でデフォルト）</div>
+      <div class="modal-label">チップの表示文字（任意・空欄で「Aa」）</div>
       <input type="text" class="modal-input" id="addLabel" maxlength="10" placeholder="例: ccf / img / 本番">
     </div>
     <div class="modal-btns">
@@ -396,7 +435,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   <div class="modal">
     <h3>カラーを編集</h3>
     <div class="modal-field">
-      <label class="modal-label">チップの表示文字（空欄でデフォルト）</label>
+      <label class="modal-label">チップの表示文字（任意・空欄で「Aa」）</label>
       <input type="text" class="modal-input" id="editLabel" maxlength="10" placeholder="例: ccf / img / 本番">
     </div>
     <div style="display:flex; gap:10px; margin-bottom:16px;">
@@ -447,7 +486,6 @@ let groups = (() => {
     else g = ensureIds(DEFAULT_GROUPS);
   } catch (e) { g = ensureIds(DEFAULT_GROUPS); }
 
-  // 指定カラーを自動差し込み（なければ追加）
   const injects = [
     { key: '🐹', b: '#f9c89b' }, { key: '🥽', b: '#efea5a' }, { key: '🐸', b: '#eef1d0' }, { key: '🩰', b: '#ffe4e1' },
     { key: '🐱', b: '#ffdab9' }, { key: '🐰', b: '#fff799' }, { key: '🎀', b: '#fff0f5' }
@@ -463,11 +501,7 @@ let groups = (() => {
   return g;
 })();
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// マイグレーション：🌃グループの行順を一度だけ強制更新
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function applyMigrations() {
-  // v1: 🌃グループの行順を強制更新
   const KEY_V1 = 'cp_migrated_row_order_v1';
   if (!localStorage.getItem(KEY_V1)) {
     const nightGroup = groups.find(g => g.name === '🌃');
@@ -483,7 +517,6 @@ function applyMigrations() {
     localStorage.setItem(KEY_V1, '1');
   }
 
-  // v2: 🌆グループから 🌆 行キーを除去
   const KEY_V2 = 'cp_migrated_remove_city_key_v2';
   if (!localStorage.getItem(KEY_V2)) {
     const cityGroup = groups.find(g => g.name === '🌆');
@@ -518,11 +551,14 @@ function ensureIds(gs) {
 let appMode = 'normal';
 let selectedForLock = [];
 let swapSelected = null;
+// 通常モードでの「選択中チップ」{gi, ri, ci} または null
+let selectedChip = null;
 
 function toggleLockMode() {
   if (appMode !== 'lock') {
     if (appMode === 'edit') { swapSelected = null; toggleEditMode(); }
     appMode = 'lock';
+    selectedChip = null;
     selectedForLock = [];
     document.getElementById('lockModeBtn').classList.add('active-lock');
     document.getElementById('lockModeIcon').textContent = '🔒';
@@ -546,12 +582,14 @@ function toggleEditMode() {
   if (appMode !== 'edit') {
     if (appMode === 'lock') toggleLockMode();
     appMode = 'edit';
+    selectedChip = null;
     document.getElementById('editModeBtn').classList.add('active');
     document.body.classList.add('mode-edit');
     showToast('▲▼で行並び替え／スウォッチタップで色を入れ替え／✏️で色を編集');
   } else {
     appMode = 'normal';
     swapSelected = null;
+    selectedChip = null;
     document.getElementById('editModeBtn').classList.remove('active');
     document.body.classList.remove('mode-edit');
     renderGroups();
@@ -559,10 +597,10 @@ function toggleEditMode() {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// チップラベル：個別設定のみ。未設定は空
+// チップラベル：個別設定 or デフォルト「Aa」
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function getChipLabel(c) {
-  return (c.label && c.label.trim()) ? c.label.trim() : '';
+  return (c.label && c.label.trim()) ? c.label.trim() : 'Aa';
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -594,24 +632,19 @@ function moveRow(gi, ri, dir) {
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // チップのフォントサイズを文字列長で決定
-// 32pxチップ内に全角4文字が快適に収まるよう調整
+// IBM Plex Sans 使用で視認性向上、descenderが切れない
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function applyChipLabelStyle(inner, label) {
   if (!label) return;
-  // 全角・絵文字は2単位、半角は1単位で視覚幅を計算
   const visualLen = [...label].reduce((n, ch) => n + (ch.codePointAt(0) > 0x7F ? 2 : 1), 0);
   if (visualLen <= 2) {
-    // 半角2文字 or 全角1文字 → 大きめ
-    inner.style.fontSize = '12px';
+    inner.style.fontSize = '11px';
   } else if (visualLen <= 4) {
-    // 半角4文字 or 全角2文字 → 標準（メインターゲット）
-    inner.style.fontSize = '9px';
+    inner.style.fontSize = '8.5px';
   } else if (visualLen <= 6) {
-    // 半角6文字 or 全角3文字
-    inner.style.cssText += ';font-size:7.5px;line-height:1.2;word-break:break-all;white-space:normal;padding:2px;';
+    inner.style.cssText += ';font-size:7px;line-height:1.2;word-break:break-all;white-space:normal;padding:2px 1px 3px;';
   } else {
-    // それ以上は最小
-    inner.style.cssText += ';font-size:6px;line-height:1.1;word-break:break-all;white-space:normal;padding:2px;';
+    inner.style.cssText += ';font-size:6px;line-height:1.1;word-break:break-all;white-space:normal;padding:2px 1px 3px;';
   }
 }
 
@@ -623,7 +656,6 @@ function renderGroups() {
   groups.forEach((g, gi) => {
     const block = document.createElement('div'); block.className = 'group-block';
 
-    // ─ ヘッダー ─
     const hdr = document.createElement('div'); hdr.className = 'group-header';
     hdr.innerHTML = `<span class="group-drag-handle">⠿</span><input type="text" class="group-name-input" value="${g.name}">`;
     hdr.querySelector('input').oninput = e => { g.name = e.target.value; saveGroups(); };
@@ -632,12 +664,10 @@ function renderGroups() {
     }));
     block.append(hdr);
 
-    // ─ 行リスト ─
     const rowsEl = document.createElement('div'); rowsEl.className = 'emoji-rows';
     g.rows.forEach((row, ri) => {
       const rowEl = document.createElement('div'); rowEl.className = 'emoji-row';
 
-      // ▲▼ 並び替えボタン（編集モード時のみ表示）
       const reorderBtns = document.createElement('div'); reorderBtns.className = 'row-reorder-btns';
       const upBtn = document.createElement('button'); upBtn.className = 'row-reorder-btn'; upBtn.textContent = '▲';
       upBtn.title = '上へ'; upBtn.disabled = ri === 0;
@@ -648,12 +678,10 @@ function renderGroups() {
       reorderBtns.append(upBtn, dnBtn);
       rowEl.append(reorderBtns);
 
-      // 絵文字キー（編集モードでタップ → 行編集モーダル）
       const keySpan = document.createElement('span'); keySpan.className = 'emoji-key'; keySpan.textContent = row.key;
       keySpan.onclick = () => { if (appMode === 'edit') openEditRowModal(gi, ri); };
       rowEl.append(keySpan);
 
-      // スウォッチ群（flex-wrap で枠に合わせて自然に折り返す）
       const swatchesEl = document.createElement('div'); swatchesEl.className = 'emoji-swatches';
       row.colors.forEach((c, ci) => {
         const chip = document.createElement('div'); chip.className = 'swatch-chip';
@@ -683,6 +711,7 @@ function renderGroups() {
             chip.classList.toggle('selected-for-lock');
             const idx = selectedForLock.findIndex(x => x.c === c);
             if (idx > -1) selectedForLock.splice(idx, 1); else selectedForLock.push({ r: row, c });
+
           } else if (appMode === 'edit') {
             if (swapSelected === null) {
               swapSelected = { gi, ri, ci };
@@ -696,21 +725,58 @@ function renderGroups() {
               swapSelected = null;
               showToast('色の位置を入れ替えました ↔');
             }
+
           } else {
-            applyHex('t', c.t); applyHex('b', c.b);
-            showToast(c.b.toUpperCase() + ' を反映'); copyText(c.b.toUpperCase());
+            // ── 通常モード ──
+            const isSame = selectedChip &&
+              selectedChip.gi === gi && selectedChip.ri === ri && selectedChip.ci === ci;
+
+            if (isSame) {
+              // 2回目タップ → 上書き確認
+              if (c.locked) {
+                showToast('🔒 ロック中のため上書きできません');
+                return;
+              }
+              const newT = document.getElementById('tHex').value;
+              const newB = document.getElementById('bHex').value;
+              const ok = confirm(
+                `このチップを現在の色で上書きしますか？\n\n` +
+                `文字色: ${c.t} → ${newT}\n` +
+                `背景色: ${c.b} → ${newB}`
+              );
+              if (ok) {
+                c.t = newT; c.b = newB;
+                saveGroups();
+                selectedChip = null;
+                renderGroups();
+                showToast('上書き保存しました ✓');
+              }
+              // ×なら何もしない（選択維持）
+            } else {
+              // 1回目タップ（or 別チップ）→ 反映＋ハイライト＋背景色コピー
+              selectedChip = { gi, ri, ci };
+              applyHex('t', c.t); applyHex('b', c.b);
+              copyText(c.b.toUpperCase());
+              showToast(c.b.toUpperCase() + ' を反映');
+              renderGroups();
+            }
           }
         };
 
         chip.append(inner, tt, editBtn);
         if (c.locked) chip.classList.add('locked');
+        // 通常モード「選択中」ハイライト
+        if (appMode === 'normal' && selectedChip &&
+            selectedChip.gi === gi && selectedChip.ri === ri && selectedChip.ci === ci) {
+          chip.classList.add('selected-chip');
+        }
         swatchesEl.append(chip);
       });
 
-      // ＋ 追加ボタン
       const addRowBtn = document.createElement('button'); addRowBtn.className = 'emoji-add-btn'; addRowBtn.textContent = '+';
       addRowBtn.onclick = () => {
         const t = document.getElementById('tHex').value, b = document.getElementById('bHex').value;
+        selectedChip = null;
         row.colors.push({ id: uid(), t, b, locked: false, label: '' }); saveGroups(); renderGroups();
       };
       swatchesEl.append(addRowBtn);
@@ -718,7 +784,6 @@ function renderGroups() {
     });
     block.append(rowsEl);
 
-    // グループ下部の登録ボタン
     const addRow = document.createElement('div'); addRow.className = 'group-add-row';
     const addBtn = document.createElement('button'); addBtn.className = 'group-add-preset'; addBtn.innerHTML = '＋ 現在の色を登録…';
     addBtn.onclick = () => openAddModal(gi); addRow.append(addBtn); block.append(addRow);
@@ -731,34 +796,64 @@ function addGroup() { groups.push({ id: uid(), name: '新規', rows: [] }); save
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 色を登録モーダル
+// 開くたびに絵文字選択・ラベル欄をリセット
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let modalTargetGi = 0, selectedEmojiKey = null;
+
 function openAddModal(gi) {
   modalTargetGi = gi ?? 0;
+
+  // ── プレビュー更新 ──
   document.getElementById('modalDotT').style.background = document.getElementById('tHex').value;
   document.getElementById('modalDotB').style.background = document.getElementById('bHex').value;
   document.getElementById('modalInfo').innerHTML = `${document.getElementById('tHex').value}&nbsp;&nbsp;/&nbsp;&nbsp;${document.getElementById('bHex').value}`;
-  const sel = document.getElementById('modalGroup'); sel.innerHTML = groups.map((g, i) => `<option value="${i}">${g.name}</option>`).join('');
-  sel.value = modalTargetGi; refreshEmojiKeySelect();
+
+  // ── グループ選択リセット ──
+  const sel = document.getElementById('modalGroup');
+  sel.innerHTML = groups.map((g, i) => `<option value="${i}">${g.name}</option>`).join('');
+  sel.value = modalTargetGi;
+
+  // ── 絵文字キー選択をリセット ──
+  selectedEmojiKey = null;
+  refreshEmojiKeySelect();
+
+  // ── ラベル欄をリセット ──
+  document.getElementById('addLabel').value = '';
+
   document.getElementById('addModal').style.display = 'flex';
 }
+
 function onModalGroupChange() { modalTargetGi = +document.getElementById('modalGroup').value; refreshEmojiKeySelect(); }
+
 function refreshEmojiKeySelect() {
   const container = document.getElementById('emojiKeySelect'); container.innerHTML = '';
+  // 新規キー入力欄も非表示にリセット
   document.getElementById('emojiNewInput').classList.remove('visible');
+  document.getElementById('emojiNewInput').value = '';
+
   groups[modalTargetGi].rows.forEach(r => {
     const b = document.createElement('button'); b.className = 'emoji-key-btn'; b.textContent = r.key;
-    b.onclick = () => { selectedEmojiKey = r.key; document.getElementById('emojiNewInput').classList.remove('visible'); container.querySelectorAll('.emoji-key-btn').forEach(btn => btn.classList.remove('selected')); b.classList.add('selected'); };
+    b.onclick = () => {
+      selectedEmojiKey = r.key;
+      document.getElementById('emojiNewInput').classList.remove('visible');
+      container.querySelectorAll('.emoji-key-btn').forEach(btn => btn.classList.remove('selected'));
+      b.classList.add('selected');
+    };
     container.append(b);
   });
 }
+
 function activateNewEmoji() {
   selectedEmojiKey = '__new__';
   document.querySelectorAll('.emoji-key-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('emojiNewInput').classList.add('visible');
   document.getElementById('emojiNewInput').focus();
 }
-function closeModal() { document.getElementById('addModal').style.display = 'none'; }
+
+function closeModal() {
+  document.getElementById('addModal').style.display = 'none';
+}
+
 function confirmAdd() {
   const t = document.getElementById('tHex').value, b = document.getElementById('bHex').value;
   const label = document.getElementById('addLabel').value.trim();
@@ -791,11 +886,12 @@ function deleteEditRow() {
 function closeEditRowModal() { document.getElementById('editRowModal').style.display = 'none'; }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 色編集モーダル
+// 色編集モーダル（ラベルは引き継ぎ）
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function openEditSwatchModal(gi, ri, ci) {
   editGi = gi; editRi = ri; editCi = ci;
   const c = groups[gi].rows[ri].colors[ci];
+  // ラベルは既存値を引き継ぐ（履歴引き継ぎ）
   document.getElementById('editLabel').value = c.label || '';
   document.getElementById('editT').value = c.t; document.getElementById('editTPicker').value = c.t;
   document.getElementById('editB').value = c.b; document.getElementById('editBPicker').value = c.b;
@@ -830,7 +926,6 @@ let syncConfig = { token: '', gistId: '' }; let pollTimer = null, lastEtag = '';
 function setSyncBadge(state, label) {
   document.getElementById('syncBadge').className = 'sync-badge ' + (state || '');
   document.getElementById('syncLabel').textContent = label;
-  // エラー時は同期設定パネルを自動表示
   if (state === 'error') document.getElementById('syncSetup').style.display = 'block';
 }
 
@@ -981,7 +1076,6 @@ document.getElementById('tName').oninput=render; document.getElementById('bName'
     startPolling(); updateSyncShareUrl();
     document.getElementById('gistTokenInput').value = syncConfig.token;
     document.getElementById('gistIdInput').value = syncConfig.gistId;
-    // 設定済みなら同期設定パネルを非表示
     document.getElementById('syncSetup').style.display = 'none';
   }
   syncUI('t'); syncUI('b'); render(); renderGroups();
