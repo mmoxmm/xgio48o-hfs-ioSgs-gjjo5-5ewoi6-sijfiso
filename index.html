@@ -119,37 +119,38 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    スウォッチチップ
-   ・overflow:visible にして編集ボタンがはみ出せるようにする
-   ・innerはoverflow:hiddenのままで色表示を整える
-   ・編集ボタンはchipの外側(z-index高め)に絶対配置
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .swatch-chip{
   position:relative;
   width:32px;
   height:32px;
-  border-radius:6px;
+  border-radius:50%;
   border:1.5px solid rgba(0,0,0,.08);
   cursor:pointer;
   flex-shrink:0;
-  transition:all .15s;
-  overflow:visible; /* ← えんぴつボタンをはみ出させる */
+  transition:border-radius .2s ease, transform .15s, box-shadow .15s;
+  overflow:visible;
 }
 .swatch-chip:hover{transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .swatch-chip.active-chip{border-color:var(--text);box-shadow:0 0 0 2px var(--text)}
 
-/* 通常モード「選択中」ハイライト */
+/* ── 選択中チップ（上書き待機）: 白枠＋黒リング ── */
 .swatch-chip.selected-chip{
-  border-color:var(--accent) !important;
-  box-shadow:0 0 0 2.5px var(--accent) !important;
+  border-color:#ffffff !important;
+  /* 白ボーダー → 外側白ハロー: 2重リング */
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 4.5px rgba(255,255,255,0.45) !important;
   transform:scale(1.1);
 }
+
 /* 選択中チップのパルスリング */
 .swatch-chip.selected-chip::after{
   content:'';
   position:absolute;
-  inset:-4px;
-  border-radius:9px;
-  border:2px solid var(--text);
+  inset:-5px;
+  border-radius:10px;
+  border:2px solid #1a1a2e;
   opacity:0;
   animation:chip-pulse 1.8s ease-in-out infinite;
   pointer-events:none;
@@ -170,8 +171,8 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
   font-weight:600;
   letter-spacing:-0.01em;
   user-select:none;
-  border-radius:4px;
-  overflow:hidden; /* ← innerはhiddenで色をクリッピング */
+  border-radius:50%;
+  overflow:hidden;
   text-align:center;
   line-height:1.2;
   padding:2px 1px 3px;
@@ -194,55 +195,64 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
   z-index:10;
 }
 .swatch-chip:hover .swatch-chip-tooltip{opacity:1}
-.swatch-chip.locked{border:2px solid #555 !important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35);}
 
-/* スワップ選択ハイライト */
+/* ── ロック済みチップ: 四角→円に変化で枠なし表現 ── */
+/* ── ロック済みチップ: 丸形＋鍵オーバーレイ、枠・shadowなし ── */
+.swatch-chip.locked{
+  border-radius:5px !important;
+}
+.swatch-chip.locked .swatch-chip-inner{
+  border-radius:3px;
+}
+
+/* スワップ選択ハイライト：上書き選択と同じ白2重リング */
 .swatch-chip.selected-for-swap{
-  border:2px solid var(--accent)!important;
-  box-shadow:0 0 0 3px rgba(59,121,96,0.35)!important;
+  border-color:#ffffff !important;
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 4.5px rgba(255,255,255,0.45) !important;
   transform:scale(1.1);
 }
 
-/* 編集ボタン（チップ右下）
-   ・chip の overflow:visible のおかげで表示される
-   ・innerの上に重ねるためz-index:5
-   ・chipの右下角に配置し、チップのborder-radiusに合わせる */
+/* 編集ボタン（チップ右下） */
 .chip-edit-btn{
   display:none;
   position:absolute;
-  bottom:-1px;
-  right:-1px;
-  width:14px;
-  height:14px;
-  background:rgba(0,0,0,0.65);
-  color:#fff;
+  bottom:-5px;
+  right:-5px;
+  width:16px;
+  height:16px;
+  background:#ffffff;
+  color:#555;
   border:none;
-  border-radius:0 0 5px 0; /* チップの右下角に合わせる */
-  font-size:8px;
+  border-radius:50%;
+  font-size:9px;
   cursor:pointer;
   align-items:center;
   justify-content:center;
   z-index:5;
   padding:0;
   line-height:1;
-  transition:background .12s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.25);
+  transition:box-shadow .12s, transform .12s;
 }
-.chip-edit-btn:hover{background:rgba(0,0,0,0.9)}
+.chip-edit-btn:hover{box-shadow:0 2px 6px rgba(0,0,0,0.35);transform:scale(1.15)}
 body.mode-edit .chip-edit-btn{display:flex}
 
 /* 行並び替えボタン */
 .row-reorder-btns{display:none;flex-direction:column;gap:1px;flex-shrink:0;margin-top:8px}
-.row-reorder-btn{background:none;border:1px solid var(--border);border-radius:3px;color:var(--muted);font-size:8px;width:16px;height:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all .12s;line-height:1}
+.row-reorder-btn{background:none;border:1px solid var(--border);border-radius:3px;color:var(--muted);font-size:8px;width:16px;height:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all .12px;line-height:1}
 .row-reorder-btn:hover{background:var(--surface2);color:var(--text)}
 .row-reorder-btn:disabled{opacity:.25;cursor:default}
 body.mode-edit .row-reorder-btns{display:flex}
 
 /* 編集モード・ロックモード */
-body.mode-lock .swatch-chip.selected-for-lock{border-color:#d9363e;box-shadow:0 0 0 3px rgba(217,54,62,0.3);transform:scale(1.05)}
+body.mode-lock .swatch-chip.selected-for-lock-on{border-color:#d9363e;box-shadow:0 0 0 3px rgba(217,54,62,0.3);transform:scale(1.05)}
+body.mode-lock .swatch-chip.selected-for-lock-off{border-color:#3b7960;box-shadow:0 0 0 3px rgba(59,121,96,0.3);transform:scale(1.05)}
 body.mode-edit .emoji-key{border:1.5px dashed var(--muted);cursor:pointer}
 body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surface2)}
 
-/* 追加ボタン：chipと高さを揃え、見た目を整える */
+/* 追加ボタン */
 .emoji-add-btn{
   width:32px;
   height:32px;
@@ -751,20 +761,35 @@ function renderGroups() {
         applyChipLabelStyle(inner, label);
 
         const tt = document.createElement('div'); tt.className = 'swatch-chip-tooltip'; tt.textContent = `${c.t} / ${c.b}`;
+        chip.addEventListener('mouseenter', () => {
+          if (appMode === 'lock') {
+            tt.textContent = c.locked ? '解除' : 'ロック';
+          } else {
+            tt.textContent = `${c.t} / ${c.b}`;
+          }
+        });
 
         const editBtn = document.createElement('button'); editBtn.className = 'chip-edit-btn';
-        editBtn.textContent = '✏'; editBtn.title = '色を編集';
+        editBtn.textContent = '✒️'; editBtn.title = '色を編集';
         editBtn.onclick = e => {
           e.stopPropagation();
           swapSelected = null;
           openEditSwatchModal(gi, ri, ci);
         };
 
-        chip.onclick = () => {
+        chip.onclick = e => {
+          e.stopPropagation();
           if (appMode === 'lock') {
-            chip.classList.toggle('selected-for-lock');
+            const isLocked = c.locked;
+            const lockClass = isLocked ? 'selected-for-lock-off' : 'selected-for-lock-on';
             const idx = selectedForLock.findIndex(x => x.c === c);
-            if (idx > -1) selectedForLock.splice(idx, 1); else selectedForLock.push({ r: row, c });
+            if (idx > -1) {
+              selectedForLock.splice(idx, 1);
+              chip.classList.remove('selected-for-lock-on', 'selected-for-lock-off');
+            } else {
+              selectedForLock.push({ r: row, c });
+              chip.classList.add(lockClass);
+            }
 
           } else if (appMode === 'edit') {
             if (swapSelected === null) {
@@ -1098,6 +1123,14 @@ document.getElementById('bPicker').oninput=e=>applyHex('b',e.target.value);
 document.getElementById('tHex').oninput=e=>applyHex('t',e.target.value);
 document.getElementById('bHex').oninput=e=>applyHex('b',e.target.value);
 document.getElementById('tName').oninput=render; document.getElementById('bName').oninput=render;
+
+// チップ以外タップで選択解除
+document.addEventListener('click', () => {
+  if (appMode === 'normal' && selectedChip) {
+    selectedChip = null;
+    renderGroups();
+  }
+});
 
 (function init() {
   const params = new URLSearchParams(location.search);
