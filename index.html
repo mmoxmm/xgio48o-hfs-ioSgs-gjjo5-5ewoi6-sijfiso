@@ -105,7 +105,6 @@ input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .group-drag-handle:active{cursor:grabbing}
 body.mode-edit .group-drag-handle{display:block}
 
-/* グループ名：クリックで編集できるようにスタイル調整 */
 .group-name-display{
   font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);
   text-align:center;cursor:text;padding:2px 6px;border-radius:4px;
@@ -136,7 +135,6 @@ body.mode-edit .row-drag-handle{display:flex}
 .emoji-row.row-drag-over{background:var(--accent-light);outline:1px dashed var(--accent);outline-offset:1px}
 .emoji-row.row-dragging *{pointer-events:none}
 
-/* キー絵文字：ダブルタップで編集、編集モードでは常にクリック可 */
 .emoji-key{
   font-size:15px;flex-shrink:0;width:auto;min-width:28px;text-align:center;
   padding:2px 4px;border-radius:4px;border:1px solid transparent;
@@ -144,7 +142,6 @@ body.mode-edit .row-drag-handle{display:flex}
 }
 body.mode-edit .emoji-key{border:1.5px dashed var(--muted);cursor:pointer}
 body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surface2)}
-/* 通常モードでもダブルタップ可能感を出す */
 .emoji-key.key-dblclick-hint{border-color:var(--border) !important;background:var(--surface2) !important}
 
 .emoji-swatches{display:flex;gap:4px;flex-wrap:wrap;align-items:flex-start;flex:1;min-width:0}
@@ -160,7 +157,6 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;
   font-family:'IBM Plex Sans',sans-serif;font-weight:600;letter-spacing:-0.01em;
   user-select:none;border-radius:50%;overflow:hidden;text-align:center;
-  /* ★ 修正: 日本語などの折り返し対応 */
   line-height:1.15;padding:2px 2px;word-break:break-all;white-space:normal;
 }
 .swatch-chip-tooltip{
@@ -168,7 +164,6 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
   background:rgba(20,20,30,.82);color:#fff;font-family:'IBM Plex Sans',sans-serif;
   font-size:10px;font-weight:500;padding:4px 8px;border-radius:6px;white-space:nowrap;
   pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;
-  /* ★ 修正: ポップアップは折り返しなし・崩れない */
   max-width:120px;overflow:hidden;text-overflow:ellipsis;
   letter-spacing:0;line-height:1.4;
 }
@@ -184,7 +179,23 @@ body.mode-edit .swatch-chip.selected-for-swap{
   transform:scale(1.1);
 }
 
-/* ✒️ chip-edit-btn は完全削除 */
+/* copyTarget=t のチップに小さいマーカーを表示 */
+.swatch-chip.copy-text-mode::after{
+  content:'T';
+  position:absolute;
+  bottom:-2px;right:-2px;
+  width:10px;height:10px;
+  background:var(--text);
+  color:#fff;
+  font-family:'DM Mono',monospace;
+  font-size:6px;font-weight:700;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  line-height:10px;
+  text-align:center;
+  pointer-events:none;
+  border:1px solid var(--bg);
+}
 
 .emoji-add-btn{
   width:28px;height:28px;border-radius:50%;border:1.5px dashed var(--border);
@@ -264,9 +275,7 @@ body.mode-edit .swatch-chip.selected-for-swap{
 .modal-btn.secondary{background:none;color:var(--muted)}
 .modal-btn.secondary:hover{color:var(--text)}
 
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   長押し色編集モーダル
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* 長押し色編集モーダル */
 #longPressEditModal .modal{width:360px}
 
 .lp-preview-chip{
@@ -275,7 +284,6 @@ body.mode-edit .swatch-chip.selected-for-swap{
   font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;
   box-shadow:0 2px 12px rgba(0,0,0,.22);flex-shrink:0;
   transition:background .15s,color .15s;
-  /* チップ内文字の折り返し */
   text-align:center;line-height:1.2;word-break:break-all;white-space:normal;padding:4px;
 }
 
@@ -303,7 +311,6 @@ body.mode-edit .swatch-chip.selected-for-swap{
 }
 .lp-apply-preview:hover{opacity:.85}
 
-/* ラベル入力欄（長押しモーダル内） */
 .lp-label-row{margin-bottom:12px}
 .lp-label-input{
   width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
@@ -312,6 +319,18 @@ body.mode-edit .swatch-chip.selected-for-swap{
 }
 .lp-label-input:focus{border-color:var(--accent)}
 .lp-label-input::placeholder{color:var(--muted);font-family:'Syne',sans-serif;font-size:12px}
+
+/* コピー対象トグル */
+.lp-copy-target-toggle{
+  display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-top:4px;
+}
+.lp-copy-target-btn{
+  flex:1;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;
+  padding:7px 10px;border:none;cursor:pointer;transition:all .15s;
+  background:var(--surface);color:var(--muted);
+}
+.lp-copy-target-btn+.lp-copy-target-btn{border-left:1px solid var(--border);}
+.lp-copy-target-btn.active{background:var(--text);color:#fff;}
 
 #overwriteModal .modal{width:300px;text-align:center}
 .overwrite-compare{
@@ -466,11 +485,9 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         <button class="icon-btn" id="lockModeBtn" onclick="toggleLockMode()">
           <span id="lockModeIcon">🔓</span> <span id="lockModeText">ロック選択</span>
         </button>
-        <!-- ★ 「編集」→「位置を並び替え」 -->
         <button class="icon-btn" id="editModeBtn" onclick="toggleEditMode()">
           <span>↕️</span> <span>位置を並び替え</span>
         </button>
-
         <button class="icon-btn" onclick="openAddGroupModal()">＋ グループ</button>
       </div>
     </div>
@@ -497,7 +514,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     </div>
   </div>
 
-  <footer>チップをタップ → プレビュー反映 ／ 長押し（0.3秒）で色・文字を編集 ／ グループ名タップで編集 ／ キー絵文字ダブルタップで編集</footer>
+  <footer>チップをタップ → プレビュー反映 ／ 長押し（0.3秒）で色・文字・コピー対象を編集 ／ グループ名タップで編集 ／ キー絵文字ダブルタップで編集</footer>
 </div>
 
 <div class="copy-toast" id="copyToast"></div>
@@ -506,7 +523,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 <div class="modal-overlay" id="addModal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <h3>新規登録</h3>
-    <!-- チッププレビュー -->
     <div class="modal-preview" style="gap:14px;">
       <div id="modalChipPreview" style="
         width:56px;height:56px;border-radius:50%;flex-shrink:0;
@@ -524,7 +540,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         <div class="modal-preview-info" id="modalInfo" style="font-size:10px;"></div>
       </div>
     </div>
-    <!-- グループ選択 + 新規キー追加（高さ揃え） -->
     <div class="modal-field" style="display:flex;gap:8px;align-items:stretch;">
       <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
         <div class="modal-label" style="text-align:center;">グループ</div>
@@ -569,16 +584,11 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- ★ 色編集モーダル（編集モードの✒️ボタン）は削除済み -->
-
-<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     長押し色編集モーダル（チップの文字編集も追加）
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<!-- 長押し色編集モーダル -->
 <div class="modal-overlay" id="longPressEditModal" style="display:none" onclick="if(event.target===this)closeLpModal()">
   <div class="modal" style="width:360px;">
     <h3>🎨 色・文字を編集</h3>
 
-    <!-- 変更前 → 変更後 チップ比較 -->
     <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:14px;background:#d0d0d8;border-radius:10px;padding:12px 16px;">
       <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
         <span style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.75);">変更前</span>
@@ -591,7 +601,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       </div>
     </div>
 
-    <!-- ★ チップの表示文字 -->
+    <!-- チップの表示文字 -->
     <div class="lp-label-row">
       <div class="modal-label">チップの表示文字（空欄で「Aa」）</div>
       <input type="text" class="lp-label-input" id="lpLabelInput" maxlength="10" placeholder="例: ccf / img / 本番 / 空欄→Aa">
@@ -619,6 +629,15 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       </div>
     </div>
 
+    <!-- ★ コピー対象トグル（新規追加） -->
+    <div class="lp-label-row" style="margin-bottom:10px;">
+      <div class="modal-label">タップ時にコピーする色</div>
+      <div class="lp-copy-target-toggle">
+        <button class="lp-copy-target-btn" id="lpCopyTargetB" onclick="setLpCopyTarget('b')">背景色</button>
+        <button class="lp-copy-target-btn" id="lpCopyTargetT" onclick="setLpCopyTarget('t')">文字色</button>
+      </div>
+    </div>
+
     <!-- メインプレビューに反映 -->
     <button class="lp-apply-preview" id="lpApplyPreviewBtn" onclick="lpApplyToMain()">
       ↗ メインプレビューに反映
@@ -634,7 +653,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- 上書き確認モーダル（互換残し） -->
+<!-- 上書き確認モーダル -->
 <div class="modal-overlay" id="overwriteModal" style="display:none" onclick="if(event.target===this)closeOverwriteModal()">
   <div class="modal">
     <h3>色を上書きしますか？</h3>
@@ -715,7 +734,7 @@ let groups = (() => {
     group.rows.forEach(row => {
       const target = injects.find(i => i.key === row.key);
       if (target && !row.colors.some(c => c.b.toLowerCase() === target.b.toLowerCase())) {
-        row.colors.push({ id: uid(), t: '#1a1a2e', b: target.b, locked: false, label: '' });
+        row.colors.push({ id: uid(), t: '#1a1a2e', b: target.b, locked: false, label: '', copyTarget: 'b' });
       }
     });
   });
@@ -753,8 +772,9 @@ function ensureIds(gs) {
     rows: (g.rows || []).map(r => ({
       key: r.key || '?',
       colors: (r.colors || []).map(c => {
-        if (typeof c === 'string') return { id: uid(), t: '#1a1a2e', b: c, locked: false, label: '' };
-        return { id: c.id || uid(), t: c.t || '#1a1a2e', b: c.b, locked: c.locked || false, label: c.label || '' };
+        if (typeof c === 'string') return { id: uid(), t: '#1a1a2e', b: c, locked: false, label: '', copyTarget: 'b' };
+        // ★ copyTarget を保持（既存データには 'b' をデフォルト）
+        return { id: c.id || uid(), t: c.t || '#1a1a2e', b: c.b, locked: c.locked || false, label: c.label || '', copyTarget: c.copyTarget || 'b' };
       })
     }))
   }));
@@ -823,20 +843,15 @@ function doSwapColors(a, b) {
   saveGroups(); renderGroups();
 }
 
-// ★ 修正: チップ内文字サイズを視覚的な幅で計算（日本語4文字バグ修正）
 function applyChipLabelStyle(inner, label) {
   if (!label) return;
-  // 絵文字・全角を2、半角を1でカウント
   const visualLen = [...label].reduce((n, ch) => {
     const cp = ch.codePointAt(0);
-    // 絵文字判定（基本的な範囲）
     if (cp >= 0x1F300 || (cp >= 0x2600 && cp <= 0x26FF) || (cp >= 0x2700 && cp <= 0x27BF)) return n + 2;
-    // 全角文字（CJK等）
     if (cp > 0x7F) return n + 2;
     return n + 1;
   }, 0);
 
-  // スタイルをリセット
   inner.style.cssText = '';
   inner.style.background = inner.dataset.bg || '';
   inner.style.color = inner.dataset.fg || '';
@@ -867,23 +882,37 @@ function applyChipLabelStyle(inner, label) {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 長押し色編集モーダル（チップ文字編集対応版）
+// ★ コピー対象トグル関数
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function setLpCopyTarget(target) {
+  const btnB = document.getElementById('lpCopyTargetB');
+  const btnT = document.getElementById('lpCopyTargetT');
+  if (!btnB || !btnT) return;
+  if (target === 'b') {
+    btnB.classList.add('active');
+    btnT.classList.remove('active');
+  } else {
+    btnT.classList.add('active');
+    btnB.classList.remove('active');
+  }
+  if (lpTarget) lpTarget.pendingCopyTarget = target;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 長押し色編集モーダル
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function openLpModal(c, gi, ri, ci) {
-  lpTarget = { c, gi, ri, ci };
+  lpTarget = { c, gi, ri, ci, pendingCopyTarget: c.copyTarget || 'b' };
   const label = getChipLabel(c);
 
-  // 変更前チップ（チップ自身の色）
   const before = document.getElementById('lpBeforeChip');
   before.style.background = c.b;
   before.style.color = c.t;
   before.textContent = label;
 
-  // ラベル入力に現在値をセット（Aaはデフォルトなので空欄に）
   const labelInput = document.getElementById('lpLabelInput');
   labelInput.value = (c.label && c.label.trim() && c.label.trim() !== 'Aa') ? c.label.trim() : '';
 
-  // メインプレビューの現在色を初期セット
   const mainB = document.getElementById('bHex').value;
   const mainT = document.getElementById('tHex').value;
 
@@ -901,6 +930,8 @@ function openLpModal(c, gi, ri, ci) {
   document.getElementById('lpTSwatchWrap').style.background = mainT;
 
   updateLpApplyBtn();
+  // ★ コピー対象トグルの初期状態を設定
+  setLpCopyTarget(c.copyTarget || 'b');
   document.getElementById('longPressEditModal').style.display = 'flex';
 }
 
@@ -909,13 +940,11 @@ function closeLpModal() {
   document.getElementById('longPressEditModal').style.display = 'none';
 }
 
-// ラベル変更でプレビューチップのテキストも更新
 document.getElementById('lpLabelInput').addEventListener('input', () => {
   const val = document.getElementById('lpLabelInput').value.trim();
   const displayLabel = val || 'Aa';
   const chip = document.getElementById('lpPreviewChip');
   chip.textContent = displayLabel;
-  // フォントサイズ調整
   const visualLen = [...displayLabel].reduce((n, ch) => {
     const cp = ch.codePointAt(0);
     if (cp >= 0x1F300 || (cp >= 0x2600 && cp <= 0x26FF)) return n + 2;
@@ -975,6 +1004,8 @@ function lpSave() {
   lpTarget.c.b = bVal;
   lpTarget.c.t = tVal;
   lpTarget.c.label = rawLabel === 'Aa' ? '' : rawLabel;
+  // ★ copyTarget を保存
+  lpTarget.c.copyTarget = lpTarget.pendingCopyTarget || 'b';
   saveGroups(); renderGroups();
   showToast('上書き保存しました ✓');
   closeLpModal();
@@ -1003,7 +1034,7 @@ document.getElementById('lpBHex').addEventListener('input', lpSyncPreview);
 document.getElementById('lpTHex').addEventListener('input', lpSyncPreview);
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 上書き確認モーダル（互換残し）
+// 上書き確認モーダル
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 function openOverwriteModal(c, gi, ri, ci, newT, newB) {
   pendingOverwrite = { c, gi, ri, ci, newT, newB };
@@ -1130,7 +1161,6 @@ function renderGroups() {
     dragHandle.addEventListener('mousedown', e => e.stopPropagation());
     hdr.append(dragHandle);
 
-    // ★ グループ名：contenteditable div でタップ編集
     const nameEl = document.createElement('div');
     nameEl.className = 'group-name-display';
     nameEl.contentEditable = 'true';
@@ -1226,7 +1256,6 @@ function renderGroups() {
         handle.style.height = rowH + 'px';
       });
 
-      // ★ キー絵文字：編集モードはクリック、通常モードはダブルクリック/ダブルタップで編集
       const keySpan = document.createElement('span');
       keySpan.className = 'emoji-key';
       keySpan.textContent = row.key;
@@ -1236,16 +1265,13 @@ function renderGroups() {
       let keyTapCount = 0;
 
       ;(function(cGi, cRi) {
-        // 編集モード：シングルクリック
         keySpan.addEventListener('click', e => {
           if (appMode === 'edit') {
             openEditRowModal(cGi, cRi);
             return;
           }
-          // 通常モード：ダブルクリック検出
           keyTapCount++;
           if (keyTapCount === 1) {
-            // ヒントを一瞬見せる
             keySpan.classList.add('key-dblclick-hint');
             keyTapTimer = setTimeout(() => {
               keyTapCount = 0;
@@ -1258,10 +1284,9 @@ function renderGroups() {
             openEditRowModal(cGi, cRi);
           }
         });
-        // タッチデバイス用ダブルタップ
         let lastTouchTime = 0;
         keySpan.addEventListener('touchend', e => {
-          if (appMode === 'edit') return; // editモードはclickに任せる
+          if (appMode === 'edit') return;
           const now = Date.now();
           if (now - lastTouchTime < 350) {
             e.preventDefault();
@@ -1283,12 +1308,13 @@ function renderGroups() {
           chip.classList.add('selected-for-swap');
         }
         if (c.locked) chip.classList.add('locked');
+        // ★ 文字色コピーモードのチップに視覚インジケータ
+        if (c.copyTarget === 't') chip.classList.add('copy-text-mode');
 
         const inner = document.createElement('div');
         inner.className = 'swatch-chip-inner';
         inner.style.background = c.b;
         inner.style.color = c.t;
-        // data属性に色を保存（applyChipLabelStyleのリセット後に再適用するため）
         inner.dataset.bg = c.b;
         inner.dataset.fg = c.t;
         const label = getChipLabel(c);
@@ -1303,15 +1329,19 @@ function renderGroups() {
           } else if (appMode === 'edit') {
             tt.textContent = c.locked ? '🔒 ロック中' : '色をタップして入れ替え';
           } else {
-            tt.textContent = c.locked ? '🔒 ロック中' : '長押しで編集';
+            // ★ コピー対象を表示
+            if (c.locked) {
+              tt.textContent = '🔒 ロック中';
+            } else if (c.copyTarget === 't') {
+              tt.textContent = '長押しで編集 ｜ 文字色コピー';
+            } else {
+              tt.textContent = '長押しで編集';
+            }
           }
         };
         updateTooltip();
         chip.addEventListener('mouseenter', updateTooltip);
 
-        // ★ chip-edit-btn は削除（✒️ボタンなし）
-
-        // ★ 長押し時間を300msに短縮
         ;(function(cC, cGi, cRi, cCi) {
           chip.addEventListener('pointerdown', e => {
             if (appMode !== 'normal') return;
@@ -1321,7 +1351,7 @@ function renderGroups() {
               longPressActive = true; longPressTimer = null;
               if (navigator.vibrate) navigator.vibrate(20);
               openLpModal(cC, cGi, cRi, cCi);
-            }, 300); // ★ 500ms → 300ms
+            }, 300);
           });
           chip.addEventListener('click', e => {
             e.stopPropagation();
@@ -1344,8 +1374,11 @@ function renderGroups() {
             } else {
               if (longPressActive) { longPressActive = false; return; }
               applyHex('t', cC.t); applyHex('b', cC.b);
-              copyText(cC.b.toUpperCase());
-              showToast(cC.b.toUpperCase() + ' を反映');
+              // ★ copyTarget に応じてコピーする色を切り替え
+              const copyVal = (cC.copyTarget === 't' ? cC.t : cC.b).toUpperCase();
+              const copyLabel = cC.copyTarget === 't' ? '文字色 ' : '背景色 ';
+              copyText(copyVal);
+              showToast(copyLabel + copyVal + ' を反映');
             }
           });
         })(c, gi, ri, ci);
@@ -1365,7 +1398,8 @@ function renderGroups() {
         addRowBtn.onclick = () => {
           const t = document.getElementById('tHex').value;
           const b = document.getElementById('bHex').value;
-          cRow.colors.push({ id: uid(), t, b, locked: false, label: '' });
+          // ★ copyTarget: 'b' をデフォルトで設定
+          cRow.colors.push({ id: uid(), t, b, locked: false, label: '', copyTarget: 'b' });
           saveGroups(); renderGroups();
         };
       })(row);
@@ -1398,7 +1432,6 @@ function openAddModal(gi) {
   document.getElementById('modalDotT').style.background = t;
   document.getElementById('modalDotB').style.background = b;
   document.getElementById('modalInfo').innerHTML = `${t}&nbsp;/&nbsp;${b}`;
-  // チッププレビュー初期化
   const chip = document.getElementById('modalChipPreview');
   chip.style.background = b;
   chip.style.color = t;
@@ -1413,7 +1446,6 @@ function openAddModal(gi) {
   document.getElementById('addModal').style.display = 'flex';
 }
 
-// ラベル入力でチッププレビューをリアルタイム更新
 document.getElementById('addLabel').addEventListener('input', () => {
   const val = document.getElementById('addLabel').value.trim();
   const label = val || 'Aa';
@@ -1454,7 +1486,8 @@ function confirmAdd() {
   const key = selectedEmojiKey === '__new__' ? document.getElementById('emojiNewInput').value.trim() : selectedEmojiKey;
   let row = groups[modalTargetGi].rows.find(r => r.key === (key || '⭐'));
   if (!row) { row = { key: key || '⭐', colors: [] }; groups[modalTargetGi].rows.push(row); }
-  row.colors.push({ id: uid(), t, b, locked: false, label });
+  // ★ copyTarget: 'b' をデフォルトで設定
+  row.colors.push({ id: uid(), t, b, locked: false, label, copyTarget: 'b' });
   saveGroups(); renderGroups(); closeModal();
 }
 
