@@ -294,6 +294,31 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 .lp-copy-btn.active{background:var(--text);color:#fff}
 .lp-copy-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid rgba(0,0,0,.12);flex-shrink:0;vertical-align:middle}
 
+/* ロックバナー */
+.lp-lock-banner{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;padding:7px 14px;
+  background:rgba(217,54,62,.10);
+  border-bottom:1px solid rgba(217,54,62,.18);
+}
+.lp-lock-banner.unlocked-temp{
+  background:rgba(59,121,96,.10);
+  border-bottom-color:rgba(59,121,96,.22);
+}
+.lp-lock-info{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#c0392b}
+.lp-lock-banner.unlocked-temp .lp-lock-info{color:var(--accent)}
+.lp-lock-icon{font-size:13px;line-height:1}
+.lp-lock-toggle{
+  font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
+  padding:4px 10px;border-radius:99px;cursor:pointer;transition:all .15s;
+  border:1px solid rgba(217,54,62,.4);color:#c0392b;background:rgba(217,54,62,.08);
+}
+.lp-lock-toggle:hover{background:rgba(217,54,62,.18)}
+.lp-lock-banner.unlocked-temp .lp-lock-toggle{
+  border-color:rgba(59,121,96,.4);color:var(--accent);background:rgba(59,121,96,.08);
+}
+.lp-lock-banner.unlocked-temp .lp-lock-toggle:hover{background:rgba(59,121,96,.18)}
+
 /* ⑤ フッター */
 .lp-footer{
   display:flex;align-items:center;justify-content:space-between;
@@ -488,6 +513,15 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         <span class="lp-compare-sep">↔</span>
         <button class="lp-compare-btn" id="lpBtnOld" onclick="lpCompareTo('old')">元に戻す</button>
       </div>
+    </div>
+
+    <!-- ロックバナー（ロック中のみ表示） -->
+    <div class="lp-lock-banner" id="lpLockBanner" style="display:none">
+      <div class="lp-lock-info">
+        <span class="lp-lock-icon" id="lpLockIcon">🔒</span>
+        <span id="lpLockMsg">ロック中 — 編集は保護されています</span>
+      </div>
+      <button class="lp-lock-toggle" id="lpLockToggleBtn" onclick="lpToggleLock()">一時解除</button>
     </div>
 
     <div class="lp-body">
@@ -786,8 +820,52 @@ function updateLpOverwriteBtn() {
   }
 }
 
+function lpUpdateLockBanner() {
+  if (!lpTarget) return;
+  const banner = document.getElementById('lpLockBanner');
+  const icon = document.getElementById('lpLockIcon');
+  const msg = document.getElementById('lpLockMsg');
+  const btn = document.getElementById('lpLockToggleBtn');
+  const chip = document.getElementById('lpChipBig');
+  if (lpTarget.c.locked && !lpTarget.tempUnlocked) {
+    // ロック中
+    banner.style.display = 'flex';
+    banner.classList.remove('unlocked-temp');
+    icon.textContent = '🔒';
+    msg.textContent = 'ロック中 — 編集は保護されています';
+    btn.textContent = '一時解除';
+    chip.classList.add('is-locked');
+    // 色・削除を無効化
+    document.getElementById('lpOverwriteBtn').disabled = true;
+    document.getElementById('lpOverwriteLabel').textContent = '🔒 ロック解除が必要です';
+    document.getElementById('lpOverwriteBtn').style.background = 'var(--surface2)';
+    document.getElementById('lpOverwriteBtn').style.color = 'var(--muted)';
+    document.getElementById('lpOverwriteBtn').style.borderColor = 'var(--border)';
+  } else if (lpTarget.c.locked && lpTarget.tempUnlocked) {
+    // 一時解除中
+    banner.style.display = 'flex';
+    banner.classList.add('unlocked-temp');
+    icon.textContent = '🔓';
+    msg.textContent = '一時解除中 — 保存時に再ロックされます';
+    btn.textContent = '再ロック';
+    chip.classList.remove('is-locked');
+    updateLpOverwriteBtn();
+  } else {
+    // 非ロック
+    banner.style.display = 'none';
+    chip.classList.remove('is-locked');
+    updateLpOverwriteBtn();
+  }
+}
+
+function lpToggleLock() {
+  if (!lpTarget) return;
+  lpTarget.tempUnlocked = !lpTarget.tempUnlocked;
+  lpUpdateLockBanner();
+}
+
 function openLpModal(c, gi, ri, ci) {
-  lpTarget = { c, gi, ri, ci, pendingCopyTarget: c.copyTarget || 'b' };
+  lpTarget = { c, gi, ri, ci, pendingCopyTarget: c.copyTarget || 'b', tempUnlocked: false };
   lpOldB = c.b;
   lpOldT = c.t;
   lpCompareMode = 'new';
@@ -813,14 +891,11 @@ function openLpModal(c, gi, ri, ci) {
   document.getElementById('lpBHex').classList.remove('invalid');
   document.getElementById('lpTHex').classList.remove('invalid');
 
-  // ロック状態
-  const chip = document.getElementById('lpChipBig');
-  c.locked ? chip.classList.add('is-locked') : chip.classList.remove('is-locked');
-
   // 見比えボタン リセット
   document.getElementById('lpBtnNew').classList.add('active-compare');
   document.getElementById('lpBtnOld').classList.remove('active-compare');
 
+  lpUpdateLockBanner();
   updateLpOverwriteBtn();
   lpUpdatePreview();
   document.getElementById('longPressEditModal').style.display = 'flex';
@@ -879,7 +954,7 @@ function lpOverwrite() {
   const bVal = document.getElementById('lpBHex').value;
   const tVal = document.getElementById('lpTHex').value;
   if (!validHex(bVal) || !validHex(tVal)) { showToast('有効な HEX 値を入力してください'); return; }
-  if (lpTarget.c.locked) { alert('🔒 ロックされているため変更できません。先にロックを解除してください。'); return; }
+  if (lpTarget.c.locked && !lpTarget.tempUnlocked) { showToast('🔒 一時解除してから操作してください'); return; }
   if (bVal.toLowerCase() === lpTarget.c.b.toLowerCase() && tVal.toLowerCase() === lpTarget.c.t.toLowerCase()) {
     showToast('色は変わっていません'); return;
   }
