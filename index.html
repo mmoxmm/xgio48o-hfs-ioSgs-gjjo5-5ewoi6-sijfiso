@@ -26,12 +26,13 @@ h1 span{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
 .sync-badge.error{background:#fff2f0;border-color:#ffccc7;color:#cf1322}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
 .sync-gear{font-size:9px;opacity:.55;flex-shrink:0}
-.swap-btn{display:flex;align-items:center;gap:8px;width:100%;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:12px;transition:background .15s}
-.swap-btn:hover{background:var(--surface2)}
-.swap-btn svg{flex-shrink:0;transition:transform .3s}
+.panels-with-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.panel-col{display:flex;flex-direction:column;gap:8px}
+.swap-btn,.match-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;flex:0 0 auto;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;text-align:center}
+.swap-btn:hover,.match-btn:hover{background:var(--surface2)}
+.swap-btn svg,.match-btn svg{flex-shrink:0;transition:transform .3s}
 .swap-btn:hover svg{transform:rotate(180deg)}
-.panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-@media(max-width:540px){.panels{grid-template-columns:1fr}}
+@media(max-width:540px){.panels-with-actions{grid-template-columns:1fr}}
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
 .panel-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .swatch-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
@@ -41,9 +42,9 @@ h1 span{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
 .hex-wrap{flex:1;min-width:0}
 .hex-label{font-size:10px;color:var(--muted);letter-spacing:.08em;margin-bottom:3px}
 .hex-copy-row{display:flex;align-items:center;gap:4px}
-.hex-input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:14px;font-weight:500;padding:5px 8px;outline:none;transition:border-color .15s}
+.hex-input{flex:2;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;font-weight:500;padding:5px 6px;outline:none;transition:border-color .15s;text-align:center}
 .hex-input:focus{border-color:#999}
-.copy-hex-btn{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:11px;padding:5px 10px;cursor:pointer;transition:all .15s;font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap}
+.copy-hex-btn{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:11px;padding:5px 4px;cursor:pointer;transition:all .15s;font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap;text-align:center}
 .copy-hex-btn:hover{background:var(--text);color:#fff;border-color:var(--text)}
 .name-input{width:100%;background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:'Syne',sans-serif;font-size:12px;padding:3px 2px;outline:none;margin-bottom:8px;transition:border-color .15s}
 .name-input::placeholder{color:var(--muted)}
@@ -113,14 +114,13 @@ body.mode-edit .emoji-key:hover{border-color:var(--text);background:var(--surfac
 .emoji-swatches{display:flex;gap:4px;flex-wrap:wrap;align-items:flex-start;flex:1;min-width:0}
 .swatch-chip{position:relative;width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(0,0,0,.08);cursor:pointer;flex-shrink:0;transition:transform .15s,box-shadow .15s;overflow:visible;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 .swatch-chip:hover{transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.swatch-chip-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Sans',sans-serif;font-weight:600;letter-spacing:-0.01em;user-select:none;border-radius:50%;overflow:hidden;text-align:center;line-height:1.15;padding:2px;word-break:break-all;white-space:normal}
+.swatch-chip-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Sans',sans-serif;font-weight:600;letter-spacing:-0.01em;user-select:none;border-radius:50%;overflow:hidden;text-align:center;line-height:1;padding:2px;word-break:break-all;white-space:normal}
 .swatch-chip-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:rgba(20,20,30,.82);color:#fff;font-family:'IBM Plex Sans',sans-serif;font-size:10px;font-weight:500;padding:4px 8px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10}
 .swatch-chip:hover .swatch-chip-tooltip:not(:empty){opacity:1}
 .swatch-chip.locked{border-radius:5px !important}
 .swatch-chip.locked .swatch-chip-inner{border-radius:3px !important}
 body.mode-lock .swatch-chip.locked{border-color:rgba(217,54,62,.4);box-shadow:0 0 0 1px rgba(217,54,62,.2)}
 body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;box-shadow:0 0 0 2px #ffffff,0 0 0 4.5px rgba(0,0,0,0.35) !important;transform:scale(1.1)}
-/* ← T バッジは完全に削除 */
 .emoji-add-btn{width:28px;height:28px;border-radius:50%;border:1.5px dashed var(--border);background:none;color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:1}
 .emoji-add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .group-add-row{padding:6px 12px;border-top:1px solid var(--border)}
@@ -174,164 +174,105 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    長押し編集モーダル
-   ① プレビュー（鍵アイコン左上）
-   ② 見比えボタン
-   ③ 色設定
-   ④ 表示テキスト
-   ⑤ コピー対象
-   ⑥ フッター
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-#longPressEditModal .modal{
-  width:380px;max-width:95vw;
-  padding:0;overflow:hidden;
-}
+#longPressEditModal .modal{width:380px;max-width:95vw;padding:0;overflow:hidden}
 
-/* ① プレビューエリア */
+/* ① キャンバス：入力値でライブプレビュー */
 .lp-canvas{
-  min-height:130px;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:0;
-  transition:background .2s;
-  padding:24px 20px 14px;
-  position:relative;
+  min-height:120px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:0;
+  padding:22px 20px 14px;position:relative;
+  transition:background .1s;
 }
-
-/* 鍵アイコン（左上） */
+/* ロックアイコン */
 .lp-lock-icon-btn{
   position:absolute;top:10px;left:12px;
   width:28px;height:28px;border-radius:50%;
   border:none;cursor:pointer;
-  display:none; /* ロック中のみ表示 */
-  align-items:center;justify-content:center;
+  display:none;align-items:center;justify-content:center;
   font-size:14px;line-height:1;
   box-shadow:0 2px 8px rgba(0,0,0,.22);
-  transition:transform .15s,box-shadow .15s;
-  z-index:5;
-  padding:0;
+  transition:transform .15s;z-index:5;padding:0;
 }
-.lp-lock-icon-btn:hover{transform:scale(1.12);box-shadow:0 4px 12px rgba(0,0,0,.3)}
-.lp-lock-icon-btn.is-locked{
-  background:#1a1a2e; /* 黒 = ロック */
-  color:#fff;
-}
-.lp-lock-icon-btn.is-unlocked-temp{
-  background:#ffffff; /* 白 = 一時解除 */
-  color:#1a1a2e;
-  border:1.5px solid rgba(0,0,0,.12);
-}
+.lp-lock-icon-btn:hover{transform:scale(1.12)}
+.lp-lock-icon-btn.is-locked{background:#1a1a2e;color:#fff}
+.lp-lock-icon-btn.is-unlocked-temp{background:#fff;color:#1a1a2e;border:1.5px solid rgba(0,0,0,.12)}
 
+/* 大チップ：入力値に追従するライブプレビュー */
 .lp-chip-big{
-  width:76px;height:76px;border-radius:50%;
+  width:72px;height:72px;border-radius:50%;
   border:3px solid rgba(255,255,255,.9);
   box-shadow:0 0 0 1px rgba(0,0,0,.08),0 6px 24px rgba(0,0,0,.28);
   display:flex;align-items:center;justify-content:center;
   font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:600;
-  text-align:center;line-height:1.2;word-break:break-all;padding:6px;
-  transition:background .2s,color .2s;
-  margin-bottom:14px;
+  text-align:center;line-height:1;word-break:break-all;padding:6px;
+  overflow:hidden;margin-bottom:12px;
+  transition:background .1s,color .1s;
 }
 .lp-chip-big.is-locked{border-radius:12px !important}
 
 /* 見比えボタン */
-.lp-compare-bar{
-  display:flex;align-items:center;gap:6px;
-  width:100%;
-}
+.lp-compare-bar{display:flex;align-items:center;gap:6px;width:100%}
 .lp-compare-btn{
-  flex:1;font-family:'Syne',sans-serif;font-size:11px;font-weight:600;
-  padding:6px 8px;border-radius:var(--radius-sm);
-  border:1px solid rgba(255,255,255,.45);
-  cursor:pointer;transition:all .15s;
-  background:rgba(255,255,255,.18);color:rgba(255,255,255,.9);
-  text-align:center;backdrop-filter:blur(2px);
-  text-shadow:0 1px 4px rgba(0,0,0,.55);
-  box-shadow:0 1px 6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.15);
+  flex:1;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
+  padding:5px 8px;border-radius:var(--radius-sm);
+  border:1px solid rgba(255,255,255,.5);cursor:pointer;transition:all .15s;
+  background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);
+  text-align:center;letter-spacing:.04em;text-transform:uppercase;
+  text-shadow:0 1px 3px rgba(0,0,0,.5);box-shadow:0 1px 4px rgba(0,0,0,.2);
 }
 .lp-compare-btn.active-compare{
-  background:rgba(255,255,255,.88);
-  color:var(--text);
-  border-color:rgba(255,255,255,.95);
-  text-shadow:none;
-  box-shadow:0 2px 8px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.6);
+  background:rgba(255,255,255,.9);color:var(--text);
+  border-color:rgba(255,255,255,.95);text-shadow:none;
+  box-shadow:0 2px 6px rgba(0,0,0,.18);
 }
-.lp-compare-btn:not(.active-compare):hover{background:rgba(255,255,255,.3)}
-.lp-compare-sep{font-size:11px;color:rgba(255,255,255,.9);flex-shrink:0;text-shadow:0 1px 4px rgba(0,0,0,.55)}
+.lp-compare-btn:not(.active-compare):hover{background:rgba(255,255,255,.28)}
+.lp-compare-sep{font-size:11px;color:rgba(255,255,255,.8);flex-shrink:0;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+
+/* アクションバー：固定デザイン（チップ色と無関係） */
+.lp-action-bar{
+  display:grid;grid-template-columns:1fr 1fr;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  background:var(--surface);
+}
+.lp-action-btn{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:.03em;
+  padding:9px 10px;border:none;cursor:pointer;
+  background:transparent;color:var(--text);transition:background .15s;
+}
+.lp-action-btn:hover{background:var(--surface2)}
+.lp-action-btn+.lp-action-btn{border-left:1px solid var(--border)}
 
 /* ボディ */
 .lp-body{padding:14px 16px 0}
 .lp-sec{margin-bottom:14px}
-.lp-sec-title{
-  font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:7px;text-align:center;
-}
+.lp-sec-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;text-align:center}
 
-/* ② 色設定 */
-.lp-color-zone{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius-sm);padding:12px 14px;
-}
+/* 色設定ゾーン */
+.lp-color-zone{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
 .lp-color-cols{display:flex;gap:10px;margin-bottom:10px}
 .lp-color-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
 .lp-col-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 .lp-swatch-row{display:flex;align-items:center;gap:5px;width:100%}
-.lp-color-swatch{
-  width:30px;height:30px;border-radius:7px;
-  border:2px solid rgba(0,0,0,.1);flex-shrink:0;
-  cursor:pointer;position:relative;overflow:hidden;
-  transition:transform .12s;
-}
+.lp-color-swatch{width:30px;height:30px;border-radius:7px;border:2px solid rgba(0,0,0,.1);flex-shrink:0;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s}
 .lp-color-swatch:hover{transform:scale(1.1)}
 .lp-color-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);opacity:0;cursor:pointer}
-.lp-hex{
-  flex:1;width:0;
-  background:var(--bg);border:1px solid var(--border);
-  border-radius:var(--radius-sm);color:var(--text);
-  font-family:'DM Mono',monospace;font-size:11px;font-weight:500;
-  padding:5px 5px;outline:none;transition:border-color .15s;text-align:center;
-}
+.lp-hex{flex:1;width:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:5px 5px;outline:none;transition:border-color .15s;text-align:center}
 .lp-hex:focus{border-color:var(--accent)}
 .lp-hex.invalid{border-color:#d9363e;background:#fff5f5}
-.lp-overwrite-btn{
-  width:100%;padding:8px 12px;border-radius:var(--radius-sm);
-  border:1.5px solid rgba(0,0,0,.08);cursor:pointer;
-  font-family:'Syne',sans-serif;font-size:12px;font-weight:600;
-  transition:opacity .15s,filter .15s;
-  display:flex;align-items:center;justify-content:center;gap:5px;
-}
+.lp-overwrite-btn{width:100%;padding:8px 12px;border-radius:var(--radius-sm);border:1.5px solid rgba(0,0,0,.08);cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;transition:opacity .15s,filter .15s;display:flex;align-items:center;justify-content:center;gap:5px}
 .lp-overwrite-btn:hover:not(:disabled){filter:brightness(.92)}
 .lp-overwrite-btn:disabled{opacity:.38;cursor:not-allowed}
 
-/* ③ チップラベル */
-.lp-label-input{
-  width:100%;background:var(--surface);
-  border:1px solid var(--border);border-radius:var(--radius-sm);
-  color:var(--text);font-family:'IBM Plex Sans',sans-serif;
-  font-size:13px;font-weight:500;padding:7px 10px;outline:none;
-  transition:border-color .15s;text-align:center;
-}
+/* ラベル入力 */
+.lp-label-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;padding:7px 10px;outline:none;transition:border-color .15s;text-align:center}
 .lp-label-input:focus{border-color:var(--accent)}
 .lp-label-input::placeholder{color:var(--muted);font-family:'Syne',sans-serif;font-size:11px}
 
-/* ④ コピー対象トグル */
-.lp-copy-toggle{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
-.lp-copy-btn{
-  flex:1;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;
-  padding:7px 10px;border:none;cursor:pointer;
-  transition:all .15s;background:var(--surface);color:var(--muted);
-  display:flex;align-items:center;justify-content:center;gap:5px;
-}
-.lp-copy-btn+.lp-copy-btn{border-left:1px solid var(--border)}
-.lp-copy-btn.active{background:var(--text);color:#fff}
-.lp-copy-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid rgba(0,0,0,.12);flex-shrink:0;vertical-align:middle}
-
-/* ⑤ フッター */
-.lp-footer{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:6px;padding:12px 16px 16px;
-  border-top:1px solid var(--border);background:var(--surface);
-  margin-top:14px;
-}
+/* フッター */
+.lp-footer{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);margin-top:14px}
 .lp-del-btn{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid #d9363e;color:#d9363e;background:none;transition:all .15s}
 .lp-del-btn:hover{background:#d9363e;color:#fff}
 .lp-footer-right{display:flex;gap:6px}
@@ -360,48 +301,55 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
     </div>
   </header>
 
-  <button class="swap-btn" onclick="swapColors()">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
-    文字色と背景色を入れ替え
-  </button>
-
-  <div class="panels">
-    <div class="panel">
-      <div class="panel-title">背景色</div>
-      <div class="swatch-row">
-        <div class="swatch" id="bSwatch"><input type="color" id="bPicker" value="#e8f4f8"></div>
-        <div class="hex-wrap">
-          <div class="hex-label">HEX</div>
-          <div class="hex-copy-row">
-            <input type="text" class="hex-input" id="bHex" value="#e8f4f8" maxlength="7" spellcheck="false">
-            <button class="copy-hex-btn" onclick="copyHex('b')">コピー</button>
+  <div class="panels-with-actions">
+    <div class="panel-col">
+      <button class="swap-btn" onclick="swapColors()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+        文字色と背景色を入れ替え
+      </button>
+      <div class="panel">
+        <div class="panel-title">背景色</div>
+        <div class="swatch-row">
+          <div class="swatch" id="bSwatch"><input type="color" id="bPicker" value="#e8f4f8"></div>
+          <div class="hex-wrap">
+            <div class="hex-label">HEX</div>
+            <div class="hex-copy-row">
+              <input type="text" class="hex-input" id="bHex" value="#e8f4f8" maxlength="7" spellcheck="false">
+              <button class="copy-hex-btn" onclick="copyHex('b')">コピー</button>
+            </div>
           </div>
         </div>
-      </div>
-      <input type="text" class="name-input" id="bName" placeholder="色の名前（任意）" maxlength="30">
-      <div class="sliders">
-        <div class="slider-group"><span class="slider-name">H</span><button class="slider-step-btn" onclick="stepSlider('bH','b',-1)">◀</button><input type="range" id="bH" min="0" max="359" value="200" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><button class="slider-step-btn" onclick="stepSlider('bH','b',1)">▶</button><span class="slider-val" id="bHval">200°</span></div>
-        <div class="slider-group"><span class="slider-name">S</span><button class="slider-step-btn" onclick="stepSlider('bS','b',-1)">◀</button><input type="range" id="bS" min="0" max="100" value="38"><button class="slider-step-btn" onclick="stepSlider('bS','b',1)">▶</button><span class="slider-val" id="bSval">38%</span></div>
-        <div class="slider-group"><span class="slider-name">V</span><button class="slider-step-btn" onclick="stepSlider('bV','b',-1)">◀</button><input type="range" id="bV" min="0" max="100" value="97"><button class="slider-step-btn" onclick="stepSlider('bV','b',1)">▶</button><span class="slider-val" id="bVval">97%</span></div>
+        <input type="text" class="name-input" id="bName" placeholder="色の名前（任意）" maxlength="30">
+        <div class="sliders">
+          <div class="slider-group"><span class="slider-name">H</span><button class="slider-step-btn" onclick="stepSlider('bH','b',-1)">◀</button><input type="range" id="bH" min="0" max="359" value="200" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><button class="slider-step-btn" onclick="stepSlider('bH','b',1)">▶</button><span class="slider-val" id="bHval">200°</span></div>
+          <div class="slider-group"><span class="slider-name">S</span><button class="slider-step-btn" onclick="stepSlider('bS','b',-1)">◀</button><input type="range" id="bS" min="0" max="100" value="38"><button class="slider-step-btn" onclick="stepSlider('bS','b',1)">▶</button><span class="slider-val" id="bSval">38%</span></div>
+          <div class="slider-group"><span class="slider-name">V</span><button class="slider-step-btn" onclick="stepSlider('bV','b',-1)">◀</button><input type="range" id="bV" min="0" max="100" value="97"><button class="slider-step-btn" onclick="stepSlider('bV','b',1)">▶</button><span class="slider-val" id="bVval">97%</span></div>
+        </div>
       </div>
     </div>
-    <div class="panel">
-      <div class="panel-title">文字色</div>
-      <div class="swatch-row">
-        <div class="swatch" id="tSwatch"><input type="color" id="tPicker" value="#1a1a2e"></div>
-        <div class="hex-wrap">
-          <div class="hex-label">HEX</div>
-          <div class="hex-copy-row">
-            <input type="text" class="hex-input" id="tHex" value="#1a1a2e" maxlength="7" spellcheck="false">
-            <button class="copy-hex-btn" onclick="copyHex('t')">コピー</button>
+    <div class="panel-col">
+      <button class="match-btn" onclick="applyMatchBg()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="3"/><circle cx="15" cy="12" r="3"/></svg>
+        背景色に揃える
+      </button>
+      <div class="panel">
+        <div class="panel-title">文字色</div>
+        <div class="swatch-row">
+          <div class="swatch" id="tSwatch"><input type="color" id="tPicker" value="#1a1a2e"></div>
+          <div class="hex-wrap">
+            <div class="hex-label">HEX</div>
+            <div class="hex-copy-row">
+              <input type="text" class="hex-input" id="tHex" value="#1a1a2e" maxlength="7" spellcheck="false">
+              <button class="copy-hex-btn" onclick="copyHex('t')">コピー</button>
+            </div>
           </div>
         </div>
-      </div>
-      <input type="text" class="name-input" id="tName" placeholder="色の名前（任意）" maxlength="30">
-      <div class="sliders">
-        <div class="slider-group"><span class="slider-name">H</span><button class="slider-step-btn" onclick="stepSlider('tH','t',-1)">◀</button><input type="range" id="tH" min="0" max="359" value="229" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><button class="slider-step-btn" onclick="stepSlider('tH','t',1)">▶</button><span class="slider-val" id="tHval">229°</span></div>
-        <div class="slider-group"><span class="slider-name">S</span><button class="slider-step-btn" onclick="stepSlider('tS','t',-1)">◀</button><input type="range" id="tS" min="0" max="100" value="44"><button class="slider-step-btn" onclick="stepSlider('tS','t',1)">▶</button><span class="slider-val" id="tSval">44%</span></div>
-        <div class="slider-group"><span class="slider-name">V</span><button class="slider-step-btn" onclick="stepSlider('tV','t',-1)">◀</button><input type="range" id="tV" min="0" max="100" value="18"><button class="slider-step-btn" onclick="stepSlider('tV','t',1)">▶</button><span class="slider-val" id="tVval">18%</span></div>
+        <input type="text" class="name-input" id="tName" placeholder="色の名前（任意）" maxlength="30">
+        <div class="sliders">
+          <div class="slider-group"><span class="slider-name">H</span><button class="slider-step-btn" onclick="stepSlider('tH','t',-1)">◀</button><input type="range" id="tH" min="0" max="359" value="229" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><button class="slider-step-btn" onclick="stepSlider('tH','t',1)">▶</button><span class="slider-val" id="tHval">229°</span></div>
+          <div class="slider-group"><span class="slider-name">S</span><button class="slider-step-btn" onclick="stepSlider('tS','t',-1)">◀</button><input type="range" id="tS" min="0" max="100" value="44"><button class="slider-step-btn" onclick="stepSlider('tS','t',1)">▶</button><span class="slider-val" id="tSval">44%</span></div>
+          <div class="slider-group"><span class="slider-name">V</span><button class="slider-step-btn" onclick="stepSlider('tV','t',-1)">◀</button><input type="range" id="tV" min="0" max="100" value="18"><button class="slider-step-btn" onclick="stepSlider('tV','t',1)">▶</button><span class="slider-val" id="tVval">18%</span></div>
+        </div>
       </div>
     </div>
   </div>
@@ -457,7 +405,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
       <button class="sync-copy-btn" onclick="copySyncUrl()">URLコピー</button>
     </div>
   </div>
-  <footer>チップをタップ → プレビュー反映 ／ 長押し（0.3秒）で色・設定を編集</footer>
+  <footer>チップをシングルタップ → 背景色コピー ／ ダブルタップ → 文字色コピー ／ 長押し（0.3秒）→ 編集</footer>
 </div>
 
 <div class="copy-toast" id="copyToast"></div>
@@ -467,7 +415,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   <div class="modal">
     <h3>新規登録</h3>
     <div class="modal-preview" style="gap:14px;">
-      <div id="modalChipPreview" style="width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;border:3px solid rgba(255,255,255,.85);box-shadow:0 2px 10px rgba(0,0,0,.22);text-align:center;line-height:1.2;word-break:break-all;white-space:normal;padding:4px;">Aa</div>
+      <div id="modalChipPreview" style="width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;border:3px solid rgba(255,255,255,.85);box-shadow:0 2px 10px rgba(0,0,0,.22);text-align:center;line-height:1;word-break:break-all;white-space:normal;padding:4px;overflow:hidden;">Aa</div>
       <div style="display:flex;flex-direction:column;gap:5px;align-items:center;">
         <div style="display:flex;gap:6px;"><div id="modalDotT" style="width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.8);box-shadow:0 1px 4px rgba(0,0,0,.2);flex-shrink:0;"></div><div id="modalDotB" style="width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.8);box-shadow:0 1px 4px rgba(0,0,0,.2);flex-shrink:0;"></div></div>
         <div class="modal-preview-info" id="modalInfo" style="font-size:10px;"></div>
@@ -505,27 +453,34 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-     長押し編集モーダル
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<!-- ━━━ 長押し編集モーダル ━━━ -->
 <div class="modal-overlay" id="longPressEditModal" style="display:none" onclick="if(event.target===this)closeLpModal()">
   <div class="modal">
-
-    <!-- ① プレビュー（鍵アイコン左上 ＋ チップ大 ＋ 見比えボタン） -->
+    <!-- キャンバス：入力値でライブプレビュー（旧・固定表示から変更） -->
     <div class="lp-canvas" id="lpCanvas">
-      <!-- 鍵アイコン：ロック中のみ表示、クリックで一時解除トグル -->
       <button class="lp-lock-icon-btn" id="lpLockIconBtn" onclick="lpToggleLock()" title="クリックで一時解除 / 再ロック">🔒</button>
       <div class="lp-chip-big" id="lpChipBig"></div>
       <div class="lp-compare-bar">
-        <button class="lp-compare-btn active-compare" id="lpBtnNew" onclick="lpCompareTo('new')">新しい色</button>
+        <button class="lp-compare-btn active-compare" id="lpBtnNew" onclick="lpCompareTo('new')">ページの色をセット</button>
         <span class="lp-compare-sep">↔</span>
-        <button class="lp-compare-btn" id="lpBtnOld" onclick="lpCompareTo('old')">元に戻す</button>
+        <button class="lp-compare-btn" id="lpBtnOld" onclick="lpCompareTo('old')">登録色をセット</button>
       </div>
     </div>
 
-    <div class="lp-body">
+    <!-- アクションバー：ページのボタン文言と統一 -->
+    <div class="lp-action-bar">
+      <button class="lp-action-btn" onclick="lpSwapColors()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+        文字色と背景色を入れ替え
+      </button>
+      <button class="lp-action-btn" onclick="lpMatchToPreview()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="3"/><circle cx="15" cy="12" r="3"/></svg>
+        背景色に揃える
+      </button>
+    </div>
 
-      <!-- ② 色設定 -->
+    <div class="lp-body">
+      <!-- 色設定 -->
       <div class="lp-sec">
         <div class="lp-sec-title">色を設定する</div>
         <div class="lp-color-zone">
@@ -551,28 +506,14 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         </div>
       </div>
 
-      <!-- ③ チップの表示テキスト -->
+      <!-- チップラベル -->
       <div class="lp-sec">
-        <div class="lp-sec-title">チップの表示テキスト（＝プレビュー）</div>
-        <input type="text" class="lp-label-input" id="lpLabelInput" maxlength="10" placeholder="空欄で「Aa」（リアルタイムプレビュー）">
+        <div class="lp-sec-title">チップの表示テキスト</div>
+        <input type="text" class="lp-label-input" id="lpLabelInput" maxlength="10" placeholder="空欄で「Aa」（大チップにリアルタイム反映）">
       </div>
+    </div>
 
-      <!-- ④ タップ時コピー対象 -->
-      <div class="lp-sec">
-        <div class="lp-sec-title">タップ時にコピーする色</div>
-        <div class="lp-copy-toggle">
-          <button class="lp-copy-btn active" id="lpCopyB" onclick="setLpCopyTarget('b')">
-            <span class="lp-copy-dot" id="lpCopyBDot"></span>背景色
-          </button>
-          <button class="lp-copy-btn" id="lpCopyT" onclick="setLpCopyTarget('t')">
-            <span class="lp-copy-dot" id="lpCopyTDot"></span>文字色
-          </button>
-        </div>
-      </div>
-
-    </div><!-- /lp-body -->
-
-    <!-- ⑤ フッター -->
+    <!-- フッター -->
     <div class="lp-footer">
       <button class="lp-del-btn" onclick="lpDelete()">削除</button>
       <div class="lp-footer-right">
@@ -580,7 +521,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         <button class="lp-save-btn" onclick="lpSaveSettings()">設定を保存</button>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -612,7 +552,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- グループ追加モーダル -->
 <div class="modal-overlay" id="addGroupModal" style="display:none" onclick="if(event.target===this)closeAddGroupModal()">
   <div class="modal" style="width:300px;">
     <div style="display:flex;align-items:center;margin-bottom:16px;">
@@ -629,7 +568,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 
 <script>
 const uid = () => Math.random().toString(36).slice(2, 9);
-
 const DEFAULT_GROUPS = [
   { name: '🌃', rows: [
     { key: '👓', colors: [] }, { key: '🐹', colors: [] }, { key: '🥽', colors: [] },
@@ -701,14 +639,9 @@ function ensureIds(gs) {
   }));
 }
 
-let appMode = 'normal';
-let swapSelected = null;
-let pendingOverwrite = null;
-let longPressTimer = null;
-let longPressActive = false;
-let lpTarget = null;
-let lpCompareMode = 'new';
-let lpOldB = '', lpOldT = '';
+let appMode = 'normal', swapSelected = null, pendingOverwrite = null;
+let longPressTimer = null, longPressActive = false;
+let lpTarget = null, lpOldB = '', lpOldT = '', lpSnapB = '', lpSnapT = '';
 
 function toggleLockMode() {
   if (appMode !== 'lock') {
@@ -747,8 +680,7 @@ function toggleEditMode() {
 function getChipLabel(c) { return (c.label && c.label.trim()) ? c.label.trim() : 'Aa'; }
 
 function doSwapColors(a, b) {
-  const rowA = groups[a.gi].rows[a.ri].colors;
-  const rowB = groups[b.gi].rows[b.ri].colors;
+  const rowA = groups[a.gi].rows[a.ri].colors, rowB = groups[b.gi].rows[b.ri].colors;
   if (a.gi === b.gi && a.ri === b.ri) { [rowA[a.ci], rowA[b.ci]] = [rowA[b.ci], rowA[a.ci]]; }
   else { const tmp = rowA[a.ci]; rowA[a.ci] = rowB[b.ci]; rowB[b.ci] = tmp; }
   saveGroups(); renderGroups();
@@ -757,44 +689,38 @@ function doSwapColors(a, b) {
 function applyChipLabelStyle(inner, label) {
   if (!label) return;
   const vlen = [...label].reduce((n, ch) => { const cp = ch.codePointAt(0); return n + (cp > 0x7F ? 2 : 1); }, 0);
-  if (vlen <= 2) { inner.style.fontSize = '11px'; inner.style.whiteSpace = 'nowrap'; }
-  else if (vlen <= 4) { inner.style.fontSize = '9px'; inner.style.wordBreak = 'break-all'; inner.style.whiteSpace = 'normal'; }
-  else if (vlen <= 6) { inner.style.fontSize = '7.5px'; inner.style.wordBreak = 'break-all'; inner.style.whiteSpace = 'normal'; }
-  else { inner.style.fontSize = '6px'; inner.style.wordBreak = 'break-all'; inner.style.whiteSpace = 'normal'; }
+  if (vlen <= 2) { inner.style.fontSize = '11px'; inner.style.whiteSpace = 'nowrap'; inner.style.wordBreak = 'normal'; }
+  else if (vlen <= 4) { inner.style.fontSize = '9px'; inner.style.wordBreak = 'break-all'; inner.style.whiteSpace = 'normal'; inner.style.lineHeight = '1.1'; }
+  else if (vlen <= 6) { inner.style.fontSize = '7.5px'; inner.style.wordBreak = 'break-all'; inner.style.whiteSpace = 'normal'; inner.style.lineHeight = '1.1'; }
+  else { inner.style.fontSize = '6px'; inner.style.wordBreak = 'break-all'; inner.style.whiteSpace = 'normal'; inner.style.lineHeight = '1.1'; }
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 長押しモーダル
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function lpGetDisplayColors() {
-  if (lpCompareMode === 'old') return { b: lpOldB, t: lpOldT };
+
+/** 大チップ（キャンバス）を入力値でライブ更新 — 修正①の核心 */
+function lpUpdateCanvas() {
   const bVal = document.getElementById('lpBHex').value;
   const tVal = document.getElementById('lpTHex').value;
-  return {
-    b: validHex(bVal) ? bVal : (lpTarget ? lpTarget.c.b : '#ffffff'),
-    t: validHex(tVal) ? tVal : (lpTarget ? lpTarget.c.t : '#000000')
-  };
-}
+  const bOk = validHex(bVal), tOk = validHex(tVal);
+  const displayB = bOk ? bVal : lpOldB;
+  const displayT = tOk ? tVal : lpOldT;
 
-function lpUpdatePreview() {
-  const { b, t } = lpGetDisplayColors();
   const canvas = document.getElementById('lpCanvas');
   const chip = document.getElementById('lpChipBig');
-  canvas.style.background = b;
-  chip.style.background = b;
-  chip.style.color = t;
+  canvas.style.background = displayB;
+  chip.style.background = displayB;
+  chip.style.color = displayT;
+
+  // ラベルもリアルタイム反映
   const rawText = document.getElementById('lpLabelInput').value.trim();
   const displayText = rawText || (lpTarget ? getChipLabel(lpTarget.c) : 'Aa');
   chip.textContent = displayText;
-  document.getElementById('lpCopyBDot').style.background = b;
-  document.getElementById('lpCopyTDot').style.background = t;
-}
-
-function lpCompareTo(mode) {
-  lpCompareMode = mode;
-  document.getElementById('lpBtnNew').classList.toggle('active-compare', mode === 'new');
-  document.getElementById('lpBtnOld').classList.toggle('active-compare', mode === 'old');
-  lpUpdatePreview();
+  const vlen = [...displayText].reduce((n, ch) => { const cp = ch.codePointAt(0); return n + (cp > 0x7F ? 2 : 1); }, 0);
+  if (vlen <= 2) { chip.style.fontSize = '15px'; chip.style.whiteSpace = 'nowrap'; }
+  else if (vlen <= 4) { chip.style.fontSize = '11px'; chip.style.lineHeight = '1.1'; chip.style.wordBreak = 'break-all'; chip.style.whiteSpace = 'normal'; }
+  else { chip.style.fontSize = '8px'; chip.style.lineHeight = '1.1'; chip.style.wordBreak = 'break-all'; chip.style.whiteSpace = 'normal'; }
 }
 
 function updateLpOverwriteBtn() {
@@ -802,202 +728,142 @@ function updateLpOverwriteBtn() {
   const tVal = document.getElementById('lpTHex').value;
   const btn = document.getElementById('lpOverwriteBtn');
   const label = document.getElementById('lpOverwriteLabel');
-
-  // ロック中（一時解除なし）なら無効
   if (lpTarget && lpTarget.c.locked && !lpTarget.tempUnlocked) {
-    btn.disabled = true;
-    btn.style.background = 'var(--surface2)';
-    btn.style.color = 'var(--muted)';
-    btn.style.borderColor = 'var(--border)';
-    label.textContent = '🔒 ロック解除が必要です';
-    return;
+    btn.disabled = true; btn.style.background = 'var(--surface2)'; btn.style.color = 'var(--muted)'; btn.style.borderColor = 'var(--border)';
+    label.textContent = '🔒 ロック解除が必要です'; return;
   }
-
   const ok = validHex(bVal) && validHex(tVal);
   btn.disabled = !ok;
-  if (ok) {
-    btn.style.background = bVal;
-    btn.style.color = tVal;
-    btn.style.borderColor = 'rgba(0,0,0,.08)';
-    label.textContent = 'この色で上書き保存';
-  } else {
-    btn.style.background = 'var(--surface2)';
-    btn.style.color = 'var(--muted)';
-    btn.style.borderColor = 'var(--border)';
-    label.textContent = '有効なHEXを入力してください';
-  }
+  if (ok) { btn.style.background = bVal; btn.style.color = tVal; btn.style.borderColor = 'rgba(0,0,0,.08)'; label.textContent = 'この色で上書き保存'; }
+  else { btn.style.background = 'var(--surface2)'; btn.style.color = 'var(--muted)'; btn.style.borderColor = 'var(--border)'; label.textContent = '有効なHEXを入力してください'; }
 }
 
-// ━━━ 鍵アイコンの更新 ━━━
 function lpUpdateLockIcon() {
   if (!lpTarget) return;
   const iconBtn = document.getElementById('lpLockIconBtn');
   const chip = document.getElementById('lpChipBig');
-
-  if (!lpTarget.c.locked) {
-    // ロックなし → アイコン非表示
-    iconBtn.style.display = 'none';
-    chip.classList.remove('is-locked');
-  } else if (lpTarget.c.locked && !lpTarget.tempUnlocked) {
-    // ロック中 → 黒背景・鍵閉
-    iconBtn.style.display = 'flex';
-    iconBtn.className = 'lp-lock-icon-btn is-locked';
-    iconBtn.textContent = '🔒';
-    iconBtn.title = 'クリックで一時解除';
-    chip.classList.add('is-locked');
+  if (!lpTarget.c.locked) { iconBtn.style.display = 'none'; chip.classList.remove('is-locked'); }
+  else if (!lpTarget.tempUnlocked) {
+    iconBtn.style.display = 'flex'; iconBtn.className = 'lp-lock-icon-btn is-locked'; iconBtn.textContent = '🔒'; iconBtn.title = 'クリックで一時解除'; chip.classList.add('is-locked');
   } else {
-    // 一時解除中 → 白背景・鍵開
-    iconBtn.style.display = 'flex';
-    iconBtn.className = 'lp-lock-icon-btn is-unlocked-temp';
-    iconBtn.textContent = '🔓';
-    iconBtn.title = 'クリックで再ロック';
-    chip.classList.remove('is-locked');
+    iconBtn.style.display = 'flex'; iconBtn.className = 'lp-lock-icon-btn is-unlocked-temp'; iconBtn.textContent = '🔓'; iconBtn.title = 'クリックで再ロック'; chip.classList.remove('is-locked');
   }
 }
 
 function lpToggleLock() {
   if (!lpTarget) return;
   lpTarget.tempUnlocked = !lpTarget.tempUnlocked;
-  lpUpdateLockIcon();
-  updateLpOverwriteBtn();
-  if (lpTarget.tempUnlocked) {
-    showToast('一時解除中 — 保存時に再ロックされます');
-  } else {
-    showToast('再ロックしました');
+  lpUpdateLockIcon(); updateLpOverwriteBtn();
+  showToast(lpTarget.tempUnlocked ? '一時解除中 — 保存時に再ロック' : '再ロックしました');
+}
+
+function lpSetInputs(bVal, tVal) {
+  if (validHex(bVal)) {
+    document.getElementById('lpBHex').value = bVal;
+    document.getElementById('lpBPicker').value = bVal;
+    document.getElementById('lpBSwatch').style.background = bVal;
+    document.getElementById('lpBHex').classList.remove('invalid');
+  }
+  if (validHex(tVal)) {
+    document.getElementById('lpTHex').value = tVal;
+    document.getElementById('lpTPicker').value = tVal;
+    document.getElementById('lpTSwatch').style.background = tVal;
+    document.getElementById('lpTHex').classList.remove('invalid');
   }
 }
 
-function openLpModal(c, gi, ri, ci) {
-  lpTarget = {
-    c, gi, ri, ci,
-    // ★ Bug fix: pendingCopyTarget を正しく c.copyTarget で初期化
-    pendingCopyTarget: c.copyTarget || 'b',
-    pendingLabel: c.label || '',
-    tempUnlocked: false
-  };
-  lpOldB = c.b;
-  lpOldT = c.t;
-  lpCompareMode = 'new';
+function lpCompareTo(mode) {
+  const targetB = mode === 'new' ? lpSnapB : lpOldB;
+  const targetT = mode === 'new' ? lpSnapT : lpOldT;
+  lpSetInputs(targetB, targetT);
+  document.getElementById('lpBtnNew').classList.toggle('active-compare', mode === 'new');
+  document.getElementById('lpBtnOld').classList.toggle('active-compare', mode === 'old');
+  lpUpdateCanvas(); updateLpOverwriteBtn();
+}
 
-  // ラベル
+function lpSwapColors() {
+  const bVal = document.getElementById('lpBHex').value, tVal = document.getElementById('lpTHex').value;
+  if (!validHex(bVal) || !validHex(tVal)) { showToast('有効なHEXを入力してください'); return; }
+  lpSetInputs(tVal, bVal);
+  lpUpdateCanvas(); updateLpOverwriteBtn();
+  showToast('入力欄の色を入れ替えました');
+}
+
+function lpMatchToPreview() {
+  const bVal = document.getElementById('lpBHex').value, tVal = document.getElementById('lpTHex').value;
+  const bOk = validHex(bVal), tOk = validHex(tVal);
+  if (!bOk && !tOk) { showToast('有効なHEXを入力してください'); return; }
+  const base = bOk ? bVal : tVal;
+  lpSetInputs(base, base);
+  lpUpdateCanvas(); updateLpOverwriteBtn();
+  showToast('同じ色 ' + base.toUpperCase() + ' に揃えました');
+}
+
+function openLpModal(c, gi, ri, ci) {
+  lpTarget = { c, gi, ri, ci, tempUnlocked: false };
+  lpOldB = c.b; lpOldT = c.t;
+  lpSnapB = document.getElementById('bHex').value;
+  lpSnapT = document.getElementById('tHex').value;
   const rawLabel = (c.label && c.label.trim() && c.label.trim() !== 'Aa') ? c.label.trim() : '';
   document.getElementById('lpLabelInput').value = rawLabel;
-
-  // コピー対象：正しく c.copyTarget で初期化
-  setLpCopyTarget(c.copyTarget || 'b');
-
-  // 色フィールド：チップ自身の色で初期化（スライダー色とは無関係）
-  const initB = c.b;
-  const initT = c.t;
-  document.getElementById('lpBHex').value = initB;
-  document.getElementById('lpBPicker').value = initB;
-  document.getElementById('lpBSwatch').style.background = initB;
-  document.getElementById('lpTHex').value = initT;
-  document.getElementById('lpTPicker').value = initT;
-  document.getElementById('lpTSwatch').style.background = initT;
-  document.getElementById('lpBHex').classList.remove('invalid');
-  document.getElementById('lpTHex').classList.remove('invalid');
-
-  // 見比えボタン リセット
+  lpSetInputs(lpSnapB, lpSnapT);
   document.getElementById('lpBtnNew').classList.add('active-compare');
   document.getElementById('lpBtnOld').classList.remove('active-compare');
-
-  lpUpdateLockIcon();
-  updateLpOverwriteBtn();
-  lpUpdatePreview();
+  lpUpdateCanvas(); lpUpdateLockIcon(); updateLpOverwriteBtn();
   document.getElementById('longPressEditModal').style.display = 'flex';
 }
 
-function closeLpModal() {
-  lpTarget = null;
-  document.getElementById('longPressEditModal').style.display = 'none';
-}
+function closeLpModal() { lpTarget = null; document.getElementById('longPressEditModal').style.display = 'none'; }
 
-function setLpCopyTarget(target) {
-  document.getElementById('lpCopyB').classList.toggle('active', target === 'b');
-  document.getElementById('lpCopyT').classList.toggle('active', target === 't');
-  if (lpTarget) lpTarget.pendingCopyTarget = target;
-}
-
-// ピッカー・HEX 入力
+// ピッカー・HEX入力イベント → 大チップをライブ更新
 document.getElementById('lpBPicker').addEventListener('input', e => {
   document.getElementById('lpBHex').value = e.target.value;
   document.getElementById('lpBSwatch').style.background = e.target.value;
   document.getElementById('lpBHex').classList.remove('invalid');
-  updateLpOverwriteBtn();
-  if (lpCompareMode === 'new') lpUpdatePreview();
+  lpUpdateCanvas(); updateLpOverwriteBtn();
 });
 document.getElementById('lpTPicker').addEventListener('input', e => {
   document.getElementById('lpTHex').value = e.target.value;
   document.getElementById('lpTSwatch').style.background = e.target.value;
   document.getElementById('lpTHex').classList.remove('invalid');
-  updateLpOverwriteBtn();
-  if (lpCompareMode === 'new') lpUpdatePreview();
+  lpUpdateCanvas(); updateLpOverwriteBtn();
 });
 document.getElementById('lpBHex').addEventListener('input', e => {
-  if (validHex(e.target.value)) {
-    document.getElementById('lpBPicker').value = e.target.value;
-    document.getElementById('lpBSwatch').style.background = e.target.value;
-    e.target.classList.remove('invalid');
-    if (lpCompareMode === 'new') lpUpdatePreview();
-  } else { e.target.classList.add('invalid'); }
-  updateLpOverwriteBtn();
+  let v = normalizeHexInput(e.target.value); if (v !== e.target.value) e.target.value = v;
+  if (validHex(v)) { document.getElementById('lpBPicker').value = v; document.getElementById('lpBSwatch').style.background = v; e.target.classList.remove('invalid'); }
+  else { e.target.classList.add('invalid'); }
+  lpUpdateCanvas(); updateLpOverwriteBtn();
 });
 document.getElementById('lpTHex').addEventListener('input', e => {
-  if (validHex(e.target.value)) {
-    document.getElementById('lpTPicker').value = e.target.value;
-    document.getElementById('lpTSwatch').style.background = e.target.value;
-    e.target.classList.remove('invalid');
-    if (lpCompareMode === 'new') lpUpdatePreview();
-  } else { e.target.classList.add('invalid'); }
-  updateLpOverwriteBtn();
+  let v = normalizeHexInput(e.target.value); if (v !== e.target.value) e.target.value = v;
+  if (validHex(v)) { document.getElementById('lpTPicker').value = v; document.getElementById('lpTSwatch').style.background = v; e.target.classList.remove('invalid'); }
+  else { e.target.classList.add('invalid'); }
+  lpUpdateCanvas(); updateLpOverwriteBtn();
 });
+document.getElementById('lpLabelInput').addEventListener('input', lpUpdateCanvas);
 
-document.getElementById('lpLabelInput').addEventListener('input', lpUpdatePreview);
-
-// ━━━ 上書き保存（色 + label + copyTarget を一括） ━━━
 function lpOverwrite() {
   if (!lpTarget) return;
-  const bVal = document.getElementById('lpBHex').value;
-  const tVal = document.getElementById('lpTHex').value;
+  const bVal = document.getElementById('lpBHex').value, tVal = document.getElementById('lpTHex').value;
   if (!validHex(bVal) || !validHex(tVal)) { showToast('有効な HEX 値を入力してください'); return; }
   if (lpTarget.c.locked && !lpTarget.tempUnlocked) { showToast('🔒 一時解除してから操作してください'); return; }
-
-  // closeLpModal() で lpTarget=null になる前に必要な値を全部退避
   const rawLabel = document.getElementById('lpLabelInput').value.trim();
   const pendingLabel = rawLabel === 'Aa' ? '' : rawLabel;
-  const pendingCopyTarget = lpTarget.pendingCopyTarget || 'b';
-  const savedC       = lpTarget.c;
-  const oldB         = lpTarget.c.b;
-  const oldT         = lpTarget.c.t;
-  const oldChipLabel = getChipLabel(lpTarget.c);
-
+  const savedC = lpTarget.c, oldChipLabel = getChipLabel(lpTarget.c);
   closeLpModal();
-
-  pendingOverwrite = {
-    c: savedC,
-    newT: tVal,
-    newB: bVal,
-    newLabel: pendingLabel,
-    newCopyTarget: pendingCopyTarget
-  };
-
+  pendingOverwrite = { c: savedC, newT: tVal, newB: bVal, newLabel: pendingLabel };
   const before = document.getElementById('owBefore');
-  before.style.background = oldB; before.style.color = oldT; before.textContent = oldChipLabel;
+  before.style.background = lpOldB; before.style.color = lpOldT; before.textContent = oldChipLabel;
   const after = document.getElementById('owAfter');
   after.style.background = bVal; after.style.color = tVal; after.textContent = pendingLabel || oldChipLabel;
   document.getElementById('overwriteModal').style.display = 'flex';
 }
 
-// ━━━ 設定のみ保存（色は変えない） ━━━
 function lpSaveSettings() {
   if (!lpTarget) return;
   const rawLabel = document.getElementById('lpLabelInput').value.trim();
   lpTarget.c.label = rawLabel === 'Aa' ? '' : rawLabel;
-  lpTarget.c.copyTarget = lpTarget.pendingCopyTarget || 'b';
-  saveGroups(); renderGroups();
-  showToast('設定を保存しました ✓');
-  closeLpModal();
+  saveGroups(); renderGroups(); showToast('設定を保存しました ✓'); closeLpModal();
 }
 
 function lpDelete() {
@@ -1006,28 +872,21 @@ function lpDelete() {
   if (c.locked) { alert('🔒 ロックされているため削除できません。先にロックを解除してください。'); return; }
   groups[gi].rows[ri].colors.splice(ci, 1);
   if (groups[gi].rows[ri].colors.length === 0) groups[gi].rows.splice(ri, 1);
-  saveGroups(); renderGroups(); showToast('削除しました');
-  closeLpModal();
+  saveGroups(); renderGroups(); showToast('削除しました'); closeLpModal();
 }
 
 function closeOverwriteModal() { pendingOverwrite = null; document.getElementById('overwriteModal').style.display = 'none'; }
-
-// ★ confirmOverwrite: 色 + label + copyTarget を全部上書き
 function confirmOverwrite() {
   if (!pendingOverwrite) return;
-  const { c, newT, newB, newLabel, newCopyTarget } = pendingOverwrite;
-  c.t = newT;
-  c.b = newB;
-  if (newLabel !== undefined) c.label = newLabel;
-  if (newCopyTarget !== undefined) c.copyTarget = newCopyTarget;
+  const { c, newT, newB, newLabel } = pendingOverwrite;
+  c.t = newT; c.b = newB; if (newLabel !== undefined) c.label = newLabel;
   saveGroups(); renderGroups(); showToast('色を上書きしました ✓');
   pendingOverwrite = null; document.getElementById('overwriteModal').style.display = 'none';
 }
 
 let deleteGroupIndex = -1;
 function openDeleteGroupModal(gi) {
-  deleteGroupIndex = gi;
-  const g = groups[gi];
+  deleteGroupIndex = gi; const g = groups[gi];
   const colorCount = g.rows.reduce((n, r) => n + r.colors.length, 0);
   const detail = colorCount > 0 ? `カラー ${colorCount} 件も削除されます。 ` : '';
   document.getElementById('deleteGroupMsg').textContent = `「${g.name}」を削除します。${detail}この操作は取り消せません。`;
@@ -1037,74 +896,39 @@ function closeDeleteGroupModal() { deleteGroupIndex = -1; document.getElementByI
 function confirmDeleteGroup() {
   if (deleteGroupIndex < 0 || deleteGroupIndex >= groups.length) { closeDeleteGroupModal(); return; }
   const name = groups[deleteGroupIndex].name;
-  groups.splice(deleteGroupIndex, 1);
-  saveGroups(); renderGroups(); showToast(`「${name}」を削除しました`);
-  closeDeleteGroupModal();
+  groups.splice(deleteGroupIndex, 1); saveGroups(); renderGroups(); showToast(`「${name}」を削除しました`); closeDeleteGroupModal();
 }
 
-function openAddGroupModal() {
-  document.getElementById('addGroupNameInput').value = '';
-  document.getElementById('addGroupModal').style.display = 'flex';
-  setTimeout(() => document.getElementById('addGroupNameInput').focus(), 50);
-}
+function openAddGroupModal() { document.getElementById('addGroupNameInput').value = ''; document.getElementById('addGroupModal').style.display = 'flex'; setTimeout(() => document.getElementById('addGroupNameInput').focus(), 50); }
 function closeAddGroupModal() { document.getElementById('addGroupModal').style.display = 'none'; }
 function confirmAddGroup() {
   const name = document.getElementById('addGroupNameInput').value.trim();
-  groups.push({ id: uid(), name: name || '新規', rows: [] });
-  saveGroups(); renderGroups(); closeAddGroupModal(); showToast('グループを追加しました');
+  groups.push({ id: uid(), name: name || '新規', rows: [] }); saveGroups(); renderGroups(); closeAddGroupModal(); showToast('グループを追加しました');
 }
-document.getElementById('addGroupNameInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') confirmAddGroup();
-  if (e.key === 'Escape') closeAddGroupModal();
-});
+document.getElementById('addGroupNameInput').addEventListener('keydown', e => { if (e.key === 'Enter') confirmAddGroup(); if (e.key === 'Escape') closeAddGroupModal(); });
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // グループ描画
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let dragSrcGi = null;
-
 function renderGroups() {
-  const el = document.getElementById('groupsList');
-  el.innerHTML = '';
+  const el = document.getElementById('groupsList'); el.innerHTML = '';
   groups.forEach((g, gi) => {
-    const block = document.createElement('div');
-    block.className = 'group-block';
-    block.setAttribute('draggable', 'true');
-    block.addEventListener('dragstart', e => {
-      if (appMode !== 'edit') { e.preventDefault(); return; }
-      dragSrcGi = gi; block.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(gi));
-    });
-    block.addEventListener('dragend', () => {
-      dragSrcGi = null;
-      document.querySelectorAll('.group-block').forEach(b => b.classList.remove('dragging', 'drag-over'));
-    });
-    block.addEventListener('dragover', e => {
-      if (appMode !== 'edit' || dragSrcGi === null || dragSrcGi === gi) return;
-      e.preventDefault(); e.dataTransfer.dropEffect = 'move';
-      document.querySelectorAll('.group-block').forEach(b => b.classList.remove('drag-over'));
-      block.classList.add('drag-over');
-    });
+    const block = document.createElement('div'); block.className = 'group-block'; block.setAttribute('draggable', 'true');
+    block.addEventListener('dragstart', e => { if (appMode !== 'edit') { e.preventDefault(); return; } dragSrcGi = gi; block.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(gi)); });
+    block.addEventListener('dragend', () => { dragSrcGi = null; document.querySelectorAll('.group-block').forEach(b => b.classList.remove('dragging', 'drag-over')); });
+    block.addEventListener('dragover', e => { if (appMode !== 'edit' || dragSrcGi === null || dragSrcGi === gi) return; e.preventDefault(); e.dataTransfer.dropEffect = 'move'; document.querySelectorAll('.group-block').forEach(b => b.classList.remove('drag-over')); block.classList.add('drag-over'); });
     block.addEventListener('dragleave', e => { if (!block.contains(e.relatedTarget)) block.classList.remove('drag-over'); });
-    block.addEventListener('drop', e => {
-      e.preventDefault(); block.classList.remove('drag-over');
-      if (dragSrcGi === null || dragSrcGi === gi) return;
-      const moved = groups.splice(dragSrcGi, 1)[0];
-      const insertAt = dragSrcGi < gi ? gi - 1 : gi;
-      groups.splice(insertAt, 0, moved);
-      dragSrcGi = null; saveGroups(); renderGroups();
-    });
+    block.addEventListener('drop', e => { e.preventDefault(); block.classList.remove('drag-over'); if (dragSrcGi === null || dragSrcGi === gi) return; const moved = groups.splice(dragSrcGi, 1)[0]; const insertAt = dragSrcGi < gi ? gi - 1 : gi; groups.splice(insertAt, 0, moved); dragSrcGi = null; saveGroups(); renderGroups(); });
 
     const hdr = document.createElement('div'); hdr.className = 'group-header';
     const dragHandle = document.createElement('span'); dragHandle.className = 'group-drag-handle'; dragHandle.title = 'ドラッグで並び替え'; dragHandle.textContent = '⠿';
-    dragHandle.addEventListener('mousedown', e => e.stopPropagation());
-    hdr.append(dragHandle);
+    dragHandle.addEventListener('mousedown', e => e.stopPropagation()); hdr.append(dragHandle);
     const nameEl = document.createElement('div'); nameEl.className = 'group-name-display'; nameEl.contentEditable = 'true'; nameEl.spellcheck = false; nameEl.textContent = g.name;
     nameEl.addEventListener('mousedown', e => e.stopPropagation());
     nameEl.addEventListener('input', () => { g.name = nameEl.textContent.trim() || g.name; saveGroups(); });
     nameEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); } if (e.key === 'Escape') { nameEl.textContent = g.name; nameEl.blur(); } });
-    nameEl.addEventListener('blur', () => { g.name = nameEl.textContent.trim() || g.name; nameEl.textContent = g.name; saveGroups(); });
-    hdr.append(nameEl);
+    nameEl.addEventListener('blur', () => { g.name = nameEl.textContent.trim() || g.name; nameEl.textContent = g.name; saveGroups(); }); hdr.append(nameEl);
     const delBtn = document.createElement('button'); delBtn.className = 'group-del-btn'; delBtn.textContent = '×'; delBtn.title = 'グループを削除';
     delBtn.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); });
     ;(function(cgi) { delBtn.addEventListener('click', e => { e.stopPropagation(); e.preventDefault(); openDeleteGroupModal(cgi); }); })(gi);
@@ -1112,38 +936,17 @@ function renderGroups() {
 
     const rowsEl = document.createElement('div'); rowsEl.className = 'emoji-rows';
     let dragSrcRi = null;
-
     g.rows.forEach((row, ri) => {
       const rowEl = document.createElement('div'); rowEl.className = 'emoji-row';
       const handle = document.createElement('div'); handle.className = 'row-drag-handle'; handle.textContent = '⠿'; handle.title = 'ドラッグして並び替え';
       rowEl.setAttribute('draggable', 'false');
       handle.addEventListener('mousedown', () => { rowEl.setAttribute('draggable', 'true'); });
       ;(function(cGi, cRi) {
-        rowEl.addEventListener('dragstart', e => {
-          if (appMode !== 'edit') { e.preventDefault(); return; }
-          dragSrcRi = cRi; rowEl.classList.add('row-dragging');
-          e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(cRi));
-        });
-        rowEl.addEventListener('dragend', () => {
-          dragSrcRi = null; rowEl.setAttribute('draggable', 'false'); rowEl.classList.remove('row-dragging');
-          rowsEl.querySelectorAll('.emoji-row').forEach(r => r.classList.remove('row-drag-over'));
-        });
-        rowEl.addEventListener('dragover', e => {
-          if (appMode !== 'edit' || dragSrcRi === null || dragSrcRi === cRi) return;
-          e.preventDefault();
-          rowsEl.querySelectorAll('.emoji-row').forEach(r => r.classList.remove('row-drag-over'));
-          rowEl.classList.add('row-drag-over');
-        });
+        rowEl.addEventListener('dragstart', e => { if (appMode !== 'edit') { e.preventDefault(); return; } dragSrcRi = cRi; rowEl.classList.add('row-dragging'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(cRi)); });
+        rowEl.addEventListener('dragend', () => { dragSrcRi = null; rowEl.setAttribute('draggable', 'false'); rowEl.classList.remove('row-dragging'); rowsEl.querySelectorAll('.emoji-row').forEach(r => r.classList.remove('row-drag-over')); });
+        rowEl.addEventListener('dragover', e => { if (appMode !== 'edit' || dragSrcRi === null || dragSrcRi === cRi) return; e.preventDefault(); rowsEl.querySelectorAll('.emoji-row').forEach(r => r.classList.remove('row-drag-over')); rowEl.classList.add('row-drag-over'); });
         rowEl.addEventListener('dragleave', e => { if (!rowEl.contains(e.relatedTarget)) rowEl.classList.remove('row-drag-over'); });
-        rowEl.addEventListener('drop', e => {
-          e.preventDefault(); rowEl.classList.remove('row-drag-over');
-          if (dragSrcRi === null || dragSrcRi === cRi) return;
-          const rows = groups[cGi].rows;
-          const moved = rows.splice(dragSrcRi, 1)[0];
-          const insertAt = dragSrcRi < cRi ? cRi - 1 : cRi;
-          rows.splice(insertAt, 0, moved);
-          dragSrcRi = null; saveGroups(); renderGroups();
-        });
+        rowEl.addEventListener('drop', e => { e.preventDefault(); rowEl.classList.remove('row-drag-over'); if (dragSrcRi === null || dragSrcRi === cRi) return; const rows = groups[cGi].rows; const moved = rows.splice(dragSrcRi, 1)[0]; const insertAt = dragSrcRi < cRi ? cRi - 1 : cRi; rows.splice(insertAt, 0, moved); dragSrcRi = null; saveGroups(); renderGroups(); });
       })(gi, ri);
       rowEl.append(handle);
 
@@ -1157,10 +960,7 @@ function renderGroups() {
           else if (keyTapCount >= 2) { clearTimeout(keyTapTimer); keyTapCount = 0; openEditRowModal(cGi, cRi); }
         });
         let lastTouch = 0;
-        keySpan.addEventListener('touchend', e => {
-          if (appMode === 'edit') return;
-          const now = Date.now(); if (now - lastTouch < 350) { e.preventDefault(); openEditRowModal(cGi, cRi); } lastTouch = now;
-        });
+        keySpan.addEventListener('touchend', e => { if (appMode === 'edit') return; const now = Date.now(); if (now - lastTouch < 350) { e.preventDefault(); openEditRowModal(cGi, cRi); } lastTouch = now; });
       })(gi, ri);
       rowEl.append(keySpan);
 
@@ -1169,18 +969,18 @@ function renderGroups() {
         const chip = document.createElement('div'); chip.className = 'swatch-chip';
         if (swapSelected && swapSelected.gi === gi && swapSelected.ri === ri && swapSelected.ci === ci) chip.classList.add('selected-for-swap');
         if (c.locked) chip.classList.add('locked');
-        // ★ Tバッジを完全削除 — copy-text-mode クラスを付けない
         const inner = document.createElement('div'); inner.className = 'swatch-chip-inner';
         inner.style.background = c.b; inner.style.color = c.t;
-        const label = getChipLabel(c); inner.textContent = label;
-        applyChipLabelStyle(inner, label);
+        const label = getChipLabel(c); inner.textContent = label; applyChipLabelStyle(inner, label);
         const tt = document.createElement('div'); tt.className = 'swatch-chip-tooltip';
         const updateTooltip = () => {
-          if (appMode === 'lock') tt.textContent = c.locked ? '🔓 タップで解除' : '🔒 タップでロック';
-          else if (appMode === 'edit') tt.textContent = c.locked ? '🔒 ロック中' : '色をタップして入れ替え';
-          else tt.textContent = c.locked ? '🔒 ロック中' : '';
+          if (appMode === 'lock') { tt.textContent = c.locked ? '🔓 タップで解除' : '🔒 タップでロック'; }
+          else if (appMode === 'edit') { tt.textContent = c.locked ? '🔒 ロック中' : '色をタップして入れ替え'; }
+          else { tt.textContent = ''; }
         };
         updateTooltip(); chip.addEventListener('mouseenter', updateTooltip);
+
+        let chipTapCount = 0, chipTapTimer = null;
         ;(function(cC, cGi, cRi, cCi) {
           chip.addEventListener('pointerdown', e => {
             if (appMode !== 'normal') return;
@@ -1188,6 +988,7 @@ function renderGroups() {
             if (longPressTimer) clearTimeout(longPressTimer);
             longPressTimer = setTimeout(() => {
               longPressActive = true; longPressTimer = null;
+              chipTapCount = 0; if (chipTapTimer) { clearTimeout(chipTapTimer); chipTapTimer = null; }
               if (navigator.vibrate) navigator.vibrate(20);
               openLpModal(cC, cGi, cRi, cCi);
             }, 300);
@@ -1198,20 +999,31 @@ function renderGroups() {
               cC.locked = !cC.locked;
               if (cC.locked) { chip.classList.add('locked'); showToast('🔒 ロックしました'); }
               else { chip.classList.remove('locked'); showToast('🔓 解除しました'); }
-              updateTooltip();
-            } else if (appMode === 'edit') {
+              updateTooltip(); return;
+            }
+            if (appMode === 'edit') {
               if (swapSelected === null) { swapSelected = { gi: cGi, ri: cRi, ci: cCi }; renderGroups(); showToast('移動先をタップ（同じ色でキャンセル）'); }
               else if (swapSelected.gi === cGi && swapSelected.ri === cRi && swapSelected.ci === cCi) { swapSelected = null; renderGroups(); }
               else { doSwapColors(swapSelected, { gi: cGi, ri: cRi, ci: cCi }); swapSelected = null; showToast('入れ替えました ↔'); }
-            } else {
-              if (longPressActive) { longPressActive = false; return; }
+              return;
+            }
+            if (longPressActive) { longPressActive = false; return; }
+            // シングル / ダブルタップ → ページプレビュー更新
+            chipTapCount++;
+            if (chipTapCount === 1) {
+              chipTapTimer = setTimeout(() => {
+                chipTapCount = 0;
+                applyHex('t', cC.t); applyHex('b', cC.b);
+                copyText(cC.b.toUpperCase()); showToast('背景色 ' + cC.b.toUpperCase() + ' をコピー');
+              }, 280);
+            } else if (chipTapCount >= 2) {
+              clearTimeout(chipTapTimer); chipTapTimer = null; chipTapCount = 0;
               applyHex('t', cC.t); applyHex('b', cC.b);
-              const copyVal = (cC.copyTarget === 't' ? cC.t : cC.b).toUpperCase();
-              const copyLabel = cC.copyTarget === 't' ? '文字色 ' : '背景色 ';
-              copyText(copyVal); showToast(copyLabel + copyVal + ' を反映');
+              copyText(cC.t.toUpperCase()); showToast('文字色 ' + cC.t.toUpperCase() + ' をコピー');
             }
           });
         })(c, gi, ri, ci);
+
         chip.addEventListener('pointerup', () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } });
         chip.addEventListener('pointerleave', () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } });
         chip.addEventListener('pointercancel', () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } longPressActive = false; });
@@ -1220,17 +1032,10 @@ function renderGroups() {
       });
 
       const addRowBtn = document.createElement('button'); addRowBtn.className = 'emoji-add-btn'; addRowBtn.textContent = '+'; addRowBtn.title = '現在の色を追加';
-      ;(function(cRow) {
-        addRowBtn.onclick = () => {
-          const t = document.getElementById('tHex').value, b = document.getElementById('bHex').value;
-          cRow.colors.push({ id: uid(), t, b, locked: false, label: '', copyTarget: 'b' });
-          saveGroups(); renderGroups();
-        };
-      })(row);
+      ;(function(cRow) { addRowBtn.onclick = () => { const t = document.getElementById('tHex').value, b = document.getElementById('bHex').value; cRow.colors.push({ id: uid(), t, b, locked: false, label: '', copyTarget: 'b' }); saveGroups(); renderGroups(); }; })(row);
       swatchesEl.append(addRowBtn); rowEl.append(swatchesEl); rowsEl.append(rowEl);
     });
     block.append(rowsEl);
-
     const addRow = document.createElement('div'); addRow.className = 'group-add-row';
     const addBtn = document.createElement('button'); addBtn.className = 'group-add-preset'; addBtn.innerHTML = '＋ 新規登録…';
     ;(function(cGi) { addBtn.onclick = () => openAddModal(cGi); })(gi);
@@ -1242,16 +1047,11 @@ let modalTargetGi = 0, selectedEmojiKey = null;
 function openAddModal(gi) {
   modalTargetGi = gi ?? 0;
   const t = document.getElementById('tHex').value, b = document.getElementById('bHex').value;
-  document.getElementById('modalDotT').style.background = t;
-  document.getElementById('modalDotB').style.background = b;
+  document.getElementById('modalDotT').style.background = t; document.getElementById('modalDotB').style.background = b;
   document.getElementById('modalInfo').innerHTML = `${t}&nbsp;/&nbsp;${b}`;
-  const chip = document.getElementById('modalChipPreview');
-  chip.style.background = b; chip.style.color = t; chip.textContent = 'Aa'; chip.style.fontSize = '13px';
-  const sel = document.getElementById('modalGroup');
-  sel.innerHTML = groups.map((g, i) => `<option value="${i}">${g.name}</option>`).join('');
-  sel.value = modalTargetGi; selectedEmojiKey = null; refreshEmojiKeySelect();
-  document.getElementById('addLabel').value = '';
-  document.getElementById('addModal').style.display = 'flex';
+  const chip = document.getElementById('modalChipPreview'); chip.style.background = b; chip.style.color = t; chip.textContent = 'Aa'; chip.style.fontSize = '13px';
+  const sel = document.getElementById('modalGroup'); sel.innerHTML = groups.map((g, i) => `<option value="${i}">${g.name}</option>`).join(''); sel.value = modalTargetGi;
+  selectedEmojiKey = null; refreshEmojiKeySelect(); document.getElementById('addLabel').value = ''; document.getElementById('addModal').style.display = 'flex';
 }
 document.getElementById('addLabel').addEventListener('input', () => {
   const val = document.getElementById('addLabel').value.trim(), label = val || 'Aa';
@@ -1261,8 +1061,8 @@ document.getElementById('addLabel').addEventListener('input', () => {
 });
 function onModalGroupChange() { modalTargetGi = +document.getElementById('modalGroup').value; refreshEmojiKeySelect(); }
 function refreshEmojiKeySelect() {
-  const container = document.getElementById('emojiKeySelect');
-  container.innerHTML = ''; document.getElementById('emojiNewInput').classList.remove('visible'); document.getElementById('emojiNewInput').value = '';
+  const container = document.getElementById('emojiKeySelect'); container.innerHTML = '';
+  document.getElementById('emojiNewInput').classList.remove('visible'); document.getElementById('emojiNewInput').value = '';
   groups[modalTargetGi].rows.forEach(r => {
     const b = document.createElement('button'); b.className = 'emoji-key-btn'; b.textContent = r.key;
     b.onclick = () => { selectedEmojiKey = r.key; document.getElementById('emojiNewInput').classList.remove('visible'); container.querySelectorAll('.emoji-key-btn').forEach(btn => btn.classList.remove('selected')); b.classList.add('selected'); };
@@ -1277,8 +1077,7 @@ function confirmAdd() {
   const key = selectedEmojiKey === '__new__' ? document.getElementById('emojiNewInput').value.trim() : selectedEmojiKey;
   let row = groups[modalTargetGi].rows.find(r => r.key === (key || '⭐'));
   if (!row) { row = { key: key || '⭐', colors: [] }; groups[modalTargetGi].rows.push(row); }
-  row.colors.push({ id: uid(), t, b, locked: false, label, copyTarget: 'b' });
-  saveGroups(); renderGroups(); closeModal();
+  row.colors.push({ id: uid(), t, b, locked: false, label, copyTarget: 'b' }); saveGroups(); renderGroups(); closeModal();
 }
 
 let editGi, editRi;
@@ -1348,6 +1147,7 @@ function syncUI(k) {
   document.getElementById(k+'V').style.background=`linear-gradient(to right,${hsvToHex(h,s,0)},${hsvToHex(h,s,100)})`;
 }
 function fromSlider(k) { state[k].h=+document.getElementById(k+'H').value; state[k].s=+document.getElementById(k+'S').value; state[k].v=+document.getElementById(k+'V').value; const hex=hsvToHex(state[k].h,state[k].s,state[k].v); document.getElementById(k+'Picker').value=hex; document.getElementById(k+'Hex').value=hex; syncUI(k); render(); }
+function applyMatchBg() { const hex = document.getElementById('bHex').value; if (!validHex(hex)) return; applyHex('t', hex); showToast('文字色を背景色 ' + hex.toUpperCase() + ' に揃えました'); }
 function swapColors() { const th=document.getElementById('tHex').value, bh=document.getElementById('bHex').value; applyHex('t',bh); applyHex('b',th); }
 function render() {
   const tc=document.getElementById('tHex').value, bc=document.getElementById('bHex').value;
@@ -1363,13 +1163,14 @@ function showToast(m) { const t=document.getElementById('copyToast'); t.textCont
 function copyHex(k){ const h=document.getElementById(k+'Hex').value; copyText(h); showToast(h+' をコピー'); }
 function copyAndShowHex(k){ const h=document.getElementById(k==='t'?'tcCode':'bcCode').textContent; copyText(h); showToast(h+' をコピー'); }
 function stepSlider(id, k, delta) { const el = document.getElementById(id); el.value = Math.min(+el.max, Math.max(+el.min, +el.value + delta)); fromSlider(k); }
+function normalizeHexInput(val) { val = val.trim(); if (!val) return val; if (!val.startsWith('#')) val = '#' + val; return val; }
 
 ['tH','tS','tV'].forEach(id=>document.getElementById(id).oninput=()=>fromSlider('t'));
 ['bH','bS','bV'].forEach(id=>document.getElementById(id).oninput=()=>fromSlider('b'));
 document.getElementById('tPicker').oninput=e=>applyHex('t',e.target.value);
 document.getElementById('bPicker').oninput=e=>applyHex('b',e.target.value);
-document.getElementById('tHex').oninput=e=>applyHex('t',e.target.value);
-document.getElementById('bHex').oninput=e=>applyHex('b',e.target.value);
+document.getElementById('tHex').addEventListener('input', e => { let v = normalizeHexInput(e.target.value); if (v !== e.target.value) e.target.value = v; applyHex('t', v); });
+document.getElementById('bHex').addEventListener('input', e => { let v = normalizeHexInput(e.target.value); if (v !== e.target.value) e.target.value = v; applyHex('b', v); });
 document.getElementById('tName').oninput=render; document.getElementById('bName').oninput=render;
 
 document.addEventListener('click', e => {
