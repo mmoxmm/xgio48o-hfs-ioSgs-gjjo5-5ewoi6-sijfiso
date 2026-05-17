@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#ffffff;--surface:#f5f5f7;--surface2:#ebebef;--border:#e0e0e8;
@@ -26,13 +27,20 @@ h1 span{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
 .sync-badge.error{background:#fff2f0;border-color:#ffccc7;color:#cf1322}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
 .sync-gear{font-size:9px;opacity:.55;flex-shrink:0}
-.panels-with-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.panel-col{display:flex;flex-direction:column;gap:8px}
-.swap-btn,.match-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;flex:0 0 auto;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;text-align:center}
+.panels-with-actions{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:8px;margin-bottom:12px;}
+.swap-btn,.match-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;text-align:center;grid-row:1;outline:none;-webkit-tap-highlight-color:transparent;}
+.panel-col{display:flex;flex-direction:column;gap:0;grid-row:2}
 .swap-btn:hover,.match-btn:hover{background:var(--surface2)}
+.swap-btn:active,.match-btn:active{background:var(--surface2)}
 .swap-btn svg,.match-btn svg{flex-shrink:0;transition:transform .3s}
 .swap-btn:hover svg{transform:rotate(180deg)}
-@media(max-width:540px){.panels-with-actions{grid-template-columns:1fr}}
+@media(max-width:540px){
+  .panels-with-actions{grid-template-columns:1fr;grid-template-rows:auto auto auto auto}
+  .swap-btn{grid-row:1;grid-column:1}
+  .match-btn{grid-row:3;grid-column:1}
+  .panel-col:first-of-type{grid-row:2;grid-column:1}
+  .panel-col:last-of-type{grid-row:4;grid-column:1}
+}
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
 .panel-title{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .swatch-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
@@ -44,7 +52,7 @@ h1 span{color:var(--muted);font-weight:400;font-size:13px;margin-left:6px}
 .hex-copy-row{display:flex;align-items:center;gap:4px}
 .hex-input{flex:2;min-width:0;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;font-weight:500;padding:5px 6px;outline:none;transition:border-color .15s;text-align:center}
 .hex-input:focus{border-color:#999}
-.copy-hex-btn{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:11px;padding:5px 4px;cursor:pointer;transition:all .15s;font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap;text-align:center}
+.copy-hex-btn{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:11px;padding:5px 4px;cursor:pointer;transition:all .15s;font-family:'Syne',sans-serif;font-weight:600;white-space:nowrap;text-align:center;outline:none;-webkit-tap-highlight-color:transparent}
 .copy-hex-btn:hover{background:var(--text);color:#fff;border-color:var(--text)}
 .name-input{width:100%;background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-family:'Syne',sans-serif;font-size:12px;padding:3px 2px;outline:none;margin-bottom:8px;transition:border-color .15s}
 .name-input::placeholder{color:var(--muted)}
@@ -56,7 +64,7 @@ input[type=range]{flex:1;height:5px;border-radius:3px;outline:none;border:none;p
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#fff;border:2px solid rgba(0,0,0,.2);box-shadow:0 1px 4px rgba(0,0,0,.15);cursor:pointer;transition:transform .1s}
 input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
 .slider-val{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);width:30px;text-align:right;flex-shrink:0}
-.slider-step-btn{flex-shrink:0;width:18px;height:18px;border:none;background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-radius:3px;transition:color .12s,background .12s;line-height:1}
+.slider-step-btn{flex-shrink:0;width:18px;height:18px;border:none;background:none;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-radius:3px;transition:color .12s,background .12s;line-height:1;outline:none;-webkit-tap-highlight-color:transparent}
 .slider-step-btn:hover{color:var(--text);background:var(--surface2)}
 .slider-step-btn:active{transform:scale(.85)}
 .preview-wrap{border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:16px}
@@ -148,8 +156,6 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 .sync-copy-btn:hover{opacity:.85}
 .copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(0,0,0,.8);color:#fff;font-family:'DM Mono',monospace;font-size:12px;padding:8px 16px;border-radius:99px;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;z-index:200;white-space:nowrap}
 .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ━━━ モーダル共通 ━━━ */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
 .modal{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px;width:340px;box-shadow:0 8px 32px rgba(0,0,0,.14)}
 .modal h3{font-size:15px;font-weight:700;margin-bottom:14px;text-align:center}
@@ -171,90 +177,26 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 .modal-btn.primary:hover{opacity:.85}
 .modal-btn.secondary{background:none;color:var(--muted)}
 .modal-btn.secondary:hover{color:var(--text)}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   長押し編集モーダル
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #longPressEditModal .modal{width:380px;max-width:95vw;padding:0;overflow:hidden}
-
-/* ① キャンバス：入力値でライブプレビュー */
-.lp-canvas{
-  min-height:120px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:0;
-  padding:22px 20px 14px;position:relative;
-  transition:background .1s;
-}
-/* ロックアイコン */
-.lp-lock-icon-btn{
-  position:absolute;top:10px;left:12px;
-  width:28px;height:28px;border-radius:50%;
-  border:none;cursor:pointer;
-  display:none;align-items:center;justify-content:center;
-  font-size:14px;line-height:1;
-  box-shadow:0 2px 8px rgba(0,0,0,.22);
-  transition:transform .15s;z-index:5;padding:0;
-}
+.lp-canvas{min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:22px 20px 14px;position:relative;transition:background .1s;}
+.lp-lock-icon-btn{position:absolute;top:10px;left:12px;width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:14px;line-height:1;box-shadow:0 2px 8px rgba(0,0,0,.22);transition:transform .15s;z-index:5;padding:0;}
 .lp-lock-icon-btn:hover{transform:scale(1.12)}
 .lp-lock-icon-btn.is-locked{background:#1a1a2e;color:#fff}
 .lp-lock-icon-btn.is-unlocked-temp{background:#fff;color:#1a1a2e;border:1.5px solid rgba(0,0,0,.12)}
-
-/* 大チップ */
-.lp-chip-big{
-  width:72px;height:72px;border-radius:50%;
-  border:3px solid rgba(255,255,255,.9);
-  box-shadow:0 0 0 1px rgba(0,0,0,.08),0 6px 24px rgba(0,0,0,.28);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:600;
-  text-align:center;line-height:1;word-break:break-all;padding:6px;
-  overflow:hidden;margin-bottom:12px;
-  transition:background .1s,color .1s;
-}
+.lp-chip-big{width:72px;height:72px;border-radius:50%;border:3px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(0,0,0,.08),0 6px 24px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:600;text-align:center;line-height:1;word-break:break-all;padding:6px;overflow:hidden;margin-bottom:12px;transition:background .1s,color .1s;}
 .lp-chip-big.is-locked{border-radius:12px !important}
-
-/* ━━━ 見比えボタン: 背景色に依存しない固定スタイル ━━━ */
 .lp-compare-bar{display:flex;align-items:center;gap:5px;width:100%}
-.lp-compare-btn{
-  flex:1;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;
-  padding:5px 8px;border-radius:var(--radius-sm);
-  border:1px solid rgba(255,255,255,.45);cursor:pointer;transition:all .2s;
-  background:rgba(255,255,255,.18);
-  color:var(--lp-btn-fg,#fff);
-  text-shadow:var(--lp-btn-shadow,0 1px 4px rgba(0,0,0,.55));
-  text-align:center;letter-spacing:.04em;text-transform:uppercase;
-  box-shadow:0 1px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.25);
-  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-}
-.lp-compare-btn.active-compare{
-  background:rgba(255,255,255,.38);
-  border-color:rgba(255,255,255,.7);
-  box-shadow:0 2px 10px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.4);
-  font-weight:800;
-}
+.lp-compare-btn{flex:1;font-family:'Syne',sans-serif;font-size:10px;font-weight:700;padding:5px 8px;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,.45);cursor:pointer;transition:all .2s;background:rgba(255,255,255,.18);color:var(--lp-btn-fg,#fff);text-shadow:var(--lp-btn-shadow,0 1px 4px rgba(0,0,0,.55));text-align:center;letter-spacing:.04em;text-transform:uppercase;box-shadow:0 1px 6px rgba(0,0,0,.15),inset 0 1px 0 rgba(255,255,255,.25);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+.lp-compare-btn.active-compare{background:rgba(255,255,255,.38);border-color:rgba(255,255,255,.7);box-shadow:0 2px 10px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.4);font-weight:800;}
 .lp-compare-btn:not(.active-compare):hover{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.55)}
 .lp-compare-sep{width:1px;height:18px;background:rgba(255,255,255,.35);flex-shrink:0;border-radius:1px}
-
-/* アクションバー */
-.lp-action-bar{
-  display:grid;grid-template-columns:1fr 1fr;
-  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
-  background:var(--surface);
-}
-.lp-action-btn{
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
-  letter-spacing:.03em;
-  padding:9px 10px;border:none;cursor:pointer;
-  background:transparent;color:var(--text);transition:background .15s;
-}
+.lp-action-bar{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);}
+.lp-action-btn{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.03em;padding:9px 10px;border:none;cursor:pointer;background:transparent;color:var(--text);transition:background .15s;}
 .lp-action-btn:hover{background:var(--surface2)}
 .lp-action-btn+.lp-action-btn{border-left:1px solid var(--border)}
-
-/* ボディ */
 .lp-body{padding:14px 16px 0}
 .lp-sec{margin-bottom:14px}
 .lp-sec-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;text-align:center}
-
-/* 色設定ゾーン */
 .lp-color-zone{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
 .lp-color-cols{display:flex;gap:10px;margin-bottom:10px}
 .lp-color-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
@@ -269,13 +211,9 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 .lp-overwrite-btn{width:100%;padding:8px 12px;border-radius:var(--radius-sm);border:1.5px solid rgba(0,0,0,.08);cursor:pointer;font-family:'Syne',sans-serif;font-size:12px;font-weight:600;transition:opacity .15s,filter .15s;display:flex;align-items:center;justify-content:center;gap:5px}
 .lp-overwrite-btn:hover:not(:disabled){filter:brightness(.92)}
 .lp-overwrite-btn:disabled{opacity:.38;cursor:not-allowed}
-
-/* ラベル入力 */
 .lp-label-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;padding:7px 10px;outline:none;transition:border-color .15s;text-align:center}
 .lp-label-input:focus{border-color:var(--accent)}
 .lp-label-input::placeholder{color:var(--muted);font-family:'Syne',sans-serif;font-size:11px}
-
-/* フッター */
 .lp-footer{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:12px 16px 16px;border-top:1px solid var(--border);background:var(--surface);margin-top:14px}
 .lp-del-btn{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;padding:6px 12px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid #d9363e;color:#d9363e;background:none;transition:all .15s}
 .lp-del-btn:hover{background:#d9363e;color:#fff}
@@ -284,8 +222,6 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 .lp-cancel-btn:hover{color:var(--text)}
 .lp-save-btn{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;border:none;background:var(--text);color:#fff;transition:opacity .15s}
 .lp-save-btn:hover{opacity:.8}
-
-/* 上書き確認 */
 #overwriteModal .modal{width:300px;text-align:center}
 .overwrite-compare{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;background:#d0d0d8;border-radius:var(--radius);padding:20px 16px}
 .overwrite-side{display:flex;flex-direction:column;align-items:center;gap:7px}
@@ -294,6 +230,7 @@ body.mode-edit .swatch-chip.selected-for-swap{border-color:#ffffff !important;bo
 .overwrite-arrow{font-size:18px;color:rgba(255,255,255,.7);flex-shrink:0;line-height:1;margin-top:18px}
 #deleteGroupModal .modal{width:300px;text-align:center}
 footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
+
 </style>
 </head>
 <body>
@@ -306,11 +243,15 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </header>
 
   <div class="panels-with-actions">
+    <button class="swap-btn" onclick="swapColors();this.blur()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
+      文字色と背景色を入れ替え
+    </button>
+    <button class="match-btn" onclick="applyMatchBg();this.blur()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="3"/><circle cx="15" cy="12" r="3"/></svg>
+      背景色に揃える
+    </button>
     <div class="panel-col">
-      <button class="swap-btn" onclick="swapColors()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
-        文字色と背景色を入れ替え
-      </button>
       <div class="panel">
         <div class="panel-title">背景色</div>
         <div class="swatch-row">
@@ -319,23 +260,19 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
             <div class="hex-label">HEX</div>
             <div class="hex-copy-row">
               <input type="text" class="hex-input" id="bHex" value="#e8f4f8" maxlength="7" spellcheck="false">
-              <button class="copy-hex-btn" onclick="copyHex('b')">コピー</button>
+              <button class="copy-hex-btn" onclick="copyHex('b');this.blur()">コピー</button>
             </div>
           </div>
         </div>
         <input type="text" class="name-input" id="bName" placeholder="色の名前（任意）" maxlength="30">
         <div class="sliders">
-          <div class="slider-group"><span class="slider-name">H</span><button class="slider-step-btn" onclick="stepSlider('bH','b',-1)">◀</button><input type="range" id="bH" min="0" max="359" value="200" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><button class="slider-step-btn" onclick="stepSlider('bH','b',1)">▶</button><span class="slider-val" id="bHval">200°</span></div>
-          <div class="slider-group"><span class="slider-name">S</span><button class="slider-step-btn" onclick="stepSlider('bS','b',-1)">◀</button><input type="range" id="bS" min="0" max="100" value="38"><button class="slider-step-btn" onclick="stepSlider('bS','b',1)">▶</button><span class="slider-val" id="bSval">38%</span></div>
-          <div class="slider-group"><span class="slider-name">V</span><button class="slider-step-btn" onclick="stepSlider('bV','b',-1)">◀</button><input type="range" id="bV" min="0" max="100" value="97"><button class="slider-step-btn" onclick="stepSlider('bV','b',1)">▶</button><span class="slider-val" id="bVval">97%</span></div>
+          <div class="slider-group"><span class="slider-name">H</span><button class="slider-step-btn" onclick="stepSlider('bH','b',-1,this)">◀</button><input type="range" id="bH" min="0" max="359" value="200" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><button class="slider-step-btn" onclick="stepSlider('bH','b',1,this)">▶</button><span class="slider-val" id="bHval">200°</span></div>
+          <div class="slider-group"><span class="slider-name">S</span><button class="slider-step-btn" onclick="stepSlider('bS','b',-1,this)">◀</button><input type="range" id="bS" min="0" max="100" value="38"><button class="slider-step-btn" onclick="stepSlider('bS','b',1,this)">▶</button><span class="slider-val" id="bSval">38%</span></div>
+          <div class="slider-group"><span class="slider-name">V</span><button class="slider-step-btn" onclick="stepSlider('bV','b',-1,this)">◀</button><input type="range" id="bV" min="0" max="100" value="97"><button class="slider-step-btn" onclick="stepSlider('bV','b',1,this)">▶</button><span class="slider-val" id="bVval">97%</span></div>
         </div>
       </div>
     </div>
     <div class="panel-col">
-      <button class="match-btn" onclick="applyMatchBg()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="3"/><circle cx="15" cy="12" r="3"/></svg>
-        背景色に揃える
-      </button>
       <div class="panel">
         <div class="panel-title">文字色</div>
         <div class="swatch-row">
@@ -344,15 +281,15 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
             <div class="hex-label">HEX</div>
             <div class="hex-copy-row">
               <input type="text" class="hex-input" id="tHex" value="#1a1a2e" maxlength="7" spellcheck="false">
-              <button class="copy-hex-btn" onclick="copyHex('t')">コピー</button>
+              <button class="copy-hex-btn" onclick="copyHex('t');this.blur()">コピー</button>
             </div>
           </div>
         </div>
         <input type="text" class="name-input" id="tName" placeholder="色の名前（任意）" maxlength="30">
         <div class="sliders">
-          <div class="slider-group"><span class="slider-name">H</span><button class="slider-step-btn" onclick="stepSlider('tH','t',-1)">◀</button><input type="range" id="tH" min="0" max="359" value="229" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><button class="slider-step-btn" onclick="stepSlider('tH','t',1)">▶</button><span class="slider-val" id="tHval">229°</span></div>
-          <div class="slider-group"><span class="slider-name">S</span><button class="slider-step-btn" onclick="stepSlider('tS','t',-1)">◀</button><input type="range" id="tS" min="0" max="100" value="44"><button class="slider-step-btn" onclick="stepSlider('tS','t',1)">▶</button><span class="slider-val" id="tSval">44%</span></div>
-          <div class="slider-group"><span class="slider-name">V</span><button class="slider-step-btn" onclick="stepSlider('tV','t',-1)">◀</button><input type="range" id="tV" min="0" max="100" value="18"><button class="slider-step-btn" onclick="stepSlider('tV','b',1)">▶</button><span class="slider-val" id="tVval">18%</span></div>
+          <div class="slider-group"><span class="slider-name">H</span><button class="slider-step-btn" onclick="stepSlider('tH','t',-1,this)">◀</button><input type="range" id="tH" min="0" max="359" value="229" style="background:linear-gradient(to right,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)"><button class="slider-step-btn" onclick="stepSlider('tH','t',1,this)">▶</button><span class="slider-val" id="tHval">229°</span></div>
+          <div class="slider-group"><span class="slider-name">S</span><button class="slider-step-btn" onclick="stepSlider('tS','t',-1,this)">◀</button><input type="range" id="tS" min="0" max="100" value="44"><button class="slider-step-btn" onclick="stepSlider('tS','t',1,this)">▶</button><span class="slider-val" id="tSval">44%</span></div>
+          <div class="slider-group"><span class="slider-name">V</span><button class="slider-step-btn" onclick="stepSlider('tV','t',-1,this)">◀</button><input type="range" id="tV" min="0" max="100" value="18"><button class="slider-step-btn" onclick="stepSlider('tV','t',1,this)">▶</button><span class="slider-val" id="tVval">18%</span></div>
         </div>
       </div>
     </div>
@@ -414,7 +351,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 
 <div class="copy-toast" id="copyToast"></div>
 
-<!-- 色を登録モーダル -->
 <div class="modal-overlay" id="addModal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <h3>新規登録</h3>
@@ -445,7 +381,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- 行編集モーダル -->
 <div class="modal-overlay" id="editRowModal" style="display:none" onclick="if(event.target===this)closeEditRowModal()">
   <div class="modal">
     <h3>行（キー）を編集</h3>
@@ -457,7 +392,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- ━━━ 長押し編集モーダル ━━━ -->
 <div class="modal-overlay" id="longPressEditModal" style="display:none" onclick="if(event.target===this)closeLpModal()">
   <div class="modal">
     <div class="lp-canvas" id="lpCanvas">
@@ -469,7 +403,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         <button class="lp-compare-btn active-compare" id="lpBtnOld" onclick="lpCompareTo('old')">登録色をセット</button>
       </div>
     </div>
-
     <div class="lp-action-bar">
       <button class="lp-action-btn" onclick="lpSwapColors()">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
@@ -480,7 +413,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
         背景色に揃える
       </button>
     </div>
-
     <div class="lp-body">
       <div class="lp-sec">
         <div class="lp-sec-title">色を設定する</div>
@@ -506,13 +438,11 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
           </button>
         </div>
       </div>
-
       <div class="lp-sec">
         <div class="lp-sec-title">チップの表示テキスト</div>
         <input type="text" class="lp-label-input" id="lpLabelInput" maxlength="10" placeholder="空欄で「Aa」（大チップにリアルタイム反映）">
       </div>
     </div>
-
     <div class="lp-footer">
       <button class="lp-del-btn" onclick="lpDelete()">削除</button>
       <div class="lp-footer-right">
@@ -523,7 +453,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- 上書き確認モーダル -->
 <div class="modal-overlay" id="overwriteModal" style="display:none" onclick="if(event.target===this)closeOverwriteModal()">
   <div class="modal">
     <h3>色を上書きしますか？</h3>
@@ -539,7 +468,6 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
   </div>
 </div>
 
-<!-- グループ削除確認モーダル -->
 <div class="modal-overlay" id="deleteGroupModal" style="display:none">
   <div class="modal" style="width:300px;text-align:center;">
     <h3 style="color:#d9363e;">グループを削除しますか？</h3>
@@ -566,6 +494,7 @@ footer{text-align:center;font-size:10px;color:var(--muted);padding-top:12px}
 </div>
 
 <script>
+
 const uid = () => Math.random().toString(36).slice(2, 9);
 const DEFAULT_GROUPS = [
   { name: '🌃', rows: [
@@ -694,35 +623,25 @@ function applyChipLabelStyle(inner, label) {
   else { inner.style.fontSize = '6px'; inner.style.wordBreak = 'break-all'; inner.style.whiteSpace = 'normal'; inner.style.lineHeight = '1.1'; }
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 長押しモーダル
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
 function lpUpdateCanvas() {
   const bVal = document.getElementById('lpBHex').value;
   const tVal = document.getElementById('lpTHex').value;
   const bOk = validHex(bVal), tOk = validHex(tVal);
   const displayB = bOk ? bVal : lpOldB;
   const displayT = tOk ? tVal : lpOldT;
-
   const canvas = document.getElementById('lpCanvas');
   const chip = document.getElementById('lpChipBig');
   canvas.style.background = displayB;
   chip.style.background = displayB;
   chip.style.color = displayT;
-
-  // 背景輝度に応じてボタン文字色・影をリアルタイム切り替え
   if (validHex(displayB)) {
     const r = parseInt(displayB.slice(1,3),16), g = parseInt(displayB.slice(3,5),16), b2 = parseInt(displayB.slice(5,7),16);
     const lum = (0.299*r + 0.587*g + 0.114*b2) / 255;
     const fg = lum > 0.45 ? 'rgba(0,0,0,.72)' : '#fff';
-    const sh = lum > 0.45
-      ? '0 1px 2px rgba(255,255,255,.6)'
-      : '0 1px 4px rgba(0,0,0,.6),0 0 8px rgba(0,0,0,.3)';
+    const sh = lum > 0.45 ? '0 1px 2px rgba(255,255,255,.6)' : '0 1px 4px rgba(0,0,0,.6),0 0 8px rgba(0,0,0,.3)';
     canvas.style.setProperty('--lp-btn-fg', fg);
     canvas.style.setProperty('--lp-btn-shadow', sh);
   }
-
   const rawText = document.getElementById('lpLabelInput').value.trim();
   const displayText = rawText || (lpTarget ? getChipLabel(lpTarget.c) : 'Aa');
   chip.textContent = displayText;
@@ -815,17 +734,17 @@ function openLpModal(c, gi, ri, ci) {
   lpSnapT = document.getElementById('tHex').value;
   const rawLabel = (c.label && c.label.trim() && c.label.trim() !== 'Aa') ? c.label.trim() : '';
   document.getElementById('lpLabelInput').value = rawLabel;
-
-  // ★ デフォルトは登録色（チップの色）
   lpSetInputs(lpOldB, lpOldT);
   document.getElementById('lpBtnNew').classList.remove('active-compare');
   document.getElementById('lpBtnOld').classList.add('active-compare');
-
   lpUpdateCanvas(); lpUpdateLockIcon(); updateLpOverwriteBtn();
   document.getElementById('longPressEditModal').style.display = 'flex';
 }
 
-function closeLpModal() { lpTarget = null; document.getElementById('longPressEditModal').style.display = 'none'; }
+function closeLpModal() {
+  lpTarget = null;
+  document.getElementById('longPressEditModal').style.display = 'none';
+}
 
 document.getElementById('lpBPicker').addEventListener('input', e => {
   document.getElementById('lpBHex').value = e.target.value;
@@ -874,7 +793,12 @@ function lpSaveSettings() {
   if (!lpTarget) return;
   const rawLabel = document.getElementById('lpLabelInput').value.trim();
   lpTarget.c.label = rawLabel === 'Aa' ? '' : rawLabel;
-  saveGroups(); renderGroups(); showToast('設定を保存しました ✓'); closeLpModal();
+  closeLpModal();
+  longPressActive = false;
+  if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+  saveGroups();
+  renderGroups();
+  showToast('設定を保存しました ✓');
 }
 
 function lpDelete() {
@@ -918,9 +842,6 @@ function confirmAddGroup() {
 }
 document.getElementById('addGroupNameInput').addEventListener('keydown', e => { if (e.key === 'Enter') confirmAddGroup(); if (e.key === 'Escape') closeAddGroupModal(); });
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// グループ描画
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 let dragSrcGi = null;
 function renderGroups() {
   const el = document.getElementById('groupsList'); el.innerHTML = '';
@@ -996,7 +917,7 @@ function renderGroups() {
           chip.addEventListener('pointerdown', e => {
             if (appMode !== 'normal') return;
             longPressActive = false;
-            if (longPressTimer) clearTimeout(longPressTimer);
+            if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
             longPressTimer = setTimeout(() => {
               longPressActive = true; longPressTimer = null;
               chipTapCount = 0; if (chipTapTimer) { clearTimeout(chipTapTimer); chipTapTimer = null; }
@@ -1172,7 +1093,8 @@ let toastTimer = null;
 function showToast(m) { const t=document.getElementById('copyToast'); t.textContent=m; t.classList.add('show'); if (toastTimer) clearTimeout(toastTimer); toastTimer = setTimeout(()=>{ t.classList.remove('show'); toastTimer=null; }, 2200); }
 function copyHex(k){ const h=document.getElementById(k+'Hex').value; copyText(h); showToast(h+' をコピー'); }
 function copyAndShowHex(k){ const h=document.getElementById(k==='t'?'tcCode':'bcCode').textContent; copyText(h); showToast(h+' をコピー'); }
-function stepSlider(id, k, delta) { const el = document.getElementById(id); el.value = Math.min(+el.max, Math.max(+el.min, +el.value + delta)); fromSlider(k); }
+// ━━━ blur() 対応: 第4引数にボタン要素を受け取りフォーカスを外す ━━━
+function stepSlider(id, k, delta, btn) { const el = document.getElementById(id); el.value = Math.min(+el.max, Math.max(+el.min, +el.value + delta)); fromSlider(k); if(btn) btn.blur(); }
 function normalizeHexInput(val) { val = val.trim(); if (!val) return val; if (!val.startsWith('#')) val = '#' + val; return val; }
 
 ['tH','tS','tV'].forEach(id=>document.getElementById(id).oninput=()=>fromSlider('t'));
@@ -1195,6 +1117,7 @@ document.addEventListener('click', e => {
   if (syncConfig.token && syncConfig.gistId) { startPolling(); updateSyncShareUrl(); document.getElementById('gistTokenInput').value = syncConfig.token; document.getElementById('gistIdInput').value = syncConfig.gistId; document.getElementById('syncSetup').style.display = 'none'; }
   syncUI('t'); syncUI('b'); render(); renderGroups();
 })();
+
 </script>
 </body>
 </html>
